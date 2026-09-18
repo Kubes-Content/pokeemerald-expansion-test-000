@@ -135,10 +135,11 @@ static void ClearFrontierRecord(void)
 
 static void WarpToTruck(void)
 {
-    if (IS_FRLG)
+#if IS_FRLG
         SetWarpDestination(MAP_GROUP(MAP_PALLET_TOWN_PLAYERS_HOUSE_2F), MAP_NUM(MAP_PALLET_TOWN_PLAYERS_HOUSE_2F), WARP_ID_NONE, 6, 6);
-    else
+#else
         SetWarpDestination(MAP_GROUP(MAP_INSIDE_OF_TRUCK), MAP_NUM(MAP_INSIDE_OF_TRUCK), WARP_ID_NONE, -1, -1);
+#endif
     WarpIntoMap();
 }
 
@@ -212,12 +213,11 @@ void NewGameInitData(void)
     ResetLotteryCorner();
     UpdateDailySeed();
     WarpToTruck();
-    if (IS_FRLG)
-        RunScriptImmediately(EventScript_ResetAllMapFlagsFrlg);
-    else
-        RunScriptImmediately(EventScript_ResetAllMapFlags);
 #if IS_FRLG
-        StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
+    RunScriptImmediately(EventScript_ResetAllMapFlagsFrlg);
+    StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
+#else
+    RunScriptImmediately(EventScript_ResetAllMapFlags);
 #endif
     ResetMiniGamesRecords();
     InitUnionRoomChatRegisteredTexts();
