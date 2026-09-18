@@ -563,11 +563,10 @@ static void VBlankCB(void)
 
 void CB2_InitTitleScreen(void)
 {
-    if (IS_FRLG)
-    {
-        CB2_InitTitleScreenFrlg();
-        return;
-    }
+#if IS_FRLG
+    CB2_InitTitleScreenFrlg();
+    return;
+#endif
     switch (gMain.state)
     {
     default:
