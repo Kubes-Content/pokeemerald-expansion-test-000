@@ -52,6 +52,7 @@
 #include "constants/items.h"
 #include "difficulty.h"
 #include "follower_npc.h"
+#include "mygame/patches/new_game_patches.h"
 
 extern const u8 EventScript_ResetAllMapFlags[];
 extern const u8 EventScript_ResetAllMapFlagsFrlg[];
@@ -212,7 +213,11 @@ void NewGameInitData(void)
     ResetFanClub();
     ResetLotteryCorner();
     UpdateDailySeed();
+#ifdef KUBES_NEW_GAME_CUSTOM_WARP
+    KUBES_NEW_GAME_CUSTOM_WARP
+#else
     WarpToTruck();
+#endif
 #if IS_FRLG
     RunScriptImmediately(EventScript_ResetAllMapFlagsFrlg);
     StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
@@ -234,6 +239,7 @@ void NewGameInitData(void)
     ResetItemFlags();
     ResetDexNav();
     ClearFollowerNPCData();
+    NewGameInitDataPatch_FnEnd();
 }
 
 static void ResetMiniGamesRecords(void)
