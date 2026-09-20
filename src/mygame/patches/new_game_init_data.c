@@ -17,7 +17,13 @@ static void GivePlayerRandomMon() {
     FlagSet(FLAG_SYS_POKEMON_GET);
 }
 
+static void ResetTownDungeonPersistentData()
+{
+    memset(&gSaveBlock3Ptr->townDungeonData, 0 , sizeof(gSaveBlock3Ptr->townDungeonData));
+}
+
 void NewGameInitDataPatch_FnEnd()
 {
     GivePlayerRandomMon(); // give the player a pokemon upon starting a new game
+    ResetTownDungeonPersistentData();
 }
