@@ -1,0 +1,16 @@
+raw `
+CaveTown_00_MapScripts::
+.byte 0
+`
+
+script CaveTown_00_EventScript_NPC {
+    lock
+    faceplayer
+    bufferleadmonspeciesname(STR_VAR_1)
+    msgbox(format("Hey, {PLAYER}! Your {STR_VAR_1} looks pretty strong!"), MSGBOX_DEFAULT)
+
+    setflag(FLAG_UNUSED_0x020)
+
+    release
+    end
+}

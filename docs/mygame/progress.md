@@ -6,9 +6,8 @@
       - for now we can just have whenever you enter a town, have it update the save block's index
         - leave a generated cave: warp to town via index
         - cave will also generate relative to current town's config through that index
-  - [ ] spawn a guy in empty plot that you can interact with
-  - [ ] make guy speak text retrieved from concatenated C strings
-    - [ ] include the first pokemon and player name
-  - [ ] spawn a guy in empty plot that you can interact with
-    - [ ] set a flag after talking to them to prevent respawning (iterate current town's dummy value)
+  - [x] spawn a guy in empty plot that you can interact with
+    - [x] include player and mon name in text
+    - [x] set a flag after talking to them to prevent respawning
+  - [ ] hide NPC via flag in save data
 - [ ] 2 - dungeon generates by state
