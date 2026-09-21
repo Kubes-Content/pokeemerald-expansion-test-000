@@ -1,0 +1,14 @@
+- [ ] 1 - behavior by save state
+  - [ ] cave redirs
+  - [ ] persistent town+dungeon data struct (per town)
+    - [ ] current town+cave index in save block that defaults to 0 (everything defaults to 0 atm)
+      - u8 
+      - for now we can just have whenever you enter a town, have it update the save block's index
+        - leave a generated cave: warp to town via index
+        - cave will also generate relative to current town's config through that index
+  - [ ] spawn a guy in empty plot that you can interact with
+  - [ ] make guy speak text retrieved from concatenated C strings
+    - [ ] include the first pokemon and player name
+  - [ ] spawn a guy in empty plot that you can interact with
+    - [ ] set a flag after talking to them to prevent respawning
+- [ ] 2 - dungeon generates by state
