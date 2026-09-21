@@ -1,5 +1,5 @@
 - [ ] 1 - behavior by save state
-  - [ ] cave redirs
+  - [x] cave redirs
   - [ ] persistent town+dungeon data struct (per town)
     - [ ] current town+cave index in save block that defaults to 0 (everything defaults to 0 atm)
       - u8 
