@@ -1,0 +1,16 @@
+{
+    "configurations": [
+      {
+        "name": "CLion",
+        "includePath": [
+          "${workspaceFolder}/include"
+        ],
+        "cStandard": "gnu17",
+        "mergeConfigurations": true,
+        "defines": [
+          "__INTELLISENSE__"
+        ]
+      }
+    ],
+    "version": 4
+}
