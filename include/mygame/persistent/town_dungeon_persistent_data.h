@@ -20,7 +20,7 @@ struct TownDungeonGamePersistentData
 };
 // if we run out of room in SaveBlock3 we can save some padding space by shucking this struct
 
-struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData();
-struct TownDungeonPersistentData* GetCurrentTownDungeonData();
+struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
+struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H
