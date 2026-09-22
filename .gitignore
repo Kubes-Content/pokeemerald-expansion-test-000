@@ -67,4 +67,7 @@ tools/aif2pcm/aif2pcm
 __pycache__
 .map_version
 
+!.idea/
+.idea/*
+!.idea/c_cpp_properties.json
 docs/mygame/aside/
