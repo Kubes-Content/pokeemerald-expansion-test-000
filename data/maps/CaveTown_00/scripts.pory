@@ -9,6 +9,8 @@ script CaveTown_00_EventScript_NPC {
     bufferleadmonspeciesname(STR_VAR_1)
     msgbox(format("Hey, {PLAYER}! Your {STR_VAR_1} looks pretty strong!"), MSGBOX_DEFAULT)
 
+    callnative(RegenerateCurrentTownDungeonConfig)
+
     setflag(FLAG_UNUSED_0x020)
 
     release

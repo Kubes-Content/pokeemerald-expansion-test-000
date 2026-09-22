@@ -9,5 +9,11 @@
   - [x] spawn a guy in empty plot that you can interact with
     - [x] include player and mon name in text
     - [x] set a flag after talking to them to prevent respawning
-  - [ ] hide NPC via flag in save data
-- [ ] 2 - dungeon generates by state
+  - [x] poryscript calls gen dung fn (init DungeonTownPersistentData)
+- [ ] 2 - dungeon generates through config
+  - config determines which map the cave enters to (they won't return correctly)
+  - figure out how to get the warps to do what you want
+    - how does where you came in return to town?
+      - assume that we're using modular room pieces (dynamic warps)
+- [ ] 3 - multi-room layout gen.
+- chest
