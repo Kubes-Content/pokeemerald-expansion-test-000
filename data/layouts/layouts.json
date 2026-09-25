@@ -9334,6 +9334,37 @@
       "border_filepath": "data/layouts/CaveTown_00/border.bin",
       "blockdata_filepath": "data/layouts/CaveTown_00/map.bin",
       "layout_version": "emerald"
+    },
+    {
+      "id": "LAYOUT_CAVE_TOWN_DUNGEON_ROOM_TEST_00",
+      "name": "CaveTownDungeonRoom_Test_00_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Cave",
+      "border_filepath": "data/layouts/CaveTownDungeonRoom_Test_00/border.bin",
+      "blockdata_filepath": "data/layouts/CaveTownDungeonRoom_Test_00/map.bin"
+    },
+    {
+      "id": "LAYOUT_CAVE_TOWN_DUNGEON_ROOM_TEST_01",
+      "name": "CaveTownDungeonRoom_Test_01_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Cave",
+      "border_filepath": "data/layouts/CaveTownDungeonRoom_Test_01/border.bin",
+      "blockdata_filepath": "data/layouts/CaveTownDungeonRoom_Test_01/map.bin",
+      "layout_version": "emerald"
+    },
+    {
+      "id": "LAYOUT_GLOBAL_SCRIPTS",
+      "name": "GlobalScripts_Layout",
+      "width": 1,
+      "height": 1,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GlobalScripts/border.bin",
+      "blockdata_filepath": "data/layouts/GlobalScripts/map.bin"
     }
   ]
 }
