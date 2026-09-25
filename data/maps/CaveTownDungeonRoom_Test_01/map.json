@@ -1,8 +1,8 @@
 {
-  "id": "MAP_CAVE_TOWN_00",
-  "name": "CaveTown_00",
-  "layout": "LAYOUT_CAVE_TOWN_00",
-  "music": "MUS_VERDANTURF",
+  "id": "MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01",
+  "name": "CaveTownDungeonRoom_Test_01",
+  "layout": "LAYOUT_CAVE_TOWN_DUNGEON_ROOM_TEST_01",
+  "music": "MUS_CABLE_CAR",
   "region_map_section": "MAPSEC_VERDANTURF_TOWN",
   "requires_flash": false,
   "weather": "WEATHER_SUNNY",
@@ -10,49 +10,57 @@
   "allow_cycling": true,
   "allow_escaping": false,
   "allow_running": true,
-  "show_map_name": true,
+  "show_map_name": false,
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": null,
   "object_events": [
     {
       "graphics_id": "OBJ_EVENT_GFX_BRENDAN_NORMAL",
-      "x": 8,
-      "y": 10,
+      "x": 3,
+      "y": 14,
       "elevation": 0,
       "movement_type": "MOVEMENT_TYPE_NONE",
       "movement_range_x": 0,
       "movement_range_y": 0,
       "trainer_type": "TRAINER_TYPE_NONE",
       "trainer_sight_or_berry_tree_id": "0",
-      "script": "CaveTown_00_EventScript_NPC",
+      "script": "NULL",
       "flag": "FLAG_UNUSED_0x020"
+    },
+    {
+      "local_id": "LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE",
+      "graphics_id": "OBJ_EVENT_GFX_POKE_BALL",
+      "x": 3,
+      "y": 15,
+      "elevation": 0,
+      "movement_type": "MOVEMENT_TYPE_NONE",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "EventScript_DynamicInteractable",
+      "flag": "FLAG_TEMP_2"
     }
   ],
   "warp_events": [
     {
-      "x": 8,
-      "y": 1,
+      "x": 5,
+      "y": 18,
       "elevation": 0,
       "dest_map": "MAP_DYNAMIC",
       "dest_warp_id": "WARP_ID_DYNAMIC"
-    },
-    {
-      "x": 10,
-      "y": 0,
-      "elevation": 0,
-      "dest_map": "MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01",
-      "dest_warp_id": "0"
     }
   ],
   "coord_events": [
     {
       "type": "trigger",
-      "x": 8,
-      "y": 2,
+      "x": 6,
+      "y": 0,
       "elevation": 0,
       "var": "VAR_TEMP_0",
       "var_value": "0",
-      "script": "CaveTown_00_EventScript_Trigger_CaveEntry"
+      "script": "CaveTown_00_EventScript_Trigger_CaveEntry",
+      "hmmm": "how would this work on south doors"
     }
   ],
   "bg_events": [],

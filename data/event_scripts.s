@@ -1740,3 +1740,9 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/scripts/wild_encounter.inc"
 
 	.include "data/maps/CaveTown_00/scripts.inc"
+
+	.include "data/maps/CaveTownDungeonRoom_Test_00/scripts.inc"
+
+	.include "data/maps/CaveTownDungeonRoom_Test_01/scripts.inc"
+
+	.include "data/maps/GlobalScripts/scripts.inc"

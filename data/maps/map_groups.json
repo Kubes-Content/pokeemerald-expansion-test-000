@@ -134,7 +134,10 @@
     "Underwater_Route129",
     "Underwater_Route105",
     "Underwater_Route125",
-    "CaveTown_00"
+    "CaveTown_00",
+    "CaveTownDungeonRoom_Test_00",
+    "CaveTownDungeonRoom_Test_01",
+    "GlobalScripts"
   ],
   "gMapGroup_IndoorLittleroot": [
     "LittlerootTown_BrendansHouse_1F",

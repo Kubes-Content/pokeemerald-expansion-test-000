@@ -1,4 +1,4 @@
-- [ ] 1 - behavior by save state
+- [x] 1 - behavior by save state
   - [x] cave redirs
   - [x] persistent town+dungeon data struct (per town)
     - [x] current town+cave index in save block that defaults to 0 (everything defaults to 0 atm)
@@ -10,10 +10,60 @@
     - [x] include player and mon name in text
     - [x] set a flag after talking to them to prevent respawning
   - [x] poryscript calls gen dung fn (init DungeonTownPersistentData)
-- [ ] 2 - dungeon generates through config
+- [x] 2 - dungeon generates through config
   - config determines which map the cave enters to (they won't return correctly)
-  - figure out how to get the warps to do what you want
-    - how does where you came in return to town?
-      - assume that we're using modular room pieces (dynamic warps)
+  - dynamic warp to walk into generated cave (same logic to walk to another room in cave)
+  - [x] script before cave entrance tile sets dynamic warp via callnative
+    - caves will use
+    - [x] initial town data contains cave entry's map data (inits with new game)
+  - [x] test cave entry map that isn't the town map
+    - [x] extract so that all of our logic is reusable and not in the town
+    - Duplicating a map rather than "New Map" in Porymap seems safer
+      - couldn't warp into my "New Map" without the game locking up ...
+  - [x] pickup disappears on use
+    - callnative interaction knows what to do from instance id
+  - [x] pickup sets flag in data on use - picked up
+  - [x] persistant pickup
+    - [x] dynamically spawn an npc/object (generated room)
+      - map's MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE (this part is untested with dynamic spawning)
+        - calls a script
+          - callnative
+            - data does smart stuff
+    - TODO?:
+      - set next room's flags on trigger before door
+      - init pickup locations+sprites w/ MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE
+    - on map start
+      - [x] spawn object (clone) if not taken
+      - [x] make template invisible
+        - [ ] unhide clones on spawn
+          - didn't need to?
+    - [x] remove test logic that assumed the first interaction was with a pickup spawner
+      - [x] remove initializing array to 1's
+    - [x] interact removes object
+    - [x] persist pickup state via data on map start
+    - [x] map start changes sprite
+    - [x] set an object's sprite via callnative + local ID
+    - [x] set an object's location via callnative + local ID
+    - [x] pickup-object event, ID tied in cave-data to:
+      - [x] cave-data drives spawning/visibility
+      - [x] an item description/id in cave-data (is it a potion or a pokeball?)
+      - [x] coordinate in cave-data
+      - NO POP-IN
+  - [x] cave enters to a persistent room and pickup
+  - [x] test multiple different pickups in dungeon (remember count is set to 1)
+    - [x] different graphics
+  - [x] test a clone after save and reload
 - [ ] 3 - multi-room layout gen.
-- chest
+  - [ ] multi-room cave
+  - [ ] gen. 'atla' pickups that persist per room
+  - [ ] test different pickups per room
+  - a space in front of each door could set the dynamic warp on step
+  - how do we support a dynamic layout of warps (different pattern per room)
+    - as opposed to allowing up to one warp per cardinal direction
+    - like imagine having inner rooms and multiple side doors
+      - if more than one door on a room side, each should lead to a smaller room
+    - a space before each warp tied to some system
+      - I'm convinced
+      - room connection id struct
+        - bool: inner or outer room
+        - index: inner/outer index

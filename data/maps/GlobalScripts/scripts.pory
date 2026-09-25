@@ -1,0 +1,25 @@
+mapscripts GlobalScripts_MapScripts {}
+
+script DungCellLoaded {
+    callnative(OnDungeonCellLoaded)
+    end
+}
+
+script EventScript_DynamicInteractable {
+    callnative(OnDynamicObjectInteractedWith)
+    compare(VAR_RESULT, OBJECT_EVENTS_COUNT)
+    goto_if_eq(OnFailedToSpawn)
+
+    buffernumberstring(STR_VAR_2, VAR_TEMP_7)
+    buffernumberstring(STR_VAR_1, VAR_RESULT)
+    msgbox(format("SUCCESS {STR_VAR_2} spawned {STR_VAR_1}!"), MSGBOX_DEFAULT)
+
+    release
+    end
+
+    OnFailedToSpawn:
+    msgbox(format("FAILURE"), MSGBOX_DEFAULT)
+
+    release
+    end
+}
