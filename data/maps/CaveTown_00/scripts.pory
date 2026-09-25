@@ -1,7 +1,4 @@
-raw `
-CaveTown_00_MapScripts::
-.byte 0
-`
+mapscripts CaveTown_00_MapScripts {}
 
 script CaveTown_00_EventScript_NPC {
     lock
@@ -9,10 +6,15 @@ script CaveTown_00_EventScript_NPC {
     bufferleadmonspeciesname(STR_VAR_1)
     msgbox(format("Hey, {PLAYER}! Your {STR_VAR_1} looks pretty strong!"), MSGBOX_DEFAULT)
 
-    callnative(RegenerateCurrentTownDungeonConfig)
-
+    # hide NPC next time town is loaded
     setflag(FLAG_UNUSED_0x020)
 
+    release
+    end
+}
+
+script CaveTown_00_EventScript_Trigger_CaveEntry {
+    callnative(SetDynamicWarpForCaveEntry)
     release
     end
 }
