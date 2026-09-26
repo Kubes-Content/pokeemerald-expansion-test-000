@@ -1,8 +1,6 @@
-- [ ] Is it worth patching dynamic warps?    (to capture warpId)
-  - we're saving
-    - literally 1 byte in save block
-    - needing at least one trigger per dynamic warp    <--- this is the part that sucks
-      - configured to cache/save that specific warp's id
+- [x] patch dynamic warps (to capture warpId)
+  - remove need of at least one trigger per dynamic warp
+      - configured to cache/save that specific warp's id pre-warp
 - [ ] multi-room layout gen.
   - [ ] multi-room cave
     - [ ] left opens to another cell
