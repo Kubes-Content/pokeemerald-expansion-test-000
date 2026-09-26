@@ -84,6 +84,7 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+#include "mygame/patches/dynamic_warp_patches.h"
 #include "mygame/patches/new_game/new_game_custom_warp.h"
 
 STATIC_ASSERT((B_FLAG_FOLLOWERS_DISABLED == 0 || OW_FOLLOWERS_ENABLED), FollowersFlagAssignedWithoutEnablingThem);
@@ -732,6 +733,8 @@ void SetDynamicWarpWithCoords(s32 unused, s8 mapGroup, s8 mapNum, s8 warpId, s8 
 
 void SetWarpDestinationToDynamicWarp(u8 unusedWarpId)
 {
+    SetWarpDestinationToDynamicWarp_FnBegin(unusedWarpId);
+
     sWarpDestination = gSaveBlock1Ptr->dynamicWarp;
 }
 
