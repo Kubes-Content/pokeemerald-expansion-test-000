@@ -1,5 +1,10 @@
 mapscripts GlobalScripts_MapScripts {}
 
+script TownMapLoaded {
+    callnative(OnTownMapLoaded)
+    end
+}
+
 script DungCellLoaded {
     callnative(OnDungeonCellLoaded)
     end

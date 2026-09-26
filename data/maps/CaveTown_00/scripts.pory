@@ -1,4 +1,8 @@
-mapscripts CaveTown_00_MapScripts {}
+mapscripts CaveTown_00_MapScripts {
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE [
+        VAR_TEMP_0, 0: TownMapLoaded
+    ]
+}
 
 script CaveTown_00_EventScript_NPC {
     lock
@@ -9,12 +13,6 @@ script CaveTown_00_EventScript_NPC {
     # hide NPC next time town is loaded
     setflag(FLAG_UNUSED_0x020)
 
-    release
-    end
-}
-
-script CaveTown_00_EventScript_Trigger_CaveEntry {
-    callnative(SetDynamicWarpForCaveEntry)
     release
     end
 }
