@@ -44,20 +44,22 @@ static u8 SpawnLocalClone(const u8 localId, s16 x, s16 y, u16 graphicsId)
 
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
-    struct DummyPickupDescription* pickupDescription = &this->dummyDungeonData.dummyPickupDescription[staticIndex]; // todo use index
+    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[0]; // refactor todo get current cell's index from game data
+    const struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[staticIndex];
     const u8 instanceIndex = SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
-    this->dummyDungeonData.staticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
+    cellData->staticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
 
     return instanceIndex;
 }
 
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
+    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[0]; // refactor todo get current cell's index from game data
     // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
-    for (u8 staticIndex = 0; staticIndex < this->dummyDungeonData.caveEntryCellPickupDefinitionCount; staticIndex++)
+    for (u8 staticIndex = 0; staticIndex < cellData->caveEntryCellPickupDefinitionCount; staticIndex++)
     {
-        if (!this->dummyDungeonData.dummyPickupDescription[staticIndex].isTaken)
+        if (!cellData->dummyPickupDescription[staticIndex].isTaken)
             SpawnDungeonPickup(this, staticIndex);
     }
 }
@@ -65,7 +67,9 @@ static void SpawnPickups(struct TownDungeonPersistentData* this)
 // ReSharper disable once CppUseInternalLinkage
 void OnDungeonCellLoaded()
 {
-    struct TownDungeonPersistentData* this = GetCurrentTownDungeonData();
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
     HideInitialInteractableTemplate();
-    SpawnPickups(this);
+    SpawnPickups(currentTownData);
+    gameData->context = CONTEXT_CAVE;
 }

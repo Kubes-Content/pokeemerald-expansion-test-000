@@ -1,4 +1,8 @@
-mapscripts CaveTown_00_MapScripts {}
+mapscripts CaveTown_00_MapScripts {
+    MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE [
+        VAR_TEMP_0, 0: TownMapLoaded
+    ]
+}
 
 script CaveTown_00_EventScript_NPC {
     lock

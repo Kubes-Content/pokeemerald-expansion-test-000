@@ -6,8 +6,11 @@
 #include "gba/types.h"
 #include "metaprogram.h"
 #include "constants/event_objects.h"
+#include "constants/items.h"
+#include "string.h"
 
-#define DUNGEON_TOWN_COUNT 16
+#define DUNGEON_TOWN_COUNT 2
+#define MAX_DUNGEON_CELL_COUNT 2
 #define MAX_PICKUPS_PER_DUNGEON 8
 
 struct DummyTownData
@@ -32,11 +35,13 @@ struct DummyDungeonCellData
     u8 staticPickupIndexByInstanceIndex[MAX_PICKUPS_PER_DUNGEON]; // todo you could pack these to fit in half of the size
 };
 
+// TODO move all function definitions to .c
+
 inline struct DummyTownData TownData_Create()
 {
     return (struct DummyTownData) {};
 }
-inline struct DummyDungeonCellData DungeonData_Create(s8 caveEntryCellMapEnum, s8 caveEntryCellMapWarpId, s8 caveEntryCellPickupCount, const struct DummyPickupDescription* dummyPickupDescriptionArr)
+inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCellMapEnum, s8 caveEntryCellMapWarpId, s8 caveEntryCellPickupCount, const struct DummyPickupDescription* dummyPickupDescriptionArr)
 {
     struct DummyDungeonCellData result = {
         .caveEntryCellMapEnum = caveEntryCellMapEnum,
@@ -61,16 +66,27 @@ inline struct DummyPickupDescription PickupDescription_Create(u8 isTaken, u16 it
 struct TownDungeonPersistentData
 {
     struct DummyTownData dummyTownData;
-    struct DummyDungeonCellData dummyDungeonData; //todo wrap type
+    u8 dungeonCellMaxIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
+    struct DummyDungeonCellData dungeonCellsData[MAX_DUNGEON_CELL_COUNT];
+};
+
+enum TownDungeonMapContext
+{
+    CONTEXT_DEFAULT,
+    CONTEXT_TOWN,
+    CONTEXT_CAVE,
+
+    CONTEXTS_COUNT
 };
 
 struct TownDungeonGamePersistentData
 {
-    u8 currentTown: BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
-    struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT]; // placeholder, uses under 10% of provided space
+    u8 currentTown : BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
+    enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
+    struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 
 };
-// if we run out of room in SaveBlock3 we can save some padding space by shucking this struct
+// if we run out of room in SaveBlock3 we can save some padding space by shucking some structs
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
 struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);

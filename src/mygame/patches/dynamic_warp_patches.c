@@ -3,7 +3,9 @@
 //
 #include "mygame/patches/dynamic_warp_patches.h"
 
+#include "mygame/patches/dynamic_warp/dynamic_warp_pre_warp.h"
+
 void SetWarpDestinationToDynamicWarp_FnBegin(u8 warpId)
 {
-
+   PreDynamicWarpPatch(warpId);
 }
