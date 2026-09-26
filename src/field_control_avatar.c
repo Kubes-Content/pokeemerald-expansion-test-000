@@ -64,7 +64,7 @@ static bool8 CheckStandardWildEncounter(u16);
 static bool8 TryArrowWarp(struct MapPosition *, u16, enum Direction);
 static bool8 IsWarpMetatileBehavior(u16);
 static bool8 IsArrowWarpMetatileBehavior(u16, enum Direction);
-static s8 GetWarpEventAtMapPosition(struct MapHeader *, struct MapPosition *);
+//static s8 GetWarpEventAtMapPosition(struct MapHeader *, struct MapPosition *);
 static void SetupWarp(struct MapHeader *, s8, struct MapPosition *);
 static bool8 TryDoorWarp(struct MapPosition *, u16, enum Direction);
 static s8 GetWarpEventAtPosition(struct MapHeader *, u16, u16, u8);
@@ -1061,7 +1061,7 @@ static bool8 IsArrowWarpMetatileBehavior(u16 metatileBehavior, enum Direction di
     }
 }
 
-static s8 GetWarpEventAtMapPosition(struct MapHeader *mapHeader, struct MapPosition *position)
+s8 GetWarpEventAtMapPosition(struct MapHeader *mapHeader, struct MapPosition *position)
 {
     return GetWarpEventAtPosition(mapHeader, position->x - MAP_OFFSET, position->y - MAP_OFFSET, position->elevation);
 }
