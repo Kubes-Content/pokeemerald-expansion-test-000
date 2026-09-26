@@ -13,8 +13,6 @@
     - as opposed to allowing up to one warp per cardinal direction
     - like imagine having inner rooms and multiple side doors
       - if more than one door on a room side, each should lead to a smaller room
-    - a space before each warp tied to some system
-      - I'm convinced
-      - room connection id struct
-        - bool: inner or outer room
-        - index: inner/outer index
+    - room connection id struct
+      - bool: inner or outer room
+      - index: inner/outer index

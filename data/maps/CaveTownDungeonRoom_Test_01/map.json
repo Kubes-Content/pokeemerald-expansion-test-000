@@ -51,18 +51,7 @@
       "dest_warp_id": "WARP_ID_DYNAMIC"
     }
   ],
-  "coord_events": [
-    {
-      "type": "trigger",
-      "x": 6,
-      "y": 0,
-      "elevation": 0,
-      "var": "VAR_TEMP_0",
-      "var_value": "0",
-      "script": "CaveTown_00_EventScript_Trigger_CaveEntry",
-      "hmmm": "how would this work on south doors"
-    }
-  ],
+  "coord_events": [],
   "bg_events": [],
   "region": "REGION_HOENN"
 }
