@@ -1,6 +1,8 @@
 - [x] patch dynamic warps (to capture warpId)
   - remove need of at least one trigger per dynamic warp
       - configured to cache/save that specific warp's id pre-warp
+- [ ] reassess object template method
+  - [ ] patch basic interactions if in cave context?
 - [ ] multi-room layout gen.
   - [ ] multi-room cave
     - [ ] left opens to another cell

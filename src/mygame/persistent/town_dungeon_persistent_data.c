@@ -2,7 +2,6 @@
 // Created by kubes on 9/21/26.
 //
 #include "global.h"
-#include "constants/map_event_ids.h"
 #include "event_object_movement.h"
 #include "overworld.h"
 
@@ -24,28 +23,6 @@ struct TownDungeonPersistentData* GetCurrentTownDungeonData()
     return &this->dungeonTownData[this->currentTown];
 }
 
-// ReSharper disable once CppUseInternalLinkage
-void OnDynamicObjectInteractedWith()
-{
-    // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
-    const u8 currentlyInteractingObjectEvent = gSelectedObjectEvent; // instance id
-    struct DummyDungeonCellData* cellData = &GetCurrentTownDungeonData()->dungeonCellsData[0]; // todo refactor, get current cell's index from game data
-    const u8 pickupStaticIndex = cellData->staticPickupIndexByInstanceIndex[currentlyInteractingObjectEvent];
-
-    struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[pickupStaticIndex];
-
-    gSpecialVar_Result = OBJECT_EVENTS_COUNT; // todo debug, do we still need this? check dynamic-interactable poryscript
-
-    // pickup item
-    pickupDescription->isTaken = TRUE;
-    const u16 itemId = pickupDescription->itemEnum;
-    AddBagItem(itemId, pickupDescription->quantity);
-
-    // remove pickup object
-    struct ObjectEvent* pickupObjectPtr = &gObjectEvents[currentlyInteractingObjectEvent];
-    RemoveObjectEvent(pickupObjectPtr);
-}
-
 static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
 {
     this->dummyTownData;
@@ -58,15 +35,15 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
     pickupDescriptionArr[1] = PickupDescription_Create(0, ITEM_SUN_STONE, 1, 6 ,15, OBJ_EVENT_GFX_BALL_CUSHION);// amber crashes for some reason; just FRLG stuff?
     pickupDescriptionArr[2] = PickupDescription_Create(0, ITEM_SUPER_REPEL, 1, 7 ,15, OBJ_EVENT_GFX_KISS_CUSHION);
 
-    // temporary, warp to cave entrance room // todo make entry room random
+    // temporary, warp to cave entrance room // todo randomize cave generation
     this->dungeonCellsData[0] = DungeonCellData_Create(MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01,
-                                                       0,
                                                        3,
                                                        pickupDescriptionArr); // duplicate over; refactor // todo reimplement, generate all cells
-    this->dungeonCellsData[1] = DungeonCellData_Create(MAP_CAVE_TOWN_00,
-                                                       0,
+    memset(&this->dungeonCellsData[0].staticPickupIndexByInstanceIndex, 1, sizeof(this->dungeonCellsData[0].staticPickupIndexByInstanceIndex));
+    this->dungeonCellsData[1] = DungeonCellData_Create(MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01,
                                                        3,
                                                        pickupDescriptionArr);
+    memset(&this->dungeonCellsData[1].staticPickupIndexByInstanceIndex, 1, sizeof(this->dungeonCellsData[1].staticPickupIndexByInstanceIndex));
 }
 
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
@@ -76,7 +53,8 @@ void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
     struct TownDungeonPersistentData* initialTownData = GetCurrentTownDungeonData();
     InitializeTownDungeonConfig(initialTownData);
 }
-void SetDynamicWarpFromDungeonCellWarp(u8 enteredWarpId)
+
+void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
 {
     // TODO I want both cells in dungeon to use the same map w/ unique state
         // just add a door on the left that warps to whichever you're not in
@@ -101,10 +79,10 @@ void SetDynamicWarpFromDungeonCellWarp(u8 enteredWarpId)
         struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
         struct TownDungeonPersistentData* townData = GetCurrentTownDungeonData();
 
-        gameData->currentCellIndex = !gameData->currentCellIndex;
+        // TODO ASSUMING EXACTLY TWO CELLS EXIST
+        gameData->currentCellIndex = !gameData->currentCellIndex; // switch cells
 
         const struct DummyDungeonCellData* cellData = &townData->dungeonCellsData[gameData->currentCellIndex];
-        // TODO ASSUMING EXACTLY TWO CELLS EXIST
         const u8 mapEnum = cellData->cellMapEnum;
         const s8 sideRoomWarpId = 1; // TODO fetch
         SetDynamicWarp(0, MAP_GROUP(mapEnum), MAP_NUM(mapEnum), sideRoomWarpId);
@@ -115,7 +93,8 @@ void SetDynamicWarpFromDungeonTownWarp(u8 enteredWarpId)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     const struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    struct DummyDungeonCellData destinationCellData = currentTownData->dungeonCellsData[0];
+    gameData->currentCellIndex = 0;
+    const struct DummyDungeonCellData destinationCellData = currentTownData->dungeonCellsData[gameData->currentCellIndex];
     // todo ASSUMES that we always enter into first cell of a dungeon // extract behavior
     const s8 caveEntryCellMapEnum = destinationCellData.cellMapEnum; // todo use getter
     const s8 caveEntranceCellWarpId = currentTownData->caveEntryCellMapWarpId;

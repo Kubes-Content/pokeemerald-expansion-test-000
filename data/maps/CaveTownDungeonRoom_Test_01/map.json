@@ -13,38 +13,17 @@
   "show_map_name": false,
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": null,
-  "object_events": [
-    {
-      "graphics_id": "OBJ_EVENT_GFX_BRENDAN_NORMAL",
-      "x": 3,
-      "y": 14,
-      "elevation": 0,
-      "movement_type": "MOVEMENT_TYPE_NONE",
-      "movement_range_x": 0,
-      "movement_range_y": 0,
-      "trainer_type": "TRAINER_TYPE_NONE",
-      "trainer_sight_or_berry_tree_id": "0",
-      "script": "NULL",
-      "flag": "FLAG_UNUSED_0x020"
-    },
-    {
-      "local_id": "LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE",
-      "graphics_id": "OBJ_EVENT_GFX_POKE_BALL",
-      "x": 3,
-      "y": 15,
-      "elevation": 0,
-      "movement_type": "MOVEMENT_TYPE_NONE",
-      "movement_range_x": 0,
-      "movement_range_y": 0,
-      "trainer_type": "TRAINER_TYPE_NONE",
-      "trainer_sight_or_berry_tree_id": "0",
-      "script": "EventScript_DynamicInteractable",
-      "flag": "FLAG_TEMP_2"
-    }
-  ],
+  "object_events": [],
   "warp_events": [
     {
       "x": 5,
+      "y": 18,
+      "elevation": 0,
+      "dest_map": "MAP_DYNAMIC",
+      "dest_warp_id": "WARP_ID_DYNAMIC"
+    },
+    {
+      "x": 2,
       "y": 18,
       "elevation": 0,
       "dest_map": "MAP_DYNAMIC",

@@ -29,9 +29,10 @@ struct DummyPickupDescription
 struct DummyDungeonCellData
 {
     s8 cellMapEnum;
-    u8 caveEntryCellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
+    u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
     struct DummyPickupDescription dummyPickupDescription[MAX_PICKUPS_PER_DUNGEON];
-    u8 staticPickupIndexByInstanceIndex[MAX_PICKUPS_PER_DUNGEON]; // todo you could pack these to fit in half of the size
+    // TODO pull out staticPickupIndexByInstanceIndex to TownDungeonPersistentData
+    u8 staticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
 };
 
 // TODO move all function definitions to .c
@@ -44,7 +45,7 @@ static inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCel
 {
     struct DummyDungeonCellData result = {
         .cellMapEnum = caveEntryCellMapEnum,
-        .caveEntryCellPickupDefinitionCount = caveEntryCellPickupCount,
+        .cellPickupDefinitionCount = caveEntryCellPickupCount,
     };
     memcpy(&result.dummyPickupDescription, dummyPickupDescriptionArr, sizeof(result.dummyPickupDescription));
     return result;
