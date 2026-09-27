@@ -5,48 +5,37 @@
 #include "gba/defines.h"
 #include "global.fieldmap.h"
 #include "constants/event_objects.h"
+#include "constants/trainer_types.h"
 
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 
-static void HideInitialInteractableTemplate()
+// todo extract
+static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 {
-    // todo is this the best way to index this? // could we search for the first non-null script? no, what if we needed more scripts?
-    struct ObjectEvent* templateObjectEvent = &gObjectEvents[LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE];
-    templateObjectEvent->invisible = TRUE;
-    MoveObjectEventToMapCoords(templateObjectEvent, 0, 0);
-}
+    struct ObjectEventTemplate template = {
+        .x = x,
+        .y = y,
+        .graphicsId = graphicsId,
+        .localId = OBJECT_EVENTS_COUNT,
+        .kind = OBJ_KIND_NORMAL,
+        .elevation = ELEVATION_DEFAULT,
+        .movementType = MOVEMENT_TYPE_NONE,
+        .trainerType = TRAINER_TYPE_NONE,
+    };
 
-// to duplicate/share a poryscript pointer as I don't know of a better way atm
-static u8 SpawnLocalCloneFromTemplate(const u8 localId, struct ObjectEventTemplate* template)
-{
-    template->localId = OBJECT_EVENTS_COUNT; // ensures no collisions
+    const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
 
-    const u8 count = SpawnSpecialObjectEvent(template);
-    if (count != OBJECT_EVENTS_COUNT)
-        gObjectEvents[count].localId = localId; // connect script // the template doesn't matter much so long as we have this localId pointing to the intended script
+    if (objectEventIndex != OBJECT_EVENTS_COUNT)
+        gObjectEvents[objectEventIndex].localId = OBJ_EVENT_ID_FOLLOWER; // prevents unloading when outside of frame
 
-    return count;
-}
-
-// to duplicate/share a poryscript pointer as I don't know of a better way atm
-static u8 SpawnLocalClone(const u8 localId, s16 x, s16 y, u16 graphicsId)
-{
-    // test: dynamically spawn another instance ... it'd be nice if the offset was dynamic so I could interact with the next one and see a change
-    struct ObjectEventTemplate template = *GetObjectEventTemplateByLocalIdAndMap(localId, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
-    // TODO is there a way to inject a c function call w/o doing this ^^^
-    // it'd give us an extra object per map // but if I can safely bump the max. that doesn't matter
-    template.x = x;
-    template.y = y;
-    template.graphicsId = graphicsId;
-
-    return SpawnLocalCloneFromTemplate(localId, &template);
+    return objectEventIndex;
 }
 
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
-    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[0]; // refactor todo get current cell's index from game data
+    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[staticIndex];
-    const u8 instanceIndex = SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
+    const u8 instanceIndex = SpawnBaseObject(pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
     cellData->staticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
 
@@ -55,9 +44,9 @@ static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIn
 
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
-    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[0]; // refactor todo get current cell's index from game data
+    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
     // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
-    for (u8 staticIndex = 0; staticIndex < cellData->caveEntryCellPickupDefinitionCount; staticIndex++)
+    for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
         if (!cellData->dummyPickupDescription[staticIndex].isTaken)
             SpawnDungeonPickup(this, staticIndex);
@@ -69,7 +58,6 @@ void OnDungeonCellLoaded()
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    HideInitialInteractableTemplate();
     SpawnPickups(currentTownData);
     gameData->context = CONTEXT_CAVE;
 }
