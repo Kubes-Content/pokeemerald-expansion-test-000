@@ -36,11 +36,11 @@ struct DummyDungeonCellData
 
 // TODO move all function definitions to .c
 
-inline struct DummyTownData TownData_Create()
+static inline struct DummyTownData TownData_Create()
 {
     return (struct DummyTownData) {};
 }
-inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCellMapEnum, s8 caveEntryCellMapWarpId, s8 caveEntryCellPickupCount, const struct DummyPickupDescription* dummyPickupDescriptionArr)
+static inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const struct DummyPickupDescription* dummyPickupDescriptionArr)
 {
     struct DummyDungeonCellData result = {
         .cellMapEnum = caveEntryCellMapEnum,
@@ -49,7 +49,7 @@ inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCellMapEnu
     memcpy(&result.dummyPickupDescription, dummyPickupDescriptionArr, sizeof(result.dummyPickupDescription));
     return result;
 }
-inline struct DummyPickupDescription PickupDescription_Create(u8 isTaken, u16 itemEnum, u8 quantity, s16 x, s16 y, u16 objectEventGraphicsEnum)
+static inline struct DummyPickupDescription PickupDescription_Create(u8 isTaken, u16 itemEnum, u8 quantity, s16 x, s16 y, u16 objectEventGraphicsEnum)
 {
     return (struct DummyPickupDescription) {
         .isTaken = isTaken,
