@@ -44,6 +44,7 @@
 #include "constants/metatile_behaviors.h"
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
+#include "mygame/patches/field_control_avatar_patches.h"
 
 static EWRAM_DATA u8 sWildEncounterImmunitySteps = 0;
 static EWRAM_DATA u16 sPrevMetatileBehavior = 0;
@@ -286,6 +287,9 @@ static u16 GetPlayerCurMetatileBehavior(int runningState)
 
 static bool8 TryStartInteractionScript(struct MapPosition *position, u16 metatileBehavior, enum Direction direction)
 {
+    if (TryStartInteractionScript_FnBegin(GetInteractedObjectEventId(position, metatileBehavior, direction)))
+        return TRUE;
+
     const u8 *script = GetInteractionScript(position, metatileBehavior, direction);
     if (script == NULL || Script_HasNoEffect(script))
         return FALSE;
