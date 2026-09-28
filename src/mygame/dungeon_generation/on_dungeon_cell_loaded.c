@@ -33,11 +33,12 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
-    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[gameData->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[staticIndex];
     const u8 instanceIndex = SpawnBaseObject(pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
-    cellData->staticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
+    gameData->objectStaticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
 
     return instanceIndex;
 }
@@ -58,6 +59,7 @@ void OnDungeonCellLoaded()
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
+    memset(&gameData->objectStaticPickupIndexByInstanceIndex, 1, sizeof(gameData->objectStaticPickupIndexByInstanceIndex));
     SpawnPickups(currentTownData);
     gameData->context = CONTEXT_CAVE;
 }

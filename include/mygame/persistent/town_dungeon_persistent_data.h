@@ -31,8 +31,6 @@ struct DummyDungeonCellData
     s8 cellMapEnum;
     u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
     struct DummyPickupDescription dummyPickupDescription[MAX_PICKUPS_PER_DUNGEON];
-    // TODO pull out staticPickupIndexByInstanceIndex to TownDungeonPersistentData
-    u8 staticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
 };
 
 // TODO move all function definitions to .c
@@ -67,6 +65,7 @@ struct TownDungeonPersistentData
     struct DummyTownData dummyTownData;
     u8 dungeonCellMaxIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
     s8 caveEntryCellMapWarpId : BIT_SIZE(31) + 1;
+    u8 objectHoldingGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
     struct DummyDungeonCellData dungeonCellsData[MAX_DUNGEON_CELL_COUNT];
 };
 
@@ -83,6 +82,7 @@ struct TownDungeonGamePersistentData
 {
     u8 currentTown : BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
     u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
+    u8 objectStaticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
     enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
     struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 
