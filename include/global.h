@@ -26,7 +26,7 @@
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "config/save.h"
-#include "mygame/patches/save_block_3.h"
+#include "mygame/patches/global_patches.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
