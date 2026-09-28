@@ -1,8 +1,47 @@
-- [x] patch dynamic warps (to capture warpId)
-  - remove need of at least one trigger per dynamic warp
-      - configured to cache/save that specific warp's id pre-warp
-- [ ] reassess object template method
-  - [ ] patch basic interactions if in cave context?
+- [ ] gen. dungeon.
+  - [ ] function that takes in all needed door directions (abstract to not restrict to cardinal directions)
+    - and returns a cell variant that fits
+  - [ ] determine initial cell relative to entrance door direction
+    - obviously, don't connect a cell to this door
+  - [ ] gen. a base path from start to end point w/o overlap
+    - arguments
+      - cave entrance direction
+        - town's northern door opens entrance-cell's southern door
+      - max path length
+      - available cell config/variants
+        - [ ] need a simple, universal, immersive way to block doors
+          - we can just use an immovable box for now
+    - use at least half of max allowed cells to form this path
+    - only connect the initial path and block off any additional adjacent connections from this pass
+      - keeps a minimum travel distance to reach the end
+        - will encourage you to clear the dungeon
+  - [ ] spawn all objects in cell
+    - [ ] pickups
+    - [ ] overworld monsters that wander relative to a home coordinate
+      - will chase player a distance from coordinate
+        - otherwise try to maintain a tighter distance from coordinate
+          - stays within 5, but will go up to 9 if chasing
+            - should give mobility abilities
+              - some mons can dash two spaces in one turn
+        - how do they move? I don't want to tie to player movement
+          - they tick. they simply tick.
+            - maybe we have a single task for game behavior that encapsulates ticking
+  - [ ] stub for generating secondary rooms/paths
+    - a side room that gives a key to a drawbridge/gate/etc. before the end
+      - aren't larger dungeons just gonna route around a drawbridge? hush.
+      - a powerup that lasts the duration of the floor and lets you push select obstacles
+        - something blocking a door can effectively be a drawbridge
+          - just differentiate a permanent blockade from a pushable one
+        - kill a mini boss for the powerup?
+          - we could also have a Dark Cloud esque backroom behind an obstacle like this
+            - or just behind a mini boss, i suppose
+              - returning to an obstacle later does have something fun to it
+                - now... if the backroom was blocked by a boss that gave a key to a different obstacle.... that'd be fine
+                  - I just don't want it to be linear if it doesn't need to be
+    - utilize GoneGlobTM Technology
+      - prefer 2 adjacent rooms to 1 adjacent room to 3 adjacent rooms to 4
+        - we want to link cells together without globbing
+        - prefer to connect to rooms with less than 2 pre-existing connections
 - [ ] multi-room layout gen.
   - [ ] multi-room cave
     - [ ] left opens to another cell
