@@ -1,9 +1,22 @@
 - [ ] gen. dungeon.
-  - [ ] function that takes in all needed door directions (abstract to not restrict to cardinal directions)
-    - and returns a cell variant that fits
-  - [ ] determine initial cell relative to entrance door direction
-    - obviously, don't connect a cell to this door
-  - [ ] gen. a base path from start to end point w/o overlap
+  - [x] get spawnable variants
+    - array of cell
+  - [x] comparable Cell Variant Description struct // temporary, only constructed and used during generation // abstracts static innards
+    - bool8 CellsCanConnect(CellVar1, Direction, CellVar2);
+      - return CellVar1->HasDoor(direction) && CellVar2->HasDoor(Reverse(Direction));
+    - for now, just build as:
+      - (struct CellVariantDesc) { GetDoorsThatCellHas(CellEnum); };
+    - we can put any additional restrictions to this
+      - let's say we decide that we'll generate a connecting pond in Cell1's bottom left and Cell2's bottom right
+        - we then verify that both have space available for that
+          - I am picturing multiple passes of generation where you add the pond in the corner to both cells' variant description
+            - then another pass cannot put something in that corner later
+            - so the CellVariantDesc struct should be a developing thing as passes proceed
+              - and then thrown away after the dungeon is generated
+  - [x] move through left ladder to enter adjacent cell
+  - [x] generate a cell connected to each of cell0's door besides town's
+  - [ ] gen. a base path from start to end point
+    - root path: spawn a winding main path from start to end
     - arguments
       - cave entrance direction
         - town's northern door opens entrance-cell's southern door
@@ -15,6 +28,8 @@
     - only connect the initial path and block off any additional adjacent connections from this pass
       - keeps a minimum travel distance to reach the end
         - will encourage you to clear the dungeon
+  - then each room can generate whatever it wants in any direction that isn't the main path
+    - this should NOT be based on cardinal directions
   - [ ] spawn all objects in cell
     - [ ] pickups
     - [ ] overworld monsters that wander relative to a home coordinate

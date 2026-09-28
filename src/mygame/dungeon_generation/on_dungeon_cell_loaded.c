@@ -1,9 +1,9 @@
 #include "global.h"
 
-#include "constants/map_event_ids.h"
 #include "event_object_movement.h"
 #include "gba/defines.h"
 #include "global.fieldmap.h"
+#include "overworld.h"
 #include "constants/event_objects.h"
 #include "constants/trainer_types.h"
 
@@ -43,6 +43,52 @@ static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIn
     return instanceIndex;
 }
 
+static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, u8* unusedDoorsXArr, u8* unusedDoorsYArr, u8 arrLength)
+{
+    const struct MapHeader* const mapHeader = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(cellData->cellMapEnum), MAP_NUM(cellData->cellMapEnum));
+    u8 unusedWarpsCount = 0;
+
+    fatal_assertf(mapHeader->events->warpCount <= arrLength);
+
+    for (u8 i = 0; i < mapHeader->events->warpCount; i++) // todo ctor CellVariantRestrictions
+    {
+        if (cellData->connections[i].isValid)
+            continue;
+
+        /*const s32 width = mapHeader->mapLayout->width;
+        const s32 height = mapHeader->mapLayout->height;*/
+        const s16 x = mapHeader->events->warps[i].x;
+        const s16 y = mapHeader->events->warps[i].y;
+
+        unusedDoorsXArr[unusedWarpsCount] = x;
+        unusedDoorsYArr[unusedWarpsCount] = y;
+        unusedWarpsCount++;
+    }
+
+    return unusedWarpsCount;
+}
+
+static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
+{
+    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex];
+
+    // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
+
+    const u8 unusedDoorsCapacity = 4;
+    u8 unusedDoorsX[unusedDoorsCapacity];
+    u8 unusedDoorsY[unusedDoorsCapacity];
+    const u8 unusedDoorsCount = GetUnusedWarps(cellData, unusedDoorsX, unusedDoorsY, unusedDoorsCapacity);
+
+    // spawn pickups over unused warps
+    for (u8 i = 0; i < unusedDoorsCount; i++)
+    {
+        //cellData->cellPickupDefinitionCount
+        const u8 x = unusedDoorsX[i];
+        const u8 y = unusedDoorsY[i];
+        [[maybe_unused]] const u8 instanceIndex = SpawnBaseObject(x, y, OBJ_EVENT_GFX_MOVING_BOX);
+    }
+}
+
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
     const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
@@ -52,6 +98,8 @@ static void SpawnPickups(struct TownDungeonPersistentData* this)
         if (!cellData->dummyPickupDescription[staticIndex].isTaken)
             SpawnDungeonPickup(this, staticIndex);
     }
+
+    SpawnGarbageOverUnusedDoors(this);
 }
 
 // ReSharper disable once CppUseInternalLinkage

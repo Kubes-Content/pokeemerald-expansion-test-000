@@ -8,10 +8,12 @@
 #include "constants/event_objects.h"
 #include "constants/items.h"
 #include "string.h"
+#include "mygame/patches/global_patches.h"
 
 #define DUNGEON_TOWN_COUNT 2
-#define MAX_DUNGEON_CELL_COUNT 2
+#define MAX_DUNGEON_CELL_COUNT 4
 #define MAX_PICKUPS_PER_DUNGEON 8
+#define MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL 4
 
 struct DummyTownData
 {
@@ -26,29 +28,53 @@ struct DummyPickupDescription
     s16 y : BIT_SIZE(32 - 1) + 1;
     u16 objectEventGraphicsEnum : BIT_SIZE(NUM_OBJ_EVENT_GFX - 1);
 };
+struct DungeonCellConnection
+{
+    bool8 isValid : 1;
+    bool8 isTown  : 1;
+    u8 cellIndex  : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
+    u16   mapEnum : BIT_SIZE(MAP_COUNT - 1); // todo shouldn't this be derived from the cellIndex/data? // cuts this from 6 to 2 bytes
+    u8    warpId  : BIT_SIZE(127);
+};
+static inline struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, const u16 mapEnum, const u8 warpId)
+{
+    return (struct DungeonCellConnection) {
+        .isValid = TRUE,
+        .isTown = cellIndex < 0,
+        .cellIndex = cellIndex,
+        .mapEnum = mapEnum,
+        .warpId = warpId,
+    };
+}
+
 struct DummyDungeonCellData
 {
-    s8 cellMapEnum;
+    u16 cellMapEnum : BIT_SIZE(MAP_COUNT - 1);
     u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
     struct DummyPickupDescription dummyPickupDescription[MAX_PICKUPS_PER_DUNGEON];
+    struct DungeonCellConnection connections[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL]; // todo initialize with new game
 };
 
 // TODO move all function definitions to .c
 
+// ReSharper disable CppRedundantInlineSpecifier
 static inline struct DummyTownData TownData_Create()
 {
     return (struct DummyTownData) {};
 }
-static inline struct DummyDungeonCellData DungeonCellData_Create(s8 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const struct DummyPickupDescription* dummyPickupDescriptionArr)
+
+static inline struct DummyDungeonCellData DungeonCellData_Create(const u16 caveEntryCellMapEnum, const s8 caveEntryCellPickupCount, const struct DummyPickupDescription dummyPickupDescriptionArr[MAX_PICKUPS_PER_DUNGEON])
 {
     struct DummyDungeonCellData result = {
         .cellMapEnum = caveEntryCellMapEnum,
         .cellPickupDefinitionCount = caveEntryCellPickupCount,
     };
     memcpy(&result.dummyPickupDescription, dummyPickupDescriptionArr, sizeof(result.dummyPickupDescription));
+    memset(&result.connections, 0, sizeof(result.connections));
+
     return result;
 }
-static inline struct DummyPickupDescription PickupDescription_Create(u8 isTaken, u16 itemEnum, u8 quantity, s16 x, s16 y, u16 objectEventGraphicsEnum)
+static inline struct DummyPickupDescription PickupDescription_Create(const u8 isTaken, const u16 itemEnum, const u8 quantity, const s16 x, const s16 y, const u16 objectEventGraphicsEnum)
 {
     return (struct DummyPickupDescription) {
         .isTaken = isTaken,
@@ -59,6 +85,7 @@ static inline struct DummyPickupDescription PickupDescription_Create(u8 isTaken,
         .objectEventGraphicsEnum = objectEventGraphicsEnum,
     };
 }
+// ReSharper restore CppRedundantInlineSpecifier
 
 struct TownDungeonPersistentData
 {
