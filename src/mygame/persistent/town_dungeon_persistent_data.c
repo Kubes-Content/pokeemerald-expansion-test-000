@@ -39,11 +39,9 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
     this->dungeonCellsData[0] = DungeonCellData_Create(MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01,
                                                        3,
                                                        pickupDescriptionArr); // duplicate over; refactor // todo reimplement, generate all cells
-    memset(&this->dungeonCellsData[0].staticPickupIndexByInstanceIndex, 1, sizeof(this->dungeonCellsData[0].staticPickupIndexByInstanceIndex));
     this->dungeonCellsData[1] = DungeonCellData_Create(MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01,
                                                        3,
                                                        pickupDescriptionArr);
-    memset(&this->dungeonCellsData[1].staticPickupIndexByInstanceIndex, 1, sizeof(this->dungeonCellsData[1].staticPickupIndexByInstanceIndex));
 }
 
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)

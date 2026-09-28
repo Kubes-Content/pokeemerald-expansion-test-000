@@ -68,10 +68,11 @@ static void Task_PickupItemObject(const u8 taskId)
     if (*tickCount == 0)
     {
         PlaySE(SE_SELECT);
+        const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
         // TODO give item or if player is out of room display a message
         // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
-        struct DummyDungeonCellData* cellData = &GetCurrentTownDungeonData()->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex];
-        const u8 pickupStaticIndex = cellData->staticPickupIndexByInstanceIndex[objectId];
+        struct DummyDungeonCellData* cellData = &GetCurrentTownDungeonData()->dungeonCellsData[gameData->currentCellIndex];
+        const u8 pickupStaticIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectId];
 
         struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[pickupStaticIndex];
         pickupDescription->isTaken = TRUE;
@@ -128,10 +129,10 @@ destroy_task:
 // returns TRUE when intercepted
 bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
 {
-    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    struct DummyDungeonCellData* currentCaveCellData = &currentTownData->dungeonCellsData[gameData->currentCellIndex];
-    const u8 staticPickupIndex = currentCaveCellData->staticPickupIndexByInstanceIndex[objectEventId];
+    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
+    const struct DummyDungeonCellData* currentCaveCellData = &currentTownData->dungeonCellsData[gameData->currentCellIndex];
+    const u8 staticPickupIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectEventId];
 
     if (gameData->context != CONTEXT_CAVE)
         return FALSE;
