@@ -1,0 +1,5 @@
+- [x] patch dynamic warps (to capture warpId)
+    - remove need of at least one trigger per dynamic warp
+        - configured to cache/save that specific warp's id pre-warp
+- [x] reassess object template method
+    - [x] patch basic interactions if in cave context?
