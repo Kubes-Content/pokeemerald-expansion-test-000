@@ -15,14 +15,14 @@
               - and then thrown away after the dungeon is generated
   - [x] move through left ladder to enter adjacent cell
   - [x] generate a cell connected to each of cell0's door besides town's
-  - [ ] gen. a base path from start to end point
+  - [x] gen. a base path from start to end point (but not generating full capacity of dungeon)
     - root path: spawn a winding main path from start to end
     - arguments
       - cave entrance direction
         - town's northern door opens entrance-cell's southern door
       - max path length
       - available cell config/variants
-        - [ ] need a simple, universal, immersive way to block doors
+        - [..] need a simple, universal, immersive way to block doors
           - we can just use an immovable box for now
     - use at least half of max allowed cells to form this path
     - only connect the initial path and block off any additional adjacent connections from this pass
@@ -31,7 +31,7 @@
   - then each room can generate whatever it wants in any direction that isn't the main path
     - this should NOT be based on cardinal directions
   - [ ] spawn all objects in cell
-    - [ ] pickups
+    - [x] pickups
     - [ ] overworld monsters that wander relative to a home coordinate
       - will chase player a distance from coordinate
         - otherwise try to maintain a tighter distance from coordinate
