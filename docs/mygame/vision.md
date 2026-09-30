@@ -62,6 +62,16 @@
         - dungeon floor
             - persistance per floor once generated
                 - generate all floors on dungeon's birth
+- I was thinking that we could have the first cave be simpler to not introduce everything at once
+  - rather than a boss it exits to the next town
+    - couldn't they all just work that way?
+  - also just one small floor?
+  - this just kinda seems stupid the more I think about it
+  - eh: we could...
+    - fill it with a few atla w/ essential key items
+      - but then they'll think that equipment comes in atla
+    - have it gradually unlock to provide key items tied to progression
+
 ---
 #### everything else is gravy:
 - systems to consider
