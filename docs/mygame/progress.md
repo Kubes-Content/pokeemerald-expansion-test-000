@@ -30,6 +30,8 @@
         - will encourage you to clear the dungeon
   - then each room can generate whatever it wants in any direction that isn't the main path
     - this should NOT be based on cardinal directions
+  - [x] randomly pick a room in segment which has an unused door and add a room to one of its unused doors
+    - generate a segment of length 1
   - [ ] spawn all objects in cell
     - [x] pickups
     - [ ] overworld monsters that wander relative to a home coordinate

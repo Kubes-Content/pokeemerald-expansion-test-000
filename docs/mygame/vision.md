@@ -62,6 +62,7 @@
         - dungeon floor
             - persistance per floor once generated
                 - generate all floors on dungeon's birth
+
 - I was thinking that we could have the first cave be simpler to not introduce everything at once
   - rather than a boss it exits to the next town
     - couldn't they all just work that way?
@@ -72,6 +73,14 @@
       - but then they'll think that equipment comes in atla
     - have it gradually unlock to provide key items tied to progression
 
+- a toggle to disallow the first and last room from having added paths/rooms for simplicity
+
+- when it's a boss floor, could have it like Dark Cloud where the last floor is just the single boss cell
+    - maybe with an entryway cell
+      - put a dramatic pit and drawbridge
+        - can also use this as a gate if something needs to be accomplished in town before proceeding
+          - iirc in Dark Cloud you have to unlock your first teammate before you can progress a point
+            - pretty sure there are other obstacles like this
 ---
 #### everything else is gravy:
 - systems to consider
