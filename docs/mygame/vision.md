@@ -1,67 +1,98 @@
+- so, saving memory.
+  - I'm limited to 1624 bytes in block 3
+  - I can free up space in other blocks, but an explicit padding array there worries that I have to match the block size
+    - that's not a huge worry if you can just calculate the padding size relative to a struct that wraps whatever you add in there
+      - block 1 can save 2516 bytes
+      - block 2 can save 1274
+    - so up to 5414 in total easily, segmented
+      - so (assuming padding is correct(?)) I can wrap data in getters/setters to not need to get from the save block
+        - arrays could be split across blocks if needed
+  - I could probably manually rip other stuff out of save blocks 1 + 2
+    - but I'd have to be careful :P
+      - and add flags to reuse/toggle these tweaks
+
 ### Premise
 - Dark Cloud, but in Gen 3
+
+- I don't know where to go from here
+  - make this a more full experience
+    - you should
+      - get atla that give pieces that rebuild something in town
+      - be able to finish a cave and go to the next town
+        - multiple towns
+        - conclude cave with a boss
+  - multiple floors per cave will make the save file larger
+    - but I think we should focus on an MVP rather than a huge game
+  - give a new pokemon each dungeon - like a new teammate in dark cloud
+  - floor gate key
+    - keys
+      - gate key
+        - dropped by randomly predetermined overworld monster
+      - obstacle key
+        - a warp blocked off by a key
+  - cave enters to floor selection map
+  - after beating first floor
+  - getting the pieces to rebuild a store
+  - pushable boulders + puzzles
+
+- multiple floors per dungeon
+- cave exit?
+- should I just focus on unlocking flags from atla for now
+  - just make different NPCs pop up in town as you acquire atla
+    - key item vs. flag in town/dungeon data
+    - then give each a toggle so the player can place them into the town manually
+
 #### Aside - Tech
 - infinite dungeons/towns but limited save space usage
   - ideally: we can preserve the state of 8 or 16 towns (and their dungeon)
     - so that towns can be revisited
-- town + cave connection method
-  - my brain says: static, use town and cave compiled to connect
-    - this is simple enough for my proof of concept
-  - my heart says: procedural, use town and cave procedurally linked at new game
-      - this will support towns and caves varying independently
-          - enables more procedural factors
-      - see: https://chatgpt.com/s/t_6aaea6145fbc8191a06742b9078ba8b6
-          - can we simplify this approach? does tech exist to help?
-          - GetMapConnection()
-          - new_game.c, overworld.c
-          - reloading/persisting through save block (new map data layer)
-              - on continue, reload saved map propietary state for current map
-                  - we could just have a key saved that refers to the current map's data
-                      - so runtime keeps track w/ key being in save block
+    - this is not happening
+      - maybe we can preserve the towns
 #### Aside - Game Intro
 - we could start game...
-    - in oak's lab and have it exit into the first town with the lab no longer there
-        - should prevent leaving without a pokemon
-    - with one town
-        - can we use the tile system to allow us to talk to buildings in the town and...
-            - pick them up or put them down anywhere
-                - like your house in animal crossing
-                - because pushing might be more complicated
-            - auto-place them and the player can nudge them one tile space at a time
-            - support Dark Cloud's resident preferences
-                - ponds
-                - river chunks that auto-connect adjacent river chunks
-                - tree might be tougher
-                    - or might just require not overlapping building
-                    - maybe there's a novel way to make trees work anywhere
-        - The magic guy that tells you about the cave and why you're restoring every town
-            - one man starts there to direct you to the cave
-                - so we can start the player in the empty plot
-            - look at what he literally tells you in Dark Cloud
-    - with one dungeon
-        - enemy encounters
-            - make wild encounters rare
-            - make overworld enemies
-                - to feel somewhere between Lufia GBA and Dark Cloud
-        - chests
-            - standard chest
-            - large chest
-            - clown chest choice (are these one size?)
-            - mimic
-        - atla
-            - should be a pickup/container that share a single sprite
-                - an equivalent to an opened chest sprite?
-                    - sprites with 2+ states
-                        - berry tree
-                        - door
-                        - character rotation
-                        - character sprite set/skin
-                        - pickup
-                        - character animation set
-                        - character animation frame
-        - dungeon floor
-            - persistance per floor once generated
-                - generate all floors on dungeon's birth
+  - in oak's lab and have it exit into the first town with the lab no longer there
+    - should prevent leaving without a pokemon
+  - with one town
+    - can we use the tile system to allow us to talk to buildings in the town and...
+      - pick them up or put them down anywhere
+        - like your house in animal crossing
+        - because pushing might be more complicated
+      - auto-place them and the player can nudge them one tile space at a time
+      - support Dark Cloud's resident preferences
+        - ponds
+        - river chunks that auto-connect adjacent river chunks
+        - tree might be tougher
+          - or might just require not overlapping building
+          - maybe there's a novel way to make trees work anywhere
+    - The magic guy that tells you about the cave and why you're restoring every town
+      - one man starts there to direct you to the cave
+        - so we can start the player in the empty plot
+      - look at what he literally tells you in Dark Cloud
+  - with one dungeon
+    - enemy encounters
+      - make wild encounters rare
+      - make overworld enemies
+        - to feel somewhere between Lufia GBA and Dark Cloud
+    - chests
+      - standard chest
+      - large chest
+      - clown chest choice (are these one size?)
+      - mimic
+    - atla
+      - should be a pickup/container that share a single sprite
+        - an equivalent to an opened chest sprite?
+          - sprites with 2+ states
+            - berry tree
+            - door
+            - character rotation
+            - character sprite set/skin
+            - pickup
+            - character animation set
+            - character animation frame
+    - dungeon floor
+      - persistence per floor once generated
+        - generate all floors on dungeon's birth
+
 - I was thinking that we could have the first cave be simpler to not introduce everything at once
   - rather than a boss it exits to the next town
     - couldn't they all just work that way?
@@ -72,66 +103,80 @@
       - but then they'll think that equipment comes in atla
     - have it gradually unlock to provide key items tied to progression
 
+- a toggle to disallow the first and last room from having added paths/rooms for simplicity
+
+- when it's a boss floor, could have it like Dark Cloud where the last floor is just the single boss cell
+    - maybe with an entryway cell
+      - put a dramatic pit and drawbridge
+        - can also use this as a gate if something needs to be accomplished in town before proceeding
+          - iirc in Dark Cloud you have to unlock your first teammate before you can progress a point
+            - pretty sure there are other obstacles like this
+
+- we could put a sign in front of that cave: "Notagiantworm Cave"
+
 ---
 #### everything else is gravy:
 - systems to consider
     - should party members or weapon pickups spiritually be pokemon?
-        - because your teammates use different weapons
-            - how can we get to that kind of relationship?
+      - because your teammates use different weapons
+        - how can we get to that kind of relationship?
     - dungeon configs
-        - we could have a limited set of unique configs that are randomly chosen
-            - like one's the spider cave, another is the clown cave, another the lava monster cave
-                - ideally we have more theme to a cave than a mario level (Earth, wind, lava, ice)
-                    - what elevates...
-                        - ice sliding and visuals
-                        - overworld fire hurting the player or their party when adjacent
-                        - cracked floor
-                            - a dungeon that is much more prone to cave-ins
-                        - flowing water (doesn't need to be a lot)
-                            - a tiny stream
-                            - a heavy stream
-                                - divides the dungeon
-                                    - lower the water level like Zelda
-                                    - build a bridge and get over it
-                                        - maybe this could be tied to a shop so that you can't get stuck?
-                                        - this could be predetermined so that it is provided from a prior floor's atla
+      - we could have a limited set of unique configs that are randomly chosen
+        - like one's the spider cave, another is the clown cave, another the lava monster cave
+          - ideally we have more theme to a cave than a mario level (Earth, wind, lava, ice)
+            - what elevates...
+              - ice sliding and visuals
+              - overworld fire hurting the player or their party when adjacent
+              - cracked floor
+                - a dungeon that is much more prone to cave-ins
+              - flowing water (doesn't need to be a lot)
+                - a tiny stream
+                - a heavy stream
+                  - divides the dungeon
+                    - lower the water level like Zelda
+                    - build a bridge and get over it
+                      - maybe this could be tied to a shop so that you can't get stuck?
+                      - this could be predetermined so that it is provided from a prior floor's atla
+                      - replace a door in two connected cells with a little water segment/body
+    - fishing spots that have a chance to give atla/item/event
     - Dark Cloud 1's
-        - floor progress screen
-            - showing...
-                - which atla are collected so far
-                - available floors
-        - weapon systems
-            - obtaining weapons in chests (no pokeballs)
-            - growth systems
-                - temporary attachments that fill limited slots
-                    - absorbed on level up
-                        - this encourages the player to collect non-atla
-        - town shops
-            - multiple shops divvy up the relevant beneficial items
-                - attachments
-                - weapons
-                - water?
-        - thirst system
-        - resident objectives
-            - missions within towns
-                - Monkey boss is under a spell - beat him and he joins you
-                - Goro shows up and you recruit him
-                    - we could do this with a pokemon
-            - home georama preferences
-        - Toan's house
-            - mom?
-            - a llama
-        - party members
-            - Xiao
-            - Goro
+      - floor progress screen
+        - showing...
+          - which atla are collected so far
+          - available floors
+      - weapon systems
+        - obtaining weapons in chests (no pokeballs)
+        - growth systems
+          - temporary attachments that fill limited slots
+            - absorbed on level up
+              - this encourages the player to collect non-atla
+      - town shops
+        - multiple shops divvy up the relevant beneficial items
+          - attachments
+          - weapons
+          - water?
+      - thirst system
+      - resident objectives
+        - missions within towns
+          - Monkey boss is under a spell - beat him and he joins you
+          - Goro shows up and you recruit him
+            - we could do this with a pokemon
+        - home georama preferences
+      - Toan's house
+        - mom?
+        - a llama
+      - party members
+        - Xiao
+        - Goro
+      - chance of an access point to a back level
     - Lufia GBA's
-        - spider cave
-            - I love the webs disappearing after clearing it
-            - a spider boss at end of dungeon
-                - spider-webbed dungeon until boss is defeated which toggles off webs
-                    - just fade to black for a second or do something more dramatic
-                        - make the spider jump on you - fade black - fade back in and the spider jumps out of frame
+      - spider cave
+        - I love the webs disappearing after clearing it
+        - a spider boss at end of dungeon
+          - spider-webbed dungeon until boss is defeated which toggles off webs
+            - just fade to black for a second or do something more dramatic
+              - make the spider jump on you - fade black - fade back in and the spider jumps out of frame
 - ASIDE
-    - RTC like Animal Crossing?
-        - https://discord.com/channels/419213663107416084/1077168246555430962/1551019542610976851
-        - (support tracking time passing and time since last save on load), how many days passed, etc.
+  - RTC like Animal Crossing?
+    - https://discord.com/channels/419213663107416084/1077168246555430962/1551019542610976851
+    - (support tracking time passing and time since last save on load), how many days passed, etc.

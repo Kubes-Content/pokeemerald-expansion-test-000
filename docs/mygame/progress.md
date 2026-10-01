@@ -1,38 +1,35 @@
-- [ ] gen. dungeon.
-  - [x] get spawnable variants
-    - array of cell
-  - [x] comparable Cell Variant Description struct // temporary, only constructed and used during generation // abstracts static innards
-    - bool8 CellsCanConnect(CellVar1, Direction, CellVar2);
-      - return CellVar1->HasDoor(direction) && CellVar2->HasDoor(Reverse(Direction));
-    - for now, just build as:
-      - (struct CellVariantDesc) { GetDoorsThatCellHas(CellEnum); };
-    - we can put any additional restrictions to this
-      - let's say we decide that we'll generate a connecting pond in Cell1's bottom left and Cell2's bottom right
-        - we then verify that both have space available for that
-          - I am picturing multiple passes of generation where you add the pond in the corner to both cells' variant description
-            - then another pass cannot put something in that corner later
-            - so the CellVariantDesc struct should be a developing thing as passes proceed
-              - and then thrown away after the dungeon is generated
-  - [x] move through left ladder to enter adjacent cell
-  - [x] generate a cell connected to each of cell0's door besides town's
-  - [x] gen. a base path from start to end point (but not generating full capacity of dungeon)
-    - root path: spawn a winding main path from start to end
-    - arguments
-      - cave entrance direction
-        - town's northern door opens entrance-cell's southern door
-      - max path length
-      - available cell config/variants
-        - [..] need a simple, universal, immersive way to block doors
-          - we can just use an immovable box for now
-    - use at least half of max allowed cells to form this path
-    - only connect the initial path and block off any additional adjacent connections from this pass
-      - keeps a minimum travel distance to reach the end
-        - will encourage you to clear the dungeon
-  - then each room can generate whatever it wants in any direction that isn't the main path
-    - this should NOT be based on cardinal directions
+- [ ] use cave pickups to test atla being picked up
+  - why don't they just share a type with pickups?
+    - create an enum that represents if its atla or something else
+      - instead of qty they can use that field as the atla index
+- [ ] overworld enemies in caves
+  - maybe expansion has some stuff built for this already?
+    - or will that just slow me down? assuming I want to change most of how it works
+- [ ] spawn atla independently of pickups
+  - how to assign as the drop of an overworld enemy in a cell within the cave
+    - you'd have to have the overworld enemy stuff built
+- [ ] town decoration
+  - obstacles placed into overworld
+    - placing things automatically
+      - aspects/layout altered by RNG for variation
+    - placing things manually
+      - how would I
+        - place a small tree (1x1)
+          - how do I spawn a tree over anything? doesn't it come with a background?
+        - place a small house?
+          - in a way that you can organically move around it
+      - for saving: I'm thinking...
+        - small obstacles use x,y coordinate for bounds
+        - anything bigger has an x,y coordinate and an enum to determine its bounds
+          - would something simpler not be better?
+            - rather than having a save block for small AND bigger objects?
+    - planting a seed and seeing it grow as you progress
+      - what would drive growth?
+- [ ] gen. dungeon. pass 2
   - [ ] spawn all objects in cell
     - [x] pickups
     - [ ] overworld monsters that wander relative to a home coordinate
+      - [ ] only save home cood
       - will chase player a distance from coordinate
         - otherwise try to maintain a tighter distance from coordinate
           - stays within 5, but will go up to 9 if chasing
@@ -41,32 +38,19 @@
         - how do they move? I don't want to tie to player movement
           - they tick. they simply tick.
             - maybe we have a single task for game behavior that encapsulates ticking
-  - [ ] stub for generating secondary rooms/paths
-    - a side room that gives a key to a drawbridge/gate/etc. before the end
-      - aren't larger dungeons just gonna route around a drawbridge? hush.
-      - a powerup that lasts the duration of the floor and lets you push select obstacles
-        - something blocking a door can effectively be a drawbridge
-          - just differentiate a permanent blockade from a pushable one
-        - kill a mini boss for the powerup?
-          - we could also have a Dark Cloud esque backroom behind an obstacle like this
-            - or just behind a mini boss, i suppose
-              - returning to an obstacle later does have something fun to it
-                - now... if the backroom was blocked by a boss that gave a key to a different obstacle.... that'd be fine
-                  - I just don't want it to be linear if it doesn't need to be
-    - utilize GoneGlobTM Technology
-      - prefer 2 adjacent rooms to 1 adjacent room to 3 adjacent rooms to 4
-        - we want to link cells together without globbing
-        - prefer to connect to rooms with less than 2 pre-existing connections
-- [ ] multi-room layout gen.
-  - [ ] multi-room cave
-    - [ ] left opens to another cell
-  - [ ] gen. 'atla' pickups that persist per room
-  - [ ] test different pickups per room
-  - a space in front of each door could set the dynamic warp on step
-  - how do we support a dynamic layout of warps (different pattern per room)
-    - as opposed to allowing up to one warp per cardinal direction
-    - like imagine having inner rooms and multiple side doors
-      - if more than one door on a room side, each should lead to a smaller room
-    - room connection id struct
-      - bool: inner or outer room
-      - index: inner/outer index
+  - a side room that gives a key to a drawbridge/gate/etc. before the end
+    - a powerup that lasts the duration of the floor and lets you push select obstacles
+      - something blocking a door can effectively be a drawbridge
+        - just differentiate a permanent blockade from a pushable one
+      - kill a mini boss for the powerup?
+        - we could also have a Dark Cloud esque backroom behind an obstacle like this
+          - or just behind a mini boss, i suppose
+            - returning to an obstacle later does have something fun to it
+              - now... if the backroom was blocked by a boss that gave a key to a different obstacle.... that'd be fine
+                - I just don't want it to be linear if it doesn't need to be
+  - utilize GoneGlobTM Technology
+    - prefer 2 adjacent rooms to 1 adjacent room to 3 adjacent rooms to 4
+      - we want to link cells together without globbing
+      - prefer to connect to rooms with less than 2 pre-existing connections
+- [ ] gen. 'atla' pickups that persist per room
+- [ ] test different pickups per room
