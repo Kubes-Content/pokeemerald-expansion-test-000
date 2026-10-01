@@ -11,7 +11,7 @@
 #include "mygame/patches/global_patches.h"
 
 #define DUNGEON_TOWN_COUNT 2
-#define MAX_DUNGEON_CELL_COUNT 4
+#define MAX_DUNGEON_CELL_COUNT 8
 #define MAX_PICKUPS_PER_DUNGEON 8
 #define MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL 4
 
@@ -33,16 +33,14 @@ struct DungeonCellConnection
     bool8 isValid : 1;
     bool8 isTown  : 1;
     u8 cellIndex  : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
-    u16   mapEnum : BIT_SIZE(MAP_COUNT - 1); // todo shouldn't this be derived from the cellIndex/data? // cuts this from 6 to 2 bytes
     u8    warpId  : BIT_SIZE(127);
 };
-static inline struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, const u16 mapEnum, const u8 warpId)
+static inline struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, const u8 warpId)
 {
     return (struct DungeonCellConnection) {
         .isValid = TRUE,
         .isTown = cellIndex < 0,
         .cellIndex = cellIndex,
-        .mapEnum = mapEnum,
         .warpId = warpId,
     };
 }
