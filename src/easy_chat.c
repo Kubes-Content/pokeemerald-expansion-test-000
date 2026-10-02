@@ -1441,6 +1441,7 @@ void ShowEasyChatScreen(void)
 
         words = bard->newSongLyrics;
         break;
+#if FREE_TV_SHOWS == FALSE
     case EASY_CHAT_TYPE_INTERVIEW:
         words = gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].bravoTrainer.words;
         displayedPersonType = gSpecialVar_0x8006;
@@ -1453,6 +1454,7 @@ void ShowEasyChatScreen(void)
         words = gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].dummy.words;
         displayedPersonType = EASY_CHAT_PERSON_REPORTER_MALE;
         break;
+#endif
     case EASY_CHAT_TYPE_TRENDY_PHRASE:
         words = (u16 *)gStringVar3;
         words[0] = gSaveBlock1Ptr->dewfordTrends[0].words[0];
@@ -1463,6 +1465,7 @@ void ShowEasyChatScreen(void)
         *words = EC_EMPTY_WORD;
         displayedPersonType = EASY_CHAT_PERSON_REPORTER_FEMALE;
         break;
+#if FREE_TV_SHOWS == FALSE
     case EASY_CHAT_TYPE_CONTEST_INTERVIEW:
         words = &gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].bravoTrainer.words[gSpecialVar_0x8006];
         displayedPersonType = EASY_CHAT_PERSON_REPORTER_MALE;
@@ -1471,15 +1474,18 @@ void ShowEasyChatScreen(void)
         words = gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].bravoTrainerTower.words;
         displayedPersonType = EASY_CHAT_PERSON_REPORTER_FEMALE;
         break;
+#endif
     case EASY_CHAT_TYPE_GOOD_SAYING:
         words = (u16 *)gStringVar3;
         InitializeEasyChatWordArray(words, 2);
         break;
+#if FREE_TV_SHOWS == FALSE
     case EASY_CHAT_TYPE_FAN_QUESTION:
         words = gSaveBlock1Ptr->tvShows[gSpecialVar_0x8005].fanClubSpecial.words;
         words[0] = EC_EMPTY_WORD;
         displayedPersonType = EASY_CHAT_PERSON_BOY;
         break;
+#endif
     case EASY_CHAT_TYPE_QUIZ_ANSWER:
         words = &gSaveBlock1Ptr->lilycoveLady.quiz.playerAnswer;
         break;

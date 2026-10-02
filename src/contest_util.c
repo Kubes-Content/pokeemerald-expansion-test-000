@@ -593,9 +593,11 @@ static void Task_ShowContestResults(u8 taskId)
             {
                 IncrementGameStat(GAME_STAT_WON_LINK_CONTEST);
                 gSpecialVar_0x8005 = TVSHOW_CONTEST_LIVE_UPDATES;
+#if FREE_TV_SHOWS == FALSE
                 InterviewBefore();
                 if (gSpecialVar_Result != TRUE)
                     InterviewAfter();
+#endif
             }
 
             TryGainNewFanFromCounter(FANCOUNTER_FINISHED_CONTEST);
@@ -1003,8 +1005,10 @@ static void Task_WaitForLinkPartnersDisconnect(u8 taskId)
 
 static void Task_TrySetContestInterviewData(u8 taskId)
 {
+#if FREE_TV_SHOWS == FALSE
     if (!(gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK))
         BravoTrainerPokemonProfile_BeforeInterview2(gContestFinalStandings[gContestPlayerMonIndex]);
+#endif
 
     BeginHardwarePaletteFade(0xFF, 0, 0, 16, 0);
     gTasks[taskId].func = Task_EndShowContestResults;
@@ -1945,8 +1949,10 @@ void GiveMonContestRibbon(void)
     {
         ribbonData++;
         SetMonData(mon, ribbon, &ribbonData);
+#if FREE_TV_SHOWS == FALSE
         if (GetRibbonCount(mon) > NUM_CUTIES_RIBBONS)
             TryPutSpotTheCutiesOnAir(mon, ribbon);
+#endif
     }
 }
 
@@ -2446,8 +2452,10 @@ bool8 GiveMonArtistRibbon(void)
     {
         hasArtistRibbon = 1;
         SetMonData(&gParties[B_TRAINER_PLAYER][gContestMonPartyIndex], MON_DATA_ARTIST_RIBBON, &hasArtistRibbon);
+#if FREE_TV_SHOWS == FALSE
         if (GetRibbonCount(&gParties[B_TRAINER_PLAYER][gContestMonPartyIndex]) > NUM_CUTIES_RIBBONS)
             TryPutSpotTheCutiesOnAir(&gParties[B_TRAINER_PLAYER][gContestMonPartyIndex], MON_DATA_ARTIST_RIBBON);
+#endif
 
         return TRUE;
     }

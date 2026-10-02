@@ -2777,7 +2777,9 @@ static void Task_EndAppeals(u8 taskId)
     ContestClearGeneralTextWindow();
     if (!(gLinkContestFlags & LINK_CONTEST_FLAG_IS_LINK))
     {
+#if FREE_TV_SHOWS == FALSE
         BravoTrainerPokemonProfile_BeforeInterview1(eContestantStatus[gContestPlayerMonIndex].prevMove);
+#endif
     }
     else
     {
@@ -5965,11 +5967,13 @@ static void SetConestLiveUpdateTVData(void)
             break;
     }
 
+#if FREE_TV_SHOWS == FALSE
     ContestLiveUpdates_Init(round1Placing);
     ContestLiveUpdates_SetRound2Placing(round2Placing);
     ContestLiveUpdates_SetWinnerAppealFlag(winnerFlag);
     ContestLiveUpdates_SetWinnerMoveUsed(gContestResources->tv[winner].move);
     ContestLiveUpdates_SetLoserData(loserFlag, loser);
+#endif
 }
 
 static void ContestDebugPrintBitStrings(void)

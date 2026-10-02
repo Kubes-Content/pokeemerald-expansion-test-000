@@ -1225,7 +1225,9 @@ static void InitSlotMachine(void)
         sSlotMachine->reelPixelOffsets[i] = REEL_HEIGHT - sSlotMachine->reelPositions[i] * REEL_SYMBOL_HEIGHT;
         sSlotMachine->reelPixelOffsets[i] %= REEL_HEIGHT;
     }
+#if FREE_TV_SHOWS == FALSE
     AlertTVThatPlayerPlayedSlotMachine(GetCoins());
+#endif
 }
 
 static void SlotMachineSetup_InitPalsSpritesTasks(void)
@@ -1741,7 +1743,9 @@ static bool8 SlotTask_WaitMsg_NoMoreCoins(struct Task *task)
 static bool8 SlotTask_EndGame(struct Task *task)
 {
     SetCoins(sSlotMachine->coins);
+#if FREE_TV_SHOWS == FALSE
     TryPutFindThatGamerOnAir(GetCoins());
+#endif
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 16, RGB_BLACK);
     sSlotMachine->state++; // SLOTTASK_FREE
     return FALSE;

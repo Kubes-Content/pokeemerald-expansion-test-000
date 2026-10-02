@@ -150,7 +150,9 @@ void InitMapFromSavedGame(void)
 #endif
     LoadSavedMapView();
     RunOnLoadMapScript();
+#if FREE_TV_SHOWS == FALSE
     UpdateTVScreensOnMap(gBackupMapLayout.width, gBackupMapLayout.height);
+#endif
 }
 
 void InitBattlePyramidMap(bool8 setPlayerPosition)

@@ -48,6 +48,8 @@
 #include "constants/moves.h"
 #include "constants/region_map_sections.h"
 
+#if FREE_TV_SHOWS == FALSE
+
 #define LAST_TVSHOW_IDX (TV_SHOWS_COUNT - 1)
 
 enum {
@@ -704,8 +706,10 @@ void ClearTVShowData(void)
     ClearPokeNews();
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 u8 GetRandomActiveShowIdx(void)
 {
+#if FREE_TV_SHOWS == FALSE
     u8 i;
     u8 j;
     u8 selIdx;
@@ -740,8 +744,10 @@ u8 GetRandomActiveShowIdx(void)
             j--;
 
     } while (j != selIdx);
+#endif //FREE_TV_SHOWS == FALSE
     return 0xFF;
 }
+#if FREE_TV_SHOWS == FALSE
 
 u8 FindAnyTVShowOnTheAir(void)
 {
@@ -779,6 +785,7 @@ void UpdateTVScreensOnMap(int width, int height)
         break;
     }
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 static void SetTVMetatilesOnMap(int width, int height, u16 metatileId)
 {
@@ -810,8 +817,13 @@ void TurnOnTVScreen(void)
 // gSpecialVar_0x8004 here is set from GetRandomActiveShowIdx in EventScript_TryDoTVShow
 u8 GetSelectedTVShow(void)
 {
+#if FREE_TV_SHOWS == FALSE
     return gSaveBlock1Ptr->tvShows[gSpecialVar_0x8004].common.kind;
+#else //FREE_TV_SHOWS == FALSE
+    return 0;
+#endif //FREE_TV_SHOWS == FALSE
 }
+#if FREE_TV_SHOWS == FALSE
 
 // IN SEARCH OF TRAINERS
 
@@ -835,6 +847,7 @@ void ResetGabbyAndTy(void)
     gSaveBlock1Ptr->gabbyAndTyData.mapnum = 0;
     gSaveBlock1Ptr->gabbyAndTyData.battleNum = 0;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void GabbyAndTyBeforeInterview(void)
 {
@@ -867,7 +880,9 @@ void GabbyAndTyBeforeInterview(void)
         }
     }
 
+#if FREE_TV_SHOWS == FALSE
     TakeGabbyAndTyOffTheAir();
+#endif //FREE_TV_SHOWS == FALSE
     if (gSaveBlock1Ptr->gabbyAndTyData.lastMove == MOVE_NONE)
         FlagSet(FLAG_TEMP_SKIP_GABBY_INTERVIEW);
 }
@@ -883,10 +898,12 @@ void GabbyAndTyAfterInterview(void)
     IncrementGameStat(GAME_STAT_GOT_INTERVIEWED);
 }
 
+#if FREE_TV_SHOWS == FALSE
 static void TakeGabbyAndTyOffTheAir(void)
 {
     gSaveBlock1Ptr->gabbyAndTyData.onAir = FALSE;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 // See gabby_and_ty.inc for details
 u8 GabbyAndTyGetBattleNum(void)
@@ -972,6 +989,7 @@ void GetGabbyAndTyLocalIds(void)
 
 void InterviewAfter(void)
 {
+#if FREE_TV_SHOWS == FALSE
     switch (gSpecialVar_0x8005)
     {
     case TVSHOW_FAN_CLUB_LETTER:
@@ -995,7 +1013,9 @@ void InterviewAfter(void)
         InterviewAfter_ContestLiveUpdates();
         break;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
+#if FREE_TV_SHOWS == FALSE
 
 void TryPutPokemonTodayOnAir(void)
 {
@@ -1218,9 +1238,11 @@ bool8 Put3CheersForPokeblocksOnTheAir(const u8 *partnersName, enum Flavor flavor
         show->threeCheers.worstBlenderLanguage = language;
     return TRUE;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void PutFanClubSpecialOnTheAir(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show;
     u8 name[32];
     u32 id;
@@ -1247,8 +1269,10 @@ void PutFanClubSpecialOnTheAir(void)
     if (show->fanClubSpecial.language == LANGUAGE_JAPANESE)
         show->fanClubSpecial.idolNameLanguage = LANGUAGE_JAPANESE;
 #endif //FREE_LINK_BATTLE_RECORDS
+#endif //FREE_TV_SHOWS == FALSE
 }
 
+#if FREE_TV_SHOWS == FALSE
 void ContestLiveUpdates_Init(u8 round1Placing)
 {
     TVShow *show;
@@ -1469,9 +1493,11 @@ static void StartMassOutbreakFromShow(TVShow *show)
     }
     StartStaticMassOutbreak(show->massOutbreak.outbreakIndex - 1);
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void PutLilycoveContestLadyShowOnTheAir(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show;
 
     Script_FindFirstEmptyNormalTVShowSlot();
@@ -1487,8 +1513,10 @@ void PutLilycoveContestLadyShowOnTheAir(void)
         show->contestLady.pokeblockState = GetContestLadyPokeblockState();
         StorePlayerIdInNormalShow(show);
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
 
+#if FREE_TV_SHOWS == FALSE
 static void InterviewAfter_FanClubLetter(void)
 {
     TVShow *show = &gSaveBlock1Ptr->tvShows[sCurTVShowSlot];
@@ -1733,9 +1761,11 @@ void TryPutTrendWatcherOnAir(const u16 *words)
         show->trendWatcher.language = gGameLanguage;
     }
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void TryPutTreasureInvestigatorsOnAir(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show;
 
     sCurTVShowSlot = FindFirstEmptyRecordMixTVShowSlot(gSaveBlock1Ptr->tvShows);
@@ -1751,8 +1781,10 @@ void TryPutTreasureInvestigatorsOnAir(void)
         StorePlayerIdInRecordMixShow(show);
         show->treasureInvestigators.language = gGameLanguage;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
 
+#if FREE_TV_SHOWS == FALSE
 void TryPutFindThatGamerOnAir(u16 nCoinsPaidOut)
 {
     TVShow *show;
@@ -2002,9 +2034,11 @@ void TryPutBreakingNewsOnAir(void)
         show->breakingNews.language = gGameLanguage;
     }
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void TryPutLotteryWinnerReportOnAir(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show;
 
     sCurTVShowSlot = FindFirstEmptyRecordMixTVShowSlot(gSaveBlock1Ptr->tvShows);
@@ -2019,8 +2053,10 @@ void TryPutLotteryWinnerReportOnAir(void)
         StorePlayerIdInRecordMixShow(show);
         show->lottoWinner.language = gGameLanguage;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
 
+#if FREE_TV_SHOWS == FALSE
 void TryPutBattleSeminarOnAir(enum Species foeSpecies, enum Species species, u8 moveIndex, const u16 *movePtr, enum Move betterMove)
 {
     TVShow *show;
@@ -2094,6 +2130,7 @@ void TryPutSpotTheCutiesOnAir(struct Pokemon *pokemon, u8 ribbonMonDataIdx)
     }
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 u8 GetRibbonCount(struct Pokemon *pokemon)
 {
     u8 nRibbons;
@@ -2118,6 +2155,7 @@ u8 GetRibbonCount(struct Pokemon *pokemon)
     nRibbons += GetMonData(pokemon, MON_DATA_WORLD_RIBBON);
     return nRibbons;
 }
+#if FREE_TV_SHOWS == FALSE
 
 static u8 MonDataIdxToRibbon(u8 monDataIdx)
 {
@@ -2140,9 +2178,11 @@ static u8 MonDataIdxToRibbon(u8 monDataIdx)
     if (monDataIdx == MON_DATA_WORLD_RIBBON)    return WORLD_RIBBON;
     return CHAMPION_RIBBON;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void TryPutTrainerFanClubOnAir(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show;
 
     sCurTVShowSlot = FindFirstEmptyRecordMixTVShowSlot(gSaveBlock1Ptr->tvShows);
@@ -2157,10 +2197,12 @@ void TryPutTrainerFanClubOnAir(void)
         StorePlayerIdInRecordMixShow(show);
         show->trainerFanClub.language = gGameLanguage;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
 
 bool8 ShouldHideFanClubInterviewer(void)
 {
+#if FREE_TV_SHOWS == FALSE
     sCurTVShowSlot = FindFirstEmptyNormalTVShowSlot(gSaveBlock1Ptr->tvShows);
     if (sCurTVShowSlot == -1)
         return TRUE;
@@ -2173,10 +2215,11 @@ bool8 ShouldHideFanClubInterviewer(void)
     if (gSaveBlock1Ptr->linkBattleRecords.entries[0].name[0] == EOS)
         return TRUE;
 #endif //FREE_LINK_BATTLE_RECORDS
-
+#endif //FREE_TV_SHOWS == FALSE
     return FALSE;
 }
 
+#if FREE_TV_SHOWS == FALSE
 bool8 ShouldAirFrontierTVShow(void)
 {
     u32 playerId;
@@ -2331,6 +2374,7 @@ static void TryPutNumberOneOnAir(u8 actionIdx)
         show->numberOne.language = gGameLanguage;
     }
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void IncrementDailySlotsUses(void)
 {
@@ -2366,6 +2410,7 @@ void IncrementDailyBattlePoints(u16 delta)
 {
     VarSet(VAR_DAILY_BP, VarGet(VAR_DAILY_BP) + delta);
 }
+#if FREE_TV_SHOWS == FALSE
 
 // PokeNews
 
@@ -2449,9 +2494,11 @@ static u8 FindAnyPokeNewsOnTheAir(void)
     }
     return 0xFF;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void DoPokeNews(void)
 {
+#if FREE_TV_SHOWS == FALSE
     u8 i = FindAnyPokeNewsOnTheAir();
     if (i == 0xFF)
     {
@@ -2481,7 +2528,9 @@ void DoPokeNews(void)
         }
         gSpecialVar_Result = TRUE;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
+#if FREE_TV_SHOWS == FALSE
 
 bool8 IsPokeNewsActive(u8 newsKind)
 {
@@ -2590,11 +2639,14 @@ void CopyContestCategoryToStringVar(u8 varIdx, enum ContestCategories category)
 {
     StringCopy(GetStringVar(varIdx), gStdStrings[gContestCategoryInfo[category].stdString]);
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void SetContestCategoryStringVarForInterview(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TVShow *show = &gSaveBlock1Ptr->tvShows[gSpecialVar_0x8004];
     CopyContestCategoryToStringVar(1, show->bravoTrainer.contestCategory);
+#endif //FREE_TV_SHOWS == FALSE
 }
 
 void ConvertIntToDecimalString(u8 varIdx, int value)
@@ -2617,6 +2669,7 @@ size_t CountDigits(int value)
     }
     return count;
 }
+#if FREE_TV_SHOWS == FALSE
 
 static void SmartShopper_BufferPurchaseTotal(u8 varIdx, TVShow *show)
 {
@@ -2707,9 +2760,11 @@ static void TryReplaceOldTVShowOfKind(u8 kind)
     Script_FindFirstEmptyNormalTVShowSlot();
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 void InterviewBefore(void)
 {
     gSpecialVar_Result = FALSE;
+#if FREE_TV_SHOWS == FALSE
     switch (gSpecialVar_0x8005)
     {
     case TVSHOW_FAN_CLUB_LETTER:
@@ -2743,7 +2798,9 @@ void InterviewBefore(void)
         InterviewBefore_FanClubSpecial();
         break;
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
+#if FREE_TV_SHOWS == FALSE
 
 static void InterviewBefore_FanClubLetter(void)
 {
@@ -2823,6 +2880,7 @@ static void InterviewBefore_FanClubSpecial(void)
                         ARRAY_COUNT(gSaveBlock1Ptr->tvShows[sCurTVShowSlot].fanClubSpecial.words));
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 static bool8 IsPartyMonNicknamedOrNotEnglish(u8 monIdx)
 {
     struct Pokemon *pokemon;
@@ -2841,6 +2899,7 @@ bool8 IsLeadMonNicknamedOrNotEnglish(void)
 {
     return IsPartyMonNicknamedOrNotEnglish(GetLeadMonIndex());
 }
+#if FREE_TV_SHOWS == FALSE
 
 static void DeleteTVShowInArrayByIdx(TVShow *shows, u8 idx)
 {
@@ -3078,9 +3137,11 @@ static void GetNicknameSubstring(u8 varIdx, u8 whichPosition, u8 charParam, u16 
     StringCopy(GetStringVar(varIdx), buff);
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 // Unused script special
 bool8 IsTVShowAlreadyInQueue(void)
 {
+#if FREE_TV_SHOWS == FALSE
     u8 i;
 
     for (i = 0; i < NUM_NORMAL_TVSHOW_SLOTS; i++)
@@ -3088,6 +3149,7 @@ bool8 IsTVShowAlreadyInQueue(void)
         if (gSaveBlock1Ptr->tvShows[i].common.kind == gSpecialVar_0x8004)
             return TRUE;
     }
+#endif //FREE_TV_SHOWS == FALSE
     return FALSE;
 }
 
@@ -3099,7 +3161,9 @@ bool8 TryPutNameRaterShowOnTheAir(void)
     if (!StringCompare(gStringVar3, gStringVar1))
         return FALSE;
 
+#if FREE_TV_SHOWS == FALSE
     PutNameRaterShowOnTheAir();
+#endif //FREE_TV_SHOWS == FALSE
     return TRUE;
 }
 
@@ -3129,6 +3193,7 @@ void IsMonOTIDNotPlayers(void)
     else
         gSpecialVar_Result = TRUE;
 }
+#if FREE_TV_SHOWS == FALSE
 
 static u8 GetTVGroupByShowId(u8 kind)
 {
@@ -3147,6 +3212,7 @@ static u8 GetTVGroupByShowId(u8 kind)
     return TVGROUP_NONE;
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 u32 GetPlayerIDAsU32(void)
 {
     return READ_OTID_FROM_SAVE;
@@ -3234,6 +3300,7 @@ void GetMomOrDadStringForTVMessage(void)
         }
     }
 }
+#if FREE_TV_SHOWS == FALSE
 
 void HideBattleTowerReporter(void)
 {
@@ -3991,9 +4058,11 @@ void SanitizeTVShowLocationsForRuby(TVShow *shows)
     }
 }
 
+#endif //FREE_TV_SHOWS == FALSE
 // gSpecialVar_0x8004 here is set from GetRandomActiveShowIdx in EventScript_TryDoTVShow
 void DoTVShow(void)
 {
+#if FREE_TV_SHOWS == FALSE
     if (gSaveBlock1Ptr->tvShows[gSpecialVar_0x8004].common.active)
     {
         switch (gSaveBlock1Ptr->tvShows[gSpecialVar_0x8004].common.kind)
@@ -4096,7 +4165,9 @@ void DoTVShow(void)
             break;
         }
     }
+#endif //FREE_TV_SHOWS == FALSE
 }
+#if FREE_TV_SHOWS == FALSE
 
 static void DoTVShowBravoTrainerPokemonProfile(void)
 {
@@ -5173,9 +5244,11 @@ static void DoTVShow3CheersForPokeblocks(void)
     }
     ShowFieldMessage(sTV3CheersForPokeblocksTextGroup[state]);
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void DoTVShowInSearchOfTrainers(void)
 {
+#if FREE_TV_SHOWS == FALSE
     u8 state;
 
     gSpecialVar_Result = FALSE;
@@ -5226,8 +5299,10 @@ void DoTVShowInSearchOfTrainers(void)
         break;
     }
     ShowFieldMessage(sTVInSearchOfTrainersTextGroup[state]);
+#endif //FREE_TV_SHOWS == FALSE
 }
 
+#if FREE_TV_SHOWS == FALSE
 static void DoTVShowPokemonAngler(void)
 {
     TVShow *show;
@@ -6574,8 +6649,11 @@ static void TVShowDone(void)
     sTVShowState = 0;
     gSaveBlock1Ptr->tvShows[gSpecialVar_0x8004].common.active = FALSE;
 }
+#endif //FREE_TV_SHOWS == FALSE
 
 void ResetTVShowState(void)
 {
+#if FREE_TV_SHOWS == FALSE
     sTVShowState = 0;
+#endif //FREE_TV_SHOWS == FALSE
 }

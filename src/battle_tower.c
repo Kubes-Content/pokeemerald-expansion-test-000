@@ -1711,10 +1711,12 @@ static void AwardBattleTowerRibbons(void)
                 ribbons[i] = prevBest;
             }
         }
+#if FREE_TV_SHOWS == FALSE
         if (ribbons[0].count > NUM_CUTIES_RIBBONS)
         {
             TryPutSpotTheCutiesOnAir(GetSavedPlayerPartyMon(ribbons[0].partyIndex), ribbonType);
         }
+#endif
     }
 }
 
@@ -1722,6 +1724,7 @@ static void AwardBattleTowerRibbons(void)
 
 void TryHideBattleTowerReporter(void)
 {
+#if FREE_TV_SHOWS == FALSE
     if (gSaveBlock2Ptr->frontier.challengeStatus == CHALLENGE_STATUS_SAVING)
         HideBattleTowerReporter();
     if (FlagGet(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE) == TRUE)
@@ -1729,6 +1732,7 @@ void TryHideBattleTowerReporter(void)
         HideBattleTowerReporter();
         FlagClear(FLAG_CANCEL_BATTLE_ROOM_CHALLENGE);
     }
+#endif
 }
 
 bool32 RubyBattleTowerRecordToEmerald(struct RSBattleTowerRecord *src, struct EmeraldBattleTowerRecord *dst)

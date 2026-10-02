@@ -5242,7 +5242,9 @@ static void HandleEndTurn_FinishBattle(void)
                     }
                 }
             }
+#if FREE_TV_SHOWS == FALSE
             TryPutPokemonTodayOnAir();
+#endif
         }
 
         if (gIsFishingEncounter && IsMonShiny(&gParties[B_TRAINER_OPPONENT_A][0]))
@@ -5269,6 +5271,7 @@ static void HandleEndTurn_FinishBattle(void)
             }
         }
 
+#if FREE_TV_SHOWS == FALSE
         if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
                                   | BATTLE_TYPE_RECORDED_LINK
                                   | BATTLE_TYPE_TRAINER
@@ -5281,6 +5284,7 @@ static void HandleEndTurn_FinishBattle(void)
         {
             TryPutBreakingNewsOnAir();
         }
+#endif
 
         BeginFastPaletteFade(3);
         FadeOutMapMusic(5);

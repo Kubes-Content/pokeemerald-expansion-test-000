@@ -68,7 +68,9 @@ void EnterSafariMode(void)
 
 void ExitSafariMode(void)
 {
+#if FREE_TV_SHOWS == FALSE
     TryPutSafariFanClubOnAir(sSafariZoneCaughtMons, sSafariZonePkblkUses);
+#endif
     ResetSafariZoneFlag();
     ClearAllPokeblockFeeders();
     gNumSafariBalls = 0;

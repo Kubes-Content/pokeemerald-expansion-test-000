@@ -1,6 +1,7 @@
 #ifndef GUARD_TV_H
 #define GUARD_TV_H
 
+#if FREE_TV_SHOWS == FALSE
 #include "constants/species.h"
 
 void ClearTVShowData(void);
@@ -12,17 +13,23 @@ void DoTVShowInSearchOfTrainers(void);
 void TryPutTreasureInvestigatorsOnAir(void);
 void TryPutLotteryWinnerReportOnAir(void);
 void TryPutTrainerFanClubOnAir(void);
+#endif
 void IncrementDailyPlantedBerries(void);
 void IncrementDailyPickedBerries(void);
 void IncrementDailyBattlePoints(u16 delta);
+#if FREE_TV_SHOWS == FALSE
 void HideBattleTowerReporter(void);
 void ReceiveTvShowsData(void *src, u32 size, u8 playersLinkId);
 void TryPutSpotTheCutiesOnAir(struct Pokemon *pokemon, u8 ribbonMonDataIdx);
+#endif
 u32 GetPlayerIDAsU32(void);
+#if FREE_TV_SHOWS == FALSE
 bool8 IsPokeNewsActive(u8 newsKind);
 void SanitizeTVShowLocationsForRuby(TVShow *shows);
+#endif
 size_t CountDigits(int value);
 u8 GetRibbonCount(struct Pokemon *pokemon);
+#if FREE_TV_SHOWS == FALSE
 void AlertTVThatPlayerPlayedSlotMachine(u16 nCoinsSpent);
 void AlertTVThatPlayerPlayedRoulette(u16 nCoinsSpent);
 void TryPutFindThatGamerOnAir(u16 nCoinsPaidOut);
@@ -32,10 +39,12 @@ void TryPutTrendWatcherOnAir(const u16 *words);
 void ReceivePokeNewsData(void *src, u32 size, u8 playersLinkId);
 void DeactivateAllNormalTVShows(void);
 void RecordFishingAttemptForTV(bool8 caughtFish);
+#endif
 void IncrementDailySlotsUses(void);
 void IncrementDailyRouletteUses(void);
 void IncrementDailyWildBattles(void);
 void IncrementDailyBerryBlender(void);
+#if FREE_TV_SHOWS == FALSE
 void SanitizeTVShowsForRuby(TVShow *shows);
 void TryPutSafariFanClubOnAir(u8 monsCaught, u8 pokeblocksUsed);
 bool8 Put3CheersForPokeblocksOnTheAir(const u8 *partnersName, enum Flavor flavor, u8 color, u8 sheen, u8 language);
@@ -48,7 +57,9 @@ void BravoTrainerPokemonProfile_BeforeInterview1(enum Move move);
 void InterviewBefore(void);
 void InterviewAfter(void);
 void UpdateTVScreensOnMap(int width, int height);
+#endif
 void ConvertIntToDecimalString(u8 varIdx, int value);
+#if FREE_TV_SHOWS == FALSE
 void TryPutSmartShopperOnAir(void);
 bool8 ShouldAirFrontierTVShow(void);
 void BravoTrainerPokemonProfile_BeforeInterview2(u8 contestStandingPlace);
@@ -61,5 +72,7 @@ void ResetGabbyAndTy(void);
 u8 CheckForPlayersHouseNews(void);
 bool8 IsGabbyAndTyShowOnTheAir(void);
 void TryPutTrainerFanClubOnAir(void);
+
+#endif
 
 #endif //GUARD_TV_H

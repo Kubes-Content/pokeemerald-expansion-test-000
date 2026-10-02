@@ -453,7 +453,9 @@ static void Task_HandleShopMenuQuit(u8 taskId)
 {
     ClearStdWindowAndFrameToTransparent(sMartInfo.windowId, 2); // Incorrect use, making it not copy it to vram.
     RemoveWindow(sMartInfo.windowId);
+#if FREE_TV_SHOWS == FALSE
     TryPutSmartShopperOnAir();
+#endif
     UnlockPlayerFieldControls();
     DestroyTask(taskId);
 
@@ -644,7 +646,11 @@ static void BuyMenuPrintPriceInList(u8 windowId, u32 itemId, u8 y)
         {
             ConvertIntToDecimalStringN(
                 gStringVar1,
+#if FREE_TV_SHOWS == FALSE
                 GetItemPrice(itemId) >> IsPokeNewsActive(POKENEWS_SLATEPORT),
+#else
+                GetItemPrice(itemId),
+#endif
                 STR_CONV_MODE_LEFT_ALIGN,
                 6);
         }
@@ -1017,7 +1023,11 @@ static void Task_BuyMenu(u8 taskId)
             BuyMenuPrintCursor(tListTaskId, COLORID_GRAY_CURSOR);
 
             if (sMartInfo.martType == MART_TYPE_NORMAL)
+#if FREE_TV_SHOWS == FALSE
                 sShopData->totalCost = (GetItemPrice(itemId) >> IsPokeNewsActive(POKENEWS_SLATEPORT));
+#else
+                sShopData->totalCost = (GetItemPrice(itemId));
+#endif
             else
                 sShopData->totalCost = gDecorations[itemId].price;
 
@@ -1037,7 +1047,11 @@ static void Task_BuyMenu(u8 taskId)
                         ConvertIntToDecimalStringN(gStringVar2, sShopData->totalCost, STR_CONV_MODE_LEFT_ALIGN, 6);
                         StringExpandPlaceholders(gStringVar4, gText_YouWantedVar1ThatllBeVar2);
                         tItemCount = 1;
+#if FREE_TV_SHOWS == FALSE
                         sShopData->totalCost = (GetItemPrice(tItemId) >> IsPokeNewsActive(POKENEWS_SLATEPORT)) * tItemCount;
+#else
+                        sShopData->totalCost = GetItemPrice(tItemId) * tItemCount;
+#endif
                         BuyMenuDisplayMessage(taskId, gStringVar4, BuyMenuConfirmPurchase);
                     }
                     else if (GetItemPocket(itemId) == POCKET_TM_HM)
@@ -1104,7 +1118,11 @@ static void Task_BuyHowManyDialogueHandleInput(u8 taskId)
 
     if (AdjustQuantityAccordingToDPadInput(&tItemCount, sShopData->maxQuantity) == TRUE)
     {
+#if FREE_TV_SHOWS == FALSE
         sShopData->totalCost = (GetItemPrice(tItemId) >> IsPokeNewsActive(POKENEWS_SLATEPORT)) * tItemCount;
+#else
+        sShopData->totalCost = GetItemPrice(tItemId) * tItemCount;
+#endif
         BuyMenuPrintItemQuantityAndPrice(taskId);
     }
     else

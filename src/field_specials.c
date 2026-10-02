@@ -1428,8 +1428,10 @@ u16 GetSlotMachineId(void)
     };
 
     u32 rnd = gSaveBlock1Ptr->dewfordTrends[0].trendiness + gSaveBlock1Ptr->dewfordTrends[0].rand + sSlotMachineRandomSeeds[gSpecialVar_0x8004];
+#if FREE_TV_SHOWS == FALSE
     if (IsPokeNewsActive(POKENEWS_GAME_CORNER))
         return sSlotMachineServiceDayIds[rnd % SLOT_MACHINE_COUNT];
+#endif
 
     return sSlotMachineIds[rnd % SLOT_MACHINE_COUNT];
 }
@@ -1492,8 +1494,10 @@ void GiveLeadMonEffortRibbon(void)
     ribbonSet = TRUE;
     leadMon = &gParties[B_TRAINER_PLAYER][GetLeadMonIndex()];
     SetMonData(leadMon, MON_DATA_EFFORT_RIBBON, &ribbonSet);
+#if FREE_TV_SHOWS == FALSE
     if (GetRibbonCount(leadMon) > NUM_CUTIES_RIBBONS)
         TryPutSpotTheCutiesOnAir(leadMon, MON_DATA_EFFORT_RIBBON);
+#endif
 }
 
 bool8 Special_AreLeadMonEVsMaxedOut(void)

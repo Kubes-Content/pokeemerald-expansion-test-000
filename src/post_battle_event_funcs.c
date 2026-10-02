@@ -76,10 +76,12 @@ int GameClear(void)
             }
         }
 
+#if FREE_TV_SHOWS == FALSE
         if (ribbonCounts[0].count > NUM_CUTIES_RIBBONS)
         {
             TryPutSpotTheCutiesOnAir(&gParties[B_TRAINER_PLAYER][ribbonCounts[0].partyIndex], MON_DATA_CHAMPION_RIBBON);
         }
+#endif
     }
 
     SetMainCallback2(CB2_DoHallOfFameScreen);
