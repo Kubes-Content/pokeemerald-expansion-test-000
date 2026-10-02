@@ -499,11 +499,15 @@ static u8 PickWildMonNature(enum Species species)
             for (i = 0; i < NUM_NATURES; i++)
                 natures[i] = i;
             Shuffle(natures, NUM_NATURES, sizeof(natures[0]));
+#if FREE_POKEBLOCKS == FALSE
             for (i = 0; i < NUM_NATURES; i++)
             {
                 if (PokeblockGetGain(natures[i], safariPokeblock) > 0)
                     return natures[i];
             }
+#else
+            return natures[0];
+#endif
         }
     }
 

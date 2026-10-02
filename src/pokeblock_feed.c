@@ -1,4 +1,5 @@
 #include "global.h"
+#if FREE_POKEBLOCKS == FALSE
 #include "malloc.h"
 #include "battle.h"
 #include "bg.h"
@@ -1121,3 +1122,4 @@ static void CalculateMonAnimMovement(void)
         pokeblockFeed->animData[ANIMDATA_TIME]--;
     }
 }
+#endif

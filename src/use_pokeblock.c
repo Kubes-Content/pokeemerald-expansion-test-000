@@ -1,4 +1,5 @@
 #include "global.h"
+#if FREE_POKEBLOCKS == FALSE
 #include "main.h"
 #include "dma3.h"
 #include "pokeblock.h"
@@ -1671,3 +1672,4 @@ static void SpriteCB_Condition(struct Sprite *sprite)
         sprite->callback = SpriteCallbackDummy;
     }
 }
+#endif

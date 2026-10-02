@@ -1373,7 +1373,11 @@ void RemoveCameraObject(void)
 
 u8 GetPokeblockNameByMonNature(void)
 {
+#if FREE_POKEBLOCKS == FALSE
     return CopyMonFavoritePokeblockName(GetNature(&gParties[B_TRAINER_PLAYER][GetLeadMonIndex()]), gStringVar1);
+#else
+    return 0;
+#endif
 }
 
 void GetSecretBaseNearbyMapName(void)

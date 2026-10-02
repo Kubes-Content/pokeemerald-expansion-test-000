@@ -145,7 +145,9 @@ void GetPokeblockFeederInFront(void)
          && sPokeblockFeeders[i].y == y)
         {
             gSpecialVar_Result = i;
+#if FREE_POKEBLOCKS == FALSE
             StringCopy(gStringVar1, gPokeblockNames[sPokeblockFeeders[i].pokeblock.color]);
+#endif
             return;
         }
     }
@@ -218,7 +220,9 @@ void SafariZoneActivatePokeblockFeeder(u8 pkblId)
             // Initialize Pokeblock feeder
             GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
             sPokeblockFeeders[i].mapNum = gSaveBlock1Ptr->location.mapNum;
+#if FREE_POKEBLOCKS == FALSE
             sPokeblockFeeders[i].pokeblock = gSaveBlock1Ptr->pokeblocks[pkblId];
+#endif
             sPokeblockFeeders[i].stepCounter = 100;
             sPokeblockFeeders[i].x = x;
             sPokeblockFeeders[i].y = y;
