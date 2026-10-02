@@ -189,7 +189,9 @@ void NewGameInitData(void)
     InitEventData();
     ClearTVShowData();
     ResetGabbyAndTy();
+#if FREE_SECRET_BASES == FALSE
     ClearSecretBases();
+#endif
     ClearBerryTrees();
     SetMoney(&gSaveBlock1Ptr->money, 3000);
     SetCoins(0);

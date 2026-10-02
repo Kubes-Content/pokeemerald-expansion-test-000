@@ -472,8 +472,10 @@ static void Task_ComputerScreenCloseEffect(u8 taskId)
 
 static void SetCurrentSecretBase(void)
 {
+#if FREE_SECRET_BASES == FALSE
     SetCurSecretBaseIdFromPosition(&gPlayerFacingPosition, gMapHeader.events);
     TrySetCurSecretBaseIndex();
+#endif
 }
 
 static void AdjustSecretPowerSpritePixelOffsets(void)
@@ -612,8 +614,10 @@ static void SpriteCB_CaveEntranceOpen(struct Sprite *sprite)
 {
     if (sprite->data[0] < 40)
     {
+#if FREE_SECRET_BASES == FALSE
         if (++sprite->data[0] == 20)
             ToggleSecretBaseEntranceMetatile();
+#endif
     }
     else
     {
@@ -667,8 +671,10 @@ bool8 FldEff_SecretPowerTree(void)
                  gSprites[gPlayerAvatar.spriteId].oam.y + gFieldEffectArguments[6],
                  148);
 
+#if FREE_SECRET_BASES == FALSE
     if (gFieldEffectArguments[7] == 1 || gFieldEffectArguments[7] == 3)
         ToggleSecretBaseEntranceMetatile();
+#endif
 
     return FALSE;
 }
@@ -688,8 +694,10 @@ static void SpriteCB_TreeEntranceOpen(struct Sprite *sprite)
 
     if (sprite->data[0] >= 40)
     {
+#if FREE_SECRET_BASES == FALSE
         if (gFieldEffectArguments[7] == 0 || gFieldEffectArguments[7] == 2)
             ToggleSecretBaseEntranceMetatile();
+#endif
 
         sprite->data[0] = 0;
         sprite->callback = SpriteCB_TreeEntranceEnd;
@@ -750,8 +758,10 @@ static void SpriteCB_ShrubEntranceOpen(struct Sprite *sprite)
     {
         sprite->data[0]++;
 
+#if FREE_SECRET_BASES == FALSE
         if (sprite->data[0] == 20)
             ToggleSecretBaseEntranceMetatile();
+#endif
     }
     else
     {
@@ -1166,8 +1176,10 @@ void InteractWithShieldOrTVDecoration(void)
 // As opposed to a small one (single metatile) like the balloons
 bool8 IsLargeBreakableDecoration(u16 metatileId, bool8 checkBase)
 {
+#if FREE_SECRET_BASES == FALSE
     if (!CurMapIsSecretBase())
         return FALSE;
+#endif
 
     if (!checkBase)
     {

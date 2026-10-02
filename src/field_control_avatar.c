@@ -466,8 +466,10 @@ static const u8 *GetInteractedBackgroundEventScript(struct MapPosition *position
         if (direction == DIR_NORTH)
         {
             gSpecialVar_0x8004 = bgEvent->bgUnion.secretBaseId;
+#if FREE_SECRET_BASES == FALSE
             if (TrySetCurSecretBase())
                 return SecretBase_EventScript_CheckEntrance;
+#endif
         }
         return NULL;
     }
@@ -614,23 +616,31 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
             return SecretBase_EventScript_ShieldOrToyTV;
         if (MetatileBehavior_IsSecretBaseDecorationBase(metatileBehavior) == TRUE)
         {
+#if FREE_SECRET_BASES == FALSE
             CheckInteractedWithFriendsFurnitureBottom();
+#endif
             return NULL;
         }
         if (MetatileBehavior_HoldsLargeDecoration(metatileBehavior) == TRUE)
         {
+#if FREE_SECRET_BASES == FALSE
             CheckInteractedWithFriendsFurnitureMiddle();
+#endif
             return NULL;
         }
         if (MetatileBehavior_HoldsSmallDecoration(metatileBehavior) == TRUE)
         {
+#if FREE_SECRET_BASES == FALSE
             CheckInteractedWithFriendsFurnitureTop();
+#endif
             return NULL;
         }
     }
     else if (MetatileBehavior_IsSecretBasePoster(metatileBehavior) == TRUE)
     {
+#if FREE_SECRET_BASES == FALSE
         CheckInteractedWithFriendsPosterDecor();
+#endif
         return NULL;
     }
 
@@ -1107,11 +1117,13 @@ static bool8 TryDoorWarp(struct MapPosition *position, u16 metatileBehavior, enu
 
     if (direction == DIR_NORTH)
     {
+#if FREE_SECRET_BASES == FALSE
         if (MetatileBehavior_IsOpenSecretBaseDoor(metatileBehavior) == TRUE)
         {
             WarpIntoSecretBase(position, gMapHeader.events);
             return TRUE;
         }
+#endif
 
         if (MetatileBehavior_IsWarpDoor(metatileBehavior) == TRUE)
         {

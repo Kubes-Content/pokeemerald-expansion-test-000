@@ -1870,7 +1870,9 @@ u8 *GetMapName(u8 *dest, mapsec_u16_t regionMapId, u16 padLength)
 
     if (regionMapId == MAPSEC_SECRET_BASE)
     {
+#if FREE_SECRET_BASES == FALSE
         str = GetSecretBaseMapName(dest);
+#endif
     }
     else if (regionMapId < MAPSEC_NONE)
     {
