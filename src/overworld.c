@@ -945,7 +945,9 @@ static void LoadMapFromWarp(bool32 a1)
     isOutdoors = IsMapTypeOutdoors(gMapHeader.mapType);
     isIndoors = IsMapTypeIndoors(gMapHeader.mapType);
 
+#if FREE_SECRET_BASES == FALSE
     CheckLeftFriendsSecretBase();
+#endif
     TrySetMapSaveWarpStatus();
     ClearTempFieldEventData();
     ResetDexNavSearch();
@@ -982,7 +984,9 @@ static void LoadMapFromWarp(bool32 a1)
     if (a1 != TRUE && isIndoors)
     {
         UpdateTVScreensOnMap(gBackupMapLayout.width, gBackupMapLayout.height);
+#if FREE_SECRET_BASES == FALSE
         InitSecretBaseAppearance(TRUE);
+#endif
     }
     SetMinimumOWESpawnTimer();
 }

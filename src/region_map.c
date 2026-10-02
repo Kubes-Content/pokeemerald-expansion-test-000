@@ -1868,11 +1868,15 @@ u8 *GetMapName(u8 *dest, mapsec_u16_t regionMapId, u16 padLength)
     u8 *str;
     u16 i;
 
+#if FREE_SECRET_BASES == FALSE
     if (regionMapId == MAPSEC_SECRET_BASE)
     {
         str = GetSecretBaseMapName(dest);
     }
     else if (regionMapId < MAPSEC_NONE)
+#else
+    if (regionMapId < MAPSEC_NONE)
+#endif
     {
         str = StringCopy(dest, gRegionMapEntries[regionMapId].name);
     }

@@ -15,7 +15,8 @@
 #define FREE_LINK_BATTLE_RECORDS            FALSE   // Frees up link battle record data (88 bytes).
 #define FREE_MYSTERY_GIFT                   FALSE   // Frees up Mystery Gift data (876 bytes).
 #define FREE_POKEBLOCKS                     FALSE   // Frees up PokéBlock data (280 bytes).
-                                            // SaveBlock1 total: 2796 bytes
+#define FREE_SECRET_BASES                   FALSE   // Frees up secret base data (3200 bytes).
+                                            // SaveBlock1 total: 5996 bytes
 // SaveBlock2 configs
 #define FREE_BATTLE_TOWER_E_READER          FALSE   // Frees up Battle Tower E-Reader data (188 bytes).
 #define FREE_POKEMON_JUMP                   FALSE   // Frees up Pokémon Jump data (16 bytes).
@@ -23,6 +24,6 @@
 #define FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK2    FALSE   // Free up unused Pokédex seen flags (108 bytes).
                                             // SaveBlock2 total: 1344 bytes
 
-                                            // Grand Total: 4070
+                                            // Grand Total: 7270
 
 #endif // GUARD_CONFIG_SAVE_H

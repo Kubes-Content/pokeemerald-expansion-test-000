@@ -85,7 +85,9 @@ union PlayerRecord
 };
 
 static bool8 sReadyToReceive;
+#if FREE_SECRET_BASES == FALSE
 static struct SecretBase *sSecretBasesSave;
+#endif
 static TVShow *sTvShowsSave;
 static PokeNews *sPokeNewsSave;
 static OldMan *sOldManSave;
@@ -173,7 +175,9 @@ void RecordMixingPlayerSpotTriggered(void)
 // these variables were const in R/S, but had to become changeable because of saveblocks changing RAM position
 static void SetSrcLookupPointers(void)
 {
+#if FREE_SECRET_BASES == FALSE
     sSecretBasesSave = gSaveBlock1Ptr->secretBases;
+#endif
     sTvShowsSave = gSaveBlock1Ptr->tvShows;
     sPokeNewsSave = gSaveBlock1Ptr->pokeNews;
     sOldManSave = &gSaveBlock1Ptr->oldMan;
@@ -187,7 +191,9 @@ static void SetSrcLookupPointers(void)
 
 static void PrepareUnknownExchangePacket(struct PlayerRecordRS *dest)
 {
+#if FREE_SECRET_BASES == FALSE
     memcpy(dest->secretBases, sSecretBasesSave, sizeof(dest->secretBases));
+#endif
     memcpy(dest->tvShows, sTvShowsSave, sizeof(dest->tvShows));
     SanitizeTVShowLocationsForRuby(dest->tvShows);
     memcpy(dest->pokeNews, sPokeNewsSave, sizeof(dest->pokeNews));
@@ -202,8 +208,12 @@ static void PrepareUnknownExchangePacket(struct PlayerRecordRS *dest)
 
 static void PrepareExchangePacketForRubySapphire(struct PlayerRecordRS *dest)
 {
+#if FREE_SECRET_BASES == FALSE
     memcpy(dest->secretBases, sSecretBasesSave, sizeof(dest->secretBases));
+#endif
+#if FREE_SECRET_BASES == FALSE
     ClearJapaneseSecretBases(dest->secretBases);
+#endif
     memcpy(dest->tvShows, sTvShowsSave, sizeof(dest->tvShows));
     SanitizeTVShowsForRuby(dest->tvShows);
     memcpy(dest->pokeNews, sPokeNewsSave, sizeof(dest->pokeNews));
@@ -221,7 +231,9 @@ static void PrepareExchangePacketForRubySapphire(struct PlayerRecordRS *dest)
 
 static void PrepareExchangePacket(void)
 {
+#if FREE_SECRET_BASES == FALSE
     SetPlayerSecretBaseParty();
+#endif
     DeactivateAllNormalTVShows();
     SetSrcLookupPointers();
 
@@ -234,7 +246,9 @@ static void PrepareExchangePacket(void)
     }
     else
     {
+#if FREE_SECRET_BASES == FALSE
         memcpy(sSentRecord->emerald.secretBases, sSecretBasesSave, sizeof(sSentRecord->emerald.secretBases));
+#endif
         memcpy(sSentRecord->emerald.tvShows, sTvShowsSave, sizeof(sSentRecord->emerald.tvShows));
         memcpy(sSentRecord->emerald.pokeNews, sPokeNewsSave, sizeof(sSentRecord->emerald.pokeNews));
         memcpy(&sSentRecord->emerald.oldMan, sOldManSave, sizeof(sSentRecord->emerald.oldMan));
@@ -258,7 +272,9 @@ static void ReceiveExchangePacket(u32 multiplayerId)
     {
         // Ruby/Sapphire
         CalculateDaycareMailRandSum((void *)sReceivedRecords->ruby.tvShows);
+#if FREE_SECRET_BASES == FALSE
         ReceiveSecretBasesData(sReceivedRecords->ruby.secretBases, sizeof(sReceivedRecords->ruby), multiplayerId);
+#endif
         ReceiveDaycareMailData(&sReceivedRecords->ruby.daycareMail, sizeof(sReceivedRecords->ruby), multiplayerId, sReceivedRecords->ruby.tvShows);
         ReceiveBattleTowerData(&sReceivedRecords->ruby.battleTowerRecord, sizeof(sReceivedRecords->ruby), multiplayerId);
         ReceiveTvShowsData(sReceivedRecords->ruby.tvShows, sizeof(sReceivedRecords->ruby), multiplayerId);
@@ -271,7 +287,9 @@ static void ReceiveExchangePacket(u32 multiplayerId)
     {
         // Emerald
         CalculateDaycareMailRandSum((void *)sReceivedRecords->emerald.tvShows);
+#if FREE_SECRET_BASES == FALSE
         ReceiveSecretBasesData(sReceivedRecords->emerald.secretBases, sizeof(sReceivedRecords->emerald), multiplayerId);
+#endif
         ReceiveTvShowsData(sReceivedRecords->emerald.tvShows, sizeof(sReceivedRecords->emerald), multiplayerId);
         ReceivePokeNewsData(sReceivedRecords->emerald.pokeNews, sizeof(sReceivedRecords->emerald), multiplayerId);
         ReceiveOldManData(&sReceivedRecords->emerald.oldMan, sizeof(sReceivedRecords->emerald), multiplayerId);

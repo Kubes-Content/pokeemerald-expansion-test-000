@@ -1812,9 +1812,11 @@ const u8 *GetTrainerALoseText(void)
 {
     const u8 *string;
 
+#if FREE_SECRET_BASES == FALSE
     if (TRAINER_BATTLE_PARAM.opponentA == TRAINER_SECRET_BASE)
         string = GetSecretBaseTrainerLoseText();
     else
+#endif
         string = TRAINER_BATTLE_PARAM.defeatTextA;
 
     StringExpandPlaceholders(gStringVar4, ReturnEmptyStringIfNull(string));
