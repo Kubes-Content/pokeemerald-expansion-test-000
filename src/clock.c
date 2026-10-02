@@ -50,7 +50,9 @@ void DoDailyEvents(u32 daysSince)
     UpdateDailySeed();
     UpdateMassOutbreakDaysLeft(daysSince);
     UpdateDewfordTrendPerDay(daysSince);
+#if FREE_TV_SHOWS == FALSE
     UpdateTVShowsPerDay(daysSince);
+#endif
     UpdateWeatherPerDay(daysSince);
     UpdatePartyPokerusTime(daysSince);
     UpdateBirchState(daysSince);

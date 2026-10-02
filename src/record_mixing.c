@@ -178,7 +178,9 @@ static void SetSrcLookupPointers(void)
 #if FREE_SECRET_BASES == FALSE
     sSecretBasesSave = gSaveBlock1Ptr->secretBases;
 #endif
+#if FREE_TV_SHOWS == FALSE
     sTvShowsSave = gSaveBlock1Ptr->tvShows;
+#endif
     sPokeNewsSave = gSaveBlock1Ptr->pokeNews;
     sOldManSave = &gSaveBlock1Ptr->oldMan;
     sDewfordTrendsSave = gSaveBlock1Ptr->dewfordTrends;
@@ -195,7 +197,9 @@ static void PrepareUnknownExchangePacket(struct PlayerRecordRS *dest)
     memcpy(dest->secretBases, sSecretBasesSave, sizeof(dest->secretBases));
 #endif
     memcpy(dest->tvShows, sTvShowsSave, sizeof(dest->tvShows));
+#if FREE_TV_SHOWS == FALSE
     SanitizeTVShowLocationsForRuby(dest->tvShows);
+#endif
     memcpy(dest->pokeNews, sPokeNewsSave, sizeof(dest->pokeNews));
     memcpy(&dest->oldMan, sOldManSave, sizeof(dest->oldMan));
     memcpy(dest->dewfordTrends, sDewfordTrendsSave, sizeof(dest->dewfordTrends));
@@ -215,7 +219,9 @@ static void PrepareExchangePacketForRubySapphire(struct PlayerRecordRS *dest)
     ClearJapaneseSecretBases(dest->secretBases);
 #endif
     memcpy(dest->tvShows, sTvShowsSave, sizeof(dest->tvShows));
+#if FREE_TV_SHOWS == FALSE
     SanitizeTVShowsForRuby(dest->tvShows);
+#endif
     memcpy(dest->pokeNews, sPokeNewsSave, sizeof(dest->pokeNews));
     memcpy(&dest->oldMan, sOldManSave, sizeof(dest->oldMan));
     SanitizeMauvilleOldManForRuby(&dest->oldMan);
@@ -234,7 +240,9 @@ static void PrepareExchangePacket(void)
 #if FREE_SECRET_BASES == FALSE
     SetPlayerSecretBaseParty();
 #endif
+#if FREE_TV_SHOWS == FALSE
     DeactivateAllNormalTVShows();
+#endif
     SetSrcLookupPointers();
 
     if (Link_AnyPartnersPlayingRubyOrSapphire())
@@ -277,8 +285,10 @@ static void ReceiveExchangePacket(u32 multiplayerId)
 #endif
         ReceiveDaycareMailData(&sReceivedRecords->ruby.daycareMail, sizeof(sReceivedRecords->ruby), multiplayerId, sReceivedRecords->ruby.tvShows);
         ReceiveBattleTowerData(&sReceivedRecords->ruby.battleTowerRecord, sizeof(sReceivedRecords->ruby), multiplayerId);
+#if FREE_TV_SHOWS == FALSE
         ReceiveTvShowsData(sReceivedRecords->ruby.tvShows, sizeof(sReceivedRecords->ruby), multiplayerId);
         ReceivePokeNewsData(sReceivedRecords->ruby.pokeNews, sizeof(sReceivedRecords->ruby), multiplayerId);
+#endif
         ReceiveOldManData(&sReceivedRecords->ruby.oldMan, sizeof(sReceivedRecords->ruby), multiplayerId);
         ReceiveDewfordTrendData(sReceivedRecords->ruby.dewfordTrends, sizeof(sReceivedRecords->ruby), multiplayerId);
         ReceiveGiftItem(&sReceivedRecords->ruby.giftItem, multiplayerId);
@@ -290,8 +300,10 @@ static void ReceiveExchangePacket(u32 multiplayerId)
 #if FREE_SECRET_BASES == FALSE
         ReceiveSecretBasesData(sReceivedRecords->emerald.secretBases, sizeof(sReceivedRecords->emerald), multiplayerId);
 #endif
+#if FREE_TV_SHOWS == FALSE
         ReceiveTvShowsData(sReceivedRecords->emerald.tvShows, sizeof(sReceivedRecords->emerald), multiplayerId);
         ReceivePokeNewsData(sReceivedRecords->emerald.pokeNews, sizeof(sReceivedRecords->emerald), multiplayerId);
+#endif
         ReceiveOldManData(&sReceivedRecords->emerald.oldMan, sizeof(sReceivedRecords->emerald), multiplayerId);
         ReceiveDewfordTrendData(sReceivedRecords->emerald.dewfordTrends, sizeof(sReceivedRecords->emerald), multiplayerId);
         ReceiveDaycareMailData(&sReceivedRecords->emerald.daycareMail, sizeof(sReceivedRecords->emerald), multiplayerId, sReceivedRecords->emerald.tvShows);

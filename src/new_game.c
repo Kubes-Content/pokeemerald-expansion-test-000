@@ -187,8 +187,10 @@ void NewGameInitData(void)
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
     InitEventData();
+#if FREE_TV_SHOWS == FALSE
     ClearTVShowData();
     ResetGabbyAndTy();
+#endif
 #if FREE_SECRET_BASES == FALSE
     ClearSecretBases();
 #endif

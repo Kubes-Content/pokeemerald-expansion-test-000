@@ -2569,7 +2569,11 @@ bool8 ScrCmd_getpokenewsactive(struct ScriptContext *ctx)
 
     Script_RequestEffects(SCREFF_V1);
 
+#if FREE_TV_SHOWS == FALSE
     gSpecialVar_Result = IsPokeNewsActive(newsKind);
+#else
+    gSpecialVar_Result = FALSE;
+#endif
     return FALSE;
 }
 

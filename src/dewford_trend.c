@@ -190,8 +190,10 @@ bool8 TrySetTrendyPhrase(u16 *phrase)
                 }
                 gSaveBlock1Ptr->dewfordTrends[i] = trend;
 
+#if FREE_TV_SHOWS == FALSE
                 if (i == SAVED_TRENDS_COUNT - 1)
                     TryPutTrendWatcherOnAir(phrase);
+#endif
 
                 // If i is 0, the given phrase is the new current phrase
                 return (i == 0);
@@ -200,7 +202,9 @@ bool8 TrySetTrendyPhrase(u16 *phrase)
 
         // New trend is less "trendy" than all other saved trends, put it in last
         gSaveBlock1Ptr->dewfordTrends[SAVED_TRENDS_COUNT - 1] = trend;
+#if FREE_TV_SHOWS == FALSE
         TryPutTrendWatcherOnAir(phrase);
+#endif
     }
     return FALSE;
 }

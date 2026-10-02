@@ -1258,7 +1258,9 @@ static void CB2_LoadRoulette(void)
         taskId = sRoulette->playTaskId = CreateTask(Task_StartPlaying, 0);
         gTasks[taskId].tBallNum = BALLS_PER_ROUND;
         gTasks[taskId].tCoins = GetCoins();
+#if FREE_TV_SHOWS == FALSE
         AlertTVThatPlayerPlayedRoulette(GetCoins());
+#endif
         sRoulette->spinTaskId = CreateTask(Task_SpinWheel, 1);
         SetMainCallback2(CB2_Roulette);
         return;
@@ -1981,7 +1983,9 @@ static void ExitRoulette(u8 taskId)
         gSpecialVar_0x8004 = TRUE;
     else
         gSpecialVar_0x8004 = FALSE;
+#if FREE_TV_SHOWS == FALSE
     TryPutFindThatGamerOnAir(GetCoins());
+#endif
     BeginHardwarePaletteFade(0xFF, 0, 0, 16, 0);
     gTasks[taskId].func = Task_ExitRoulette;
 }

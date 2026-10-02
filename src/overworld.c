@@ -983,7 +983,9 @@ static void LoadMapFromWarp(bool32 a1)
 
     if (a1 != TRUE && isIndoors)
     {
+#if FREE_TV_SHOWS == FALSE
         UpdateTVScreensOnMap(gBackupMapLayout.width, gBackupMapLayout.height);
+#endif
 #if FREE_SECRET_BASES == FALSE
         InitSecretBaseAppearance(TRUE);
 #endif
@@ -2156,12 +2158,16 @@ void CB2_ContinueSavedGame(void)
         ClearContinueGameWarpStatus();
         SetWarpDestinationToContinueGameWarp();
         WarpIntoMap();
+#if FREE_TV_SHOWS == FALSE
         TryPutTodaysRivalTrainerOnAir();
+#endif
         SetMainCallback2(CB2_LoadMap);
     }
     else
     {
+#if FREE_TV_SHOWS == FALSE
         TryPutTodaysRivalTrainerOnAir();
+#endif
         gFieldCallback = FieldCB_FadeTryShowMapPopup;
         SetMainCallback1(CB1_Overworld);
         CB2_ReturnToField();

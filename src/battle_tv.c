@@ -778,12 +778,16 @@ void TryPutLinkBattleTvShowOnAir(void)
          || (playerBestMonId >= MULTI_PARTY_SIZE && GetLinkTrainerFlankId(gBattleScripting.multiplayerId)))
         {
             j = (opponentBestMonId < MULTI_PARTY_SIZE) ? FALSE : TRUE;
+#if FREE_TV_SHOWS == FALSE
             PutBattleUpdateOnTheAir(GetOpposingLinkMultiBattlerId(j, gBattleScripting.multiplayerId), move, playerBestSpecies, opponentBestSpecies);
+#endif
         }
     }
     else
     {
+#if FREE_TV_SHOWS == FALSE
         PutBattleUpdateOnTheAir(gBattleScripting.multiplayerId ^ 1, move, playerBestSpecies, opponentBestSpecies);
+#endif
     }
 }
 
@@ -1346,7 +1350,9 @@ static void TrySetBattleSeminarShow(void)
 
             opponentSpecies = GetMonData(GetBattlerMon(gBattlerTarget),   MON_DATA_SPECIES);
             playerSpecies   = GetMonData(GetBattlerMon(gBattlerAttacker), MON_DATA_SPECIES);
+#if FREE_TV_SHOWS == FALSE
             TryPutBattleSeminarOnAir(opponentSpecies, playerSpecies, gMoveSelectionCursor[gBattlerAttacker], gBattleMons[gBattlerAttacker].moves, gBattleMons[gBattlerAttacker].moves[bestMoveId]);
+#endif
             break;
         }
     }

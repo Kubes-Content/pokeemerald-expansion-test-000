@@ -3811,12 +3811,14 @@ static bool32 TryAddContestLinkTvShow(struct Pokeblock *pokeblock, struct TvBlen
             // Player came first, try to put on air
             StringCopy(tvBlender->name, gLinkPlayers[sBerryBlender->playerPlaces[sBerryBlender->numPlayers - 1]].name);
             tvBlender->pokeblockFlavor = GetPokeblocksFlavor(pokeblock);
+#if FREE_TV_SHOWS == FALSE
             if (Put3CheersForPokeblocksOnTheAir(tvBlender->name, tvBlender->pokeblockFlavor,
                                             tvBlender->pokeblockColor, tvBlender->pokeblockSheen,
                                             gLinkPlayers[sBerryBlender->playerPlaces[sBerryBlender->numPlayers - 1]].language))
             {
                 return TRUE;
             }
+#endif
 
             return FALSE;
         }
@@ -3825,12 +3827,14 @@ static bool32 TryAddContestLinkTvShow(struct Pokeblock *pokeblock, struct TvBlen
             // Player came last, try to put on air
             StringCopy(tvBlender->name, gLinkPlayers[sBerryBlender->playerPlaces[0]].name);
             tvBlender->pokeblockFlavor = GetPokeblocksFlavor(pokeblock);
+#if FREE_TV_SHOWS == FALSE
             if (Put3CheersForPokeblocksOnTheAir(tvBlender->name, tvBlender->pokeblockFlavor,
                                             tvBlender->pokeblockColor, tvBlender->pokeblockSheen,
                                             gLinkPlayers[sBerryBlender->playerPlaces[0]].language))
             {
                 return TRUE;
             }
+#endif
 
             return FALSE;
         }

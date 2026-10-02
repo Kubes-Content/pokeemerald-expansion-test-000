@@ -401,7 +401,9 @@ static bool32 Fishing_StartEncounter(struct Task *task)
         gPlayerAvatar.preventStep = FALSE;
         UnlockPlayerFieldControls();
         FishingWildEncounter(task->tFishingRod);
+#if FREE_TV_SHOWS == FALSE
         RecordFishingAttemptForTV(TRUE);
+#endif
         DestroyTask(FindTaskIdByFunc(Task_Fishing));
     }
     return FALSE;
@@ -463,7 +465,9 @@ static bool32 Fishing_EndNoMon(struct Task *task)
         UnlockPlayerFieldControls();
         UnfreezeObjectEvents();
         ClearDialogWindowAndFrame(0, TRUE);
+#if FREE_TV_SHOWS == FALSE
         RecordFishingAttemptForTV(FALSE);
+#endif
         DestroyTask(FindTaskIdByFunc(Task_Fishing));
     }
     return FALSE;

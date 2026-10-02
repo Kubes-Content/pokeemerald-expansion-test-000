@@ -971,7 +971,9 @@ void FishingWildEncounter(u8 rod)
     }
 
     IncrementGameStat(GAME_STAT_FISHING_ENCOUNTERS);
+#if FREE_TV_SHOWS == FALSE
     SetPokemonAnglerSpecies(species);
+#endif
     BattleSetup_StartWildBattle();
 }
 
