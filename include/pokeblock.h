@@ -1,6 +1,8 @@
 #ifndef GUARD_POKEBLOCK_H
 #define GUARD_POKEBLOCK_H
 
+#if FREE_POKEBLOCKS == FALSE
+
 #define TAG_POKEBLOCK       14818
 
 enum
@@ -72,5 +74,6 @@ s16 PokeblockGetGain(u8 nature, const struct Pokeblock *pokeblock);
 void PokeblockCopyName(const struct Pokeblock *pokeblock, u8 *dest);
 bool8 CopyMonFavoritePokeblockName(u8 nature, u8 *dest);
 u8 GetPokeblocksFlavor(const struct Pokeblock *pokeblock);
+#endif // FREE_POKEBLOCKS == FALSE
 
 #endif // GUARD_POKEBLOCK_H

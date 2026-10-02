@@ -59,7 +59,9 @@ static void Task_HiddenItemNearby(u8);
 static void Task_StandingOnHiddenItem(u8);
 static void PlayerFaceHiddenItem(enum Direction);
 static void CheckForHiddenItemsInMapConnection(u8);
+#if FREE_POKEBLOCKS == FALSE
 static void Task_OpenRegisteredPokeblockCase(u8);
+#endif
 static void Task_AccessPokemonBoxLink(u8);
 static void ItemUseOnFieldCB_Bike(u8);
 static void ItemUseOnFieldCB_Rod(u8);
@@ -702,6 +704,7 @@ static void Task_StandingOnHiddenItem(u8 taskId)
 
 void ItemUseOutOfBattle_PokeblockCase(u8 taskId)
 {
+#if FREE_POKEBLOCKS == FALSE
     if (MenuHelpers_IsLinkActive() == TRUE)
     {
         DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
@@ -717,8 +720,10 @@ void ItemUseOutOfBattle_PokeblockCase(u8 taskId)
         FadeScreen(FADE_TO_BLACK, 0);
         gTasks[taskId].func = Task_OpenRegisteredPokeblockCase;
     }
+#endif
 }
 
+#if FREE_POKEBLOCKS == FALSE
 static void CB2_OpenPokeblockFromBag(void)
 {
     OpenPokeblockCase(PBLOCK_CASE_FIELD, CB2_ReturnToBagMenuPocket);
@@ -733,6 +738,7 @@ static void Task_OpenRegisteredPokeblockCase(u8 taskId)
         DestroyTask(taskId);
     }
 }
+#endif
 
 void ItemUseOutOfBattle_PokemonBoxLink(u8 taskId)
 {

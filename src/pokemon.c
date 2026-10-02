@@ -5287,14 +5287,22 @@ bool8 IsMonSpriteNotFlipped(enum Species species)
 
 s8 GetMonFlavorRelation(struct Pokemon *mon, enum Flavor flavor)
 {
+#if FREE_POKEBLOCKS == FALSE
     u8 nature = GetNature(mon);
     return gPokeblockFlavorCompatibilityTable[nature * FLAVOR_COUNT + flavor];
+#else
+    return 0;
+#endif
 }
 
 s8 GetFlavorRelationByPersonality(u32 personality, enum Flavor flavor)
 {
+#if FREE_POKEBLOCKS == FALSE
     u8 nature = GetNatureFromPersonality(personality);
     return gPokeblockFlavorCompatibilityTable[nature * FLAVOR_COUNT + flavor];
+#else
+    return 0;
+#endif
 }
 
 bool8 IsTradedMon(struct Pokemon *mon)

@@ -2252,6 +2252,7 @@ static bool8 AreBlenderBerriesSame(struct BlenderBerry *berries, u8 a, u8 b)
 
 static u32 CalculatePokeblockColor(struct BlenderBerry *berries, s16 *_flavors, u8 numPlayers, u8 negativeFlavors)
 {
+#if FREE_POKEBLOCKS == FALSE
     s16 flavors[FLAVOR_COUNT + 1];
     s32 i, j;
     u8 numFlavors;
@@ -2352,6 +2353,9 @@ static u32 CalculatePokeblockColor(struct BlenderBerry *berries, s16 *_flavors, 
         }
     }
     return PBLOCK_CLR_NONE;
+#else
+    return 0;
+#endif
 }
 
 static void Debug_SetMaxRPMStage(s16 value)
@@ -2376,6 +2380,7 @@ static s16 UNUSED Debug_GetGameTimeStage(void)
 
 static void CalculatePokeblock(struct BlenderBerry *berries, struct Pokeblock *pokeblock, u8 numPlayers, u8 *flavors, u16 maxRPM)
 {
+#if FREE_POKEBLOCKS == FALSE
     s32 i, j;
     s32 multiuseVar;
     u8 numNegatives;
@@ -2473,6 +2478,7 @@ static void CalculatePokeblock(struct BlenderBerry *berries, struct Pokeblock *p
 
     for (i = 0; i < FLAVOR_COUNT + 1; i++)
         flavors[i] = sPokeblockFlavors[i];
+#endif
 }
 
 static void Debug_SetStageVars(void)
@@ -2688,12 +2694,14 @@ static void CB2_EndBlenderGame(void)
                 sBerryBlender->playAgainState = CANT_PLAY_NO_BERRIES;
                 gSendCmd[BLENDER_COMM_RESP] = LINKCMD_BLENDER_NO_BERRIES;
             }
+#if FREE_POKEBLOCKS == FALSE
             else if (GetFirstFreePokeblockSlot() == -1)
             {
                 // No space for pokeblocks
                 sBerryBlender->playAgainState = CANT_PLAY_NO_PKBLCK_SPACE;
                 gSendCmd[BLENDER_COMM_RESP] = LINKCMD_BLENDER_NO_PBLOCK_SPACE;
             }
+#endif
             else
             {
                 sBerryBlender->playAgainState = PLAY_AGAIN_YES;
@@ -3436,7 +3444,9 @@ static bool8 PrintBlendingResults(void)
     u16 i;
     s32 xPos, yPos;
 
+#if FREE_POKEBLOCKS == FALSE
     struct Pokeblock pokeblock;
+#endif
     enum Flavor flavors[FLAVOR_COUNT + 1];
     u8 text[40];
 
@@ -3540,15 +3550,19 @@ static bool8 PrintBlendingResults(void)
         }
 
         Debug_SetStageVars();
+#if FREE_POKEBLOCKS == FALSE
         CalculatePokeblock(sBerryBlender->blendedBerries, &pokeblock, sBerryBlender->numPlayers, flavors, sBerryBlender->maxRPM);
         PrintMadePokeblockString(&pokeblock, sBerryBlender->stringVar);
         TryAddContestLinkTvShow(&pokeblock, &sBerryBlender->tvBlender);
+#endif
 
         CreateTask(Task_PlayPokeblockFanfare, 6);
         IncrementDailyBerryBlender();
 
         RemoveBagItem(gSpecialVar_ItemId, 1);
+#if FREE_POKEBLOCKS == FALSE
         AddPokeblock(&pokeblock);
+#endif
 
         sBerryBlender->textState = 0;
         sBerryBlender->mainState++;
@@ -3567,6 +3581,7 @@ static bool8 PrintBlendingResults(void)
 
 static void PrintMadePokeblockString(struct Pokeblock *pokeblock, u8 *dst)
 {
+#if FREE_POKEBLOCKS == FALSE
     u8 text[12];
     u8 flavorLvl, feel;
 
@@ -3588,6 +3603,7 @@ static void PrintMadePokeblockString(struct Pokeblock *pokeblock, u8 *dst)
 
     StringAppend(dst, sText_Dot2);
     StringAppend(dst, sText_NewParagraph);
+#endif
 }
 
 static void SortBasedOnPoints(u8 *places, u8 playersNum, u32 *scores)
@@ -3780,6 +3796,7 @@ static void Task_PlayPokeblockFanfare(u8 taskId)
 
 static bool32 TryAddContestLinkTvShow(struct Pokeblock *pokeblock, struct TvBlenderStruct *tvBlender)
 {
+#if FREE_POKEBLOCKS == FALSE
     u8 flavorLevel = GetHighestPokeblocksFlavorLevel(pokeblock);
     u16 sheen = (flavorLevel * 10) / GetPokeblocksFeel(pokeblock);
 
@@ -3818,6 +3835,7 @@ static bool32 TryAddContestLinkTvShow(struct Pokeblock *pokeblock, struct TvBlen
             return FALSE;
         }
     }
+#endif
 
     return FALSE;
 }

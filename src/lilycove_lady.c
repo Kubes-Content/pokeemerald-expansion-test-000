@@ -742,7 +742,9 @@ void Script_BufferContestLadyCategoryAndMonName(void)
 
 void OpenPokeblockCaseForContestLady(void)
 {
+#if FREE_POKEBLOCKS == FALSE
     OpenPokeblockCase(PBLOCK_CASE_GIVE, CB2_ReturnToField);
+#endif
 }
 
 void SetContestLadyGivenPokeblock(void)

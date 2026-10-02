@@ -1,4 +1,5 @@
 #include "global.h"
+#if FREE_POKEBLOCKS == FALSE
 #include "malloc.h"
 #include "battle.h"
 #include "battle_controllers.h"
@@ -482,10 +483,14 @@ void OpenPokeblockCaseInBattle(void)
     OpenPokeblockCase(PBLOCK_CASE_BATTLE, CB2_SetUpReshowBattleScreenAfterMenu2);
 }
 
+#endif
 void OpenPokeblockCaseOnFeeder(void)
 {
+#if FREE_POKEBLOCKS == FALSE
     OpenPokeblockCase(PBLOCK_CASE_FEEDER, CB2_ReturnToField);
+#endif
 }
+#if FREE_POKEBLOCKS == FALSE
 
 static void CB2_PokeblockMenu(void)
 {
@@ -1345,8 +1350,10 @@ u8 GetPokeblocksFeel(const struct Pokeblock *pokeblock)
     return feel;
 }
 
+#endif
 s8 GetFirstFreePokeblockSlot(void)
 {
+#if FREE_POKEBLOCKS == FALSE
     u8 i;
 
     for (i = 0; i < POKEBLOCKS_COUNT; i++)
@@ -1354,9 +1361,10 @@ s8 GetFirstFreePokeblockSlot(void)
         if (gSaveBlock1Ptr->pokeblocks[i].color == PBLOCK_CLR_NONE)
             return i;
     }
-
+#endif
     return -1;
 }
+#if FREE_POKEBLOCKS == FALSE
 
 bool32 AddPokeblock(const struct Pokeblock *pokeblock)
 {
@@ -1456,3 +1464,4 @@ u8 GetPokeblocksFlavor(const struct Pokeblock *pokeblock)
 
     return bestFlavor;
 }
+#endif

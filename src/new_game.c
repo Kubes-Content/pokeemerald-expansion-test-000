@@ -156,7 +156,9 @@ void ResetMenuAndMonGlobals(void)
     ZeroPlayerPartyMons();
     ZeroEnemyPartyMons();
     ResetBagScrollPositions();
+#if FREE_POKEBLOCKS == FALSE
     ResetPokeblockScrollPositions();
+#endif
 }
 
 void NewGameInitData(void)
@@ -204,7 +206,9 @@ void NewGameInitData(void)
     gSaveBlock1Ptr->registeredItem = ITEM_NONE;
     ClearBag();
     NewGameInitPCItems();
+#if FREE_POKEBLOCKS == FALSE
     ClearPokeblocks();
+#endif
     ClearDecorationInventories();
     InitEasyChatPhrases();
     SetMauvilleOldMan();

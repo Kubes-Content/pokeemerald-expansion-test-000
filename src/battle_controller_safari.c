@@ -204,6 +204,7 @@ static void SafariSetBattleEndCallbacks(enum BattlerId battler)
     }
 }
 
+#if FREE_POKEBLOCKS == FALSE
 static void SafariOpenPokeblockCase(enum BattlerId battler)
 {
     if (!gPaletteFade.active)
@@ -213,6 +214,7 @@ static void SafariOpenPokeblockCase(enum BattlerId battler)
         OpenPokeblockCaseInBattle();
     }
 }
+#endif
 
 static void CompleteWhenChosePokeblock(enum BattlerId battler)
 {
@@ -310,9 +312,13 @@ static void SafariHandleChooseAction(enum BattlerId battler)
 
 static void SafariHandleChooseItem(enum BattlerId battler)
 {
+#if FREE_POKEBLOCKS == FALSE
     BeginNormalPaletteFade(PALETTES_ALL, 0, 0, 0x10, RGB_BLACK);
     gBattlerControllerFuncs[battler] = SafariOpenPokeblockCase;
     gBattlerInMenuId = battler;
+#else
+    BtlController_Complete(battler);
+#endif
 }
 
 static void SafariHandleChoosePokemon(enum BattlerId battler)
