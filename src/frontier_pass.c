@@ -623,7 +623,11 @@ static u32 AllocateFrontierPassData(MainCallback callback)
         sPassData->cursorY = 48;
     }
 
+#if FREE_BATTLE_FRONTIER == FALSE
     sPassData->battlePoints = gSaveBlock2Ptr->frontier.battlePoints;
+#else
+    sPassData->battlePoints = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     sPassData->hasBattleRecord = CanCopyRecordedBattleSaveData();
     sPassData->areaToShow = CURSOR_AREA_NOTHING;
     sPassData->trainerStars = CountPlayerTrainerStars();

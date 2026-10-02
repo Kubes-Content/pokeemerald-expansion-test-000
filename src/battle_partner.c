@@ -59,7 +59,11 @@ void FillPartnerParty(u16 trainerId)
         u32 otID = Random32();
         for (i = 0; i < FRONTIER_MULTI_PARTY_SIZE; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             monId = gSaveBlock2Ptr->frontier.trainerIds[i + 18];
+#else
+            monId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             CreateFacilityMon(&gFacilityTrainerMons[monId], level, ivs, otID, 0, &gParties[B_TRAINER_PARTNER][i]);
             for (j = 0; j < PLAYER_NAME_LENGTH + 1; j++)
                 trainerName[j] = gFacilityTrainers[trainerId].trainerName[j];
@@ -73,6 +77,7 @@ void FillPartnerParty(u16 trainerId)
         trainerId -= TRAINER_RECORD_MIXING_FRIEND;
         for (i = 0; i < FRONTIER_MULTI_PARTY_SIZE; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             struct EmeraldBattleTowerRecord *record = &gSaveBlock2Ptr->frontier.towerRecords[trainerId];
             struct BattleTowerPokemon monData = record->party[gSaveBlock2Ptr->frontier.trainerIds[18 + i]];
             StringCopy(trainerName, record->name);
@@ -90,6 +95,7 @@ void FillPartnerParty(u16 trainerId)
                     trainerName[5] = EOS;
             }
             CreateBattleTowerMon_HandleLevel(&gParties[B_TRAINER_PARTNER][i], &monData, TRUE);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             SetMonData(&gParties[B_TRAINER_PARTNER][i], MON_DATA_OT_NAME, trainerName);
             j = IsFrontierTrainerFemale(trainerId + TRAINER_RECORD_MIXING_FRIEND);
             SetMonData(&gParties[B_TRAINER_PARTNER][i], MON_DATA_OT_GENDER, &j);
@@ -100,7 +106,11 @@ void FillPartnerParty(u16 trainerId)
         trainerId -= TRAINER_RECORD_MIXING_APPRENTICE;
         for (i = 0; i < FRONTIER_MULTI_PARTY_SIZE; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             CreateApprenticeMon(&gParties[B_TRAINER_PARTNER][i], &gSaveBlock2Ptr->apprentices[trainerId], gSaveBlock2Ptr->frontier.trainerIds[18 + i]);
+#else
+            CreateApprenticeMon(&gParties[B_TRAINER_PARTNER][i], &gSaveBlock2Ptr->apprentices[trainerId], 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             j = IsFrontierTrainerFemale(trainerId + TRAINER_RECORD_MIXING_APPRENTICE);
             SetMonData(&gParties[B_TRAINER_PARTNER][i], MON_DATA_OT_GENDER, &j);
         }

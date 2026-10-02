@@ -1879,6 +1879,7 @@ static u16 GetFrontierStreakInfo(u16 facilityId, u32 *topicTextId)
     switch (facilityId)
     {
     case FRONTIER_FACILITY_DOME:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.domeRecordWinStreaks); i++)
         {
             for (j = 0; j < FRONTIER_LVL_MODE_COUNT; j++)
@@ -1887,17 +1888,21 @@ static u16 GetFrontierStreakInfo(u16 facilityId, u32 *topicTextId)
                     streak = gSaveBlock2Ptr->frontier.domeRecordWinStreaks[i][j];
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_B_DOME - 1;
         break;
     case MATCH_CALL_PIKE:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < FRONTIER_LVL_MODE_COUNT; i++)
         {
             if (streak < gSaveBlock2Ptr->frontier.pikeRecordStreaks[i])
                 streak = gSaveBlock2Ptr->frontier.pikeRecordStreaks[i];
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_B_PIKE - 1;
         break;
     case FRONTIER_FACILITY_TOWER:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.towerRecordWinStreaks); i++)
         {
             for (j = 0; j < FRONTIER_LVL_MODE_COUNT; j++)
@@ -1906,9 +1911,11 @@ static u16 GetFrontierStreakInfo(u16 facilityId, u32 *topicTextId)
                     streak = gSaveBlock2Ptr->frontier.towerRecordWinStreaks[i][j];
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_STREAK_RECORD - 1;
         break;
     case FRONTIER_FACILITY_PALACE:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.palaceRecordWinStreaks); i++)
         {
             for (j = 0; j < FRONTIER_LVL_MODE_COUNT; j++)
@@ -1917,9 +1924,11 @@ static u16 GetFrontierStreakInfo(u16 facilityId, u32 *topicTextId)
                     streak = gSaveBlock2Ptr->frontier.palaceRecordWinStreaks[i][j];
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_STREAK_RECORD - 1;
         break;
     case MATCH_CALL_FACTORY:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.factoryRecordWinStreaks); i++)
         {
             for (j = 0; j < FRONTIER_LVL_MODE_COUNT; j++)
@@ -1928,22 +1937,27 @@ static u16 GetFrontierStreakInfo(u16 facilityId, u32 *topicTextId)
                     streak = gSaveBlock2Ptr->frontier.factoryRecordWinStreaks[i][j];
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_STREAK_RECORD - 1;
         break;
     case FRONTIER_FACILITY_ARENA:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < FRONTIER_LVL_MODE_COUNT; i++)
         {
             if (streak < gSaveBlock2Ptr->frontier.arenaRecordStreaks[i])
                 streak = gSaveBlock2Ptr->frontier.arenaRecordStreaks[i];
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_STREAK_RECORD - 1;
         break;
     case FRONTIER_FACILITY_PYRAMID:
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < FRONTIER_LVL_MODE_COUNT; i++)
         {
             if (streak < gSaveBlock2Ptr->frontier.pyramidRecordStreaks[i])
                 streak = gSaveBlock2Ptr->frontier.pyramidRecordStreaks[i];
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         *topicTextId = GEN_TOPIC_B_PYRAMID - 1;
         break;
     }

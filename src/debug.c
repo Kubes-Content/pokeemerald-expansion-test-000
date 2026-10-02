@@ -2503,7 +2503,9 @@ static void DebugAction_Trainers_TryBattle(u8 taskId)
         for (u32 i = 0; i < MAX_FRONTIER_PARTY_SIZE; i++)
         {
             gSelectedOrderFromParty[i] = i + 1;
+#if FREE_BATTLE_FRONTIER == FALSE
             gSaveBlock2Ptr->frontier.selectedPartyMons[i] = gSelectedOrderFromParty[i];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
         FillPartnerParty(gPartnerTrainerId);
     }
@@ -3557,7 +3559,9 @@ static void DebugAction_Give_MaxCoins(u8 taskId)
 
 static void DebugAction_Give_MaxBattlePoints(u8 taskId)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.battlePoints = MAX_BATTLE_FRONTIER_POINTS;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void DebugAction_Give_DayCareEgg(u8 taskId)

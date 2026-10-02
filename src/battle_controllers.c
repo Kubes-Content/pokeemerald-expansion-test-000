@@ -1442,8 +1442,10 @@ void BtlController_EmitEndLinkBattle(enum BattlerId battler, u32 bufferId, u8 ba
 {
     gBattleResources->transferBuffer[0] = CONTROLLER_ENDLINKBATTLE;
     gBattleResources->transferBuffer[1] = battleOutcome;
+#if FREE_BATTLE_FRONTIER == FALSE
     gBattleResources->transferBuffer[2] = gSaveBlock2Ptr->frontier.disableRecordBattle;
     gBattleResources->transferBuffer[3] = gSaveBlock2Ptr->frontier.disableRecordBattle;
+#endif
     gBattleResources->transferBuffer[5] = gBattleResources->transferBuffer[4] = RecordedBattle_BufferNewBattlerData(&gBattleResources->transferBuffer[6]);
     PrepareBufferDataTransfer(battler, bufferId, gBattleResources->transferBuffer, gBattleResources->transferBuffer[4] + 6);
 }

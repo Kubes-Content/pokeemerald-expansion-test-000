@@ -129,9 +129,14 @@ void CallBattleFactoryFunction(void)
 static void InitFactoryChallenge(void)
 {
     u8 i;
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
@@ -141,10 +146,13 @@ static void InitFactoryChallenge(void)
         gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] = 0;
         gSaveBlock2Ptr->frontier.factoryRentsCount[battleMode][lvlMode] = 0;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     sPerformedRentalSwap = FALSE;
+#if FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons); i++)
         gSaveBlock2Ptr->frontier.rentalMons[i].monId = 0xFFFF;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         gFrontierTempParty[i] = 0xFFFF;
 
@@ -154,6 +162,7 @@ static void InitFactoryChallenge(void)
 
 static void GetBattleFactoryData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     int lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     int battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
@@ -169,10 +178,12 @@ static void GetBattleFactoryData(void)
         gSpecialVar_Result = gSaveBlock2Ptr->frontier.factoryRentsCount[battleMode][lvlMode];
         break;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetBattleFactoryData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     int lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     int battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
@@ -195,14 +206,19 @@ static void SetBattleFactoryData(void)
         }
         break;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SaveFactoryChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
@@ -239,12 +255,21 @@ static void GenerateOpponentMons(void)
     enum Item heldItems[FRONTIER_PARTY_SIZE];
     int firstMonId = 0;
     u16 trainerId = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     u32 winStreak = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode];
+#else
+    u32 winStreak = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 challengeNum = winStreak / FRONTIER_STAGES_PER_CHALLENGE;
     gFacilityTrainers = gBattleFrontierTrainers;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     do
     {
         // Choose a random trainer, ensuring no repeats in this challenge
@@ -255,10 +280,13 @@ static void GenerateOpponentMons(void)
                 break;
         }
     } while (i != gSaveBlock2Ptr->frontier.curChallengeBattleNum);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     TRAINER_BATTLE_PARAM.opponentA = trainerId;
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < FRONTIER_STAGES_PER_CHALLENGE - 1)
         gSaveBlock2Ptr->frontier.trainerIds[gSaveBlock2Ptr->frontier.curChallengeBattleNum] = trainerId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     i = 0;
     while (i != FRONTIER_PARTY_SIZE)
@@ -269,6 +297,7 @@ static void GenerateOpponentMons(void)
         if (gFacilityTrainerMons[monId].species == SPECIES_UNOWN)
             continue;
 
+#if FREE_BATTLE_FRONTIER == FALSE
         // Ensure none of the opponent's Pokémon are the same as the potential rental Pokémon for the player
         for (j = 0; j < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons); j++)
         {
@@ -277,6 +306,7 @@ static void GenerateOpponentMons(void)
         }
         if (j != (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons))
             continue;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         // "High tier" Pokémon are only allowed on open level mode
         if (lvlMode == FRONTIER_LVL_50 && monId > FRONTIER_MONS_HIGH_TIER)
@@ -317,17 +347,21 @@ static void SetRentalsToOpponentParty(void)
 {
     u8 i;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         gFacilityTrainerMons = gBattleFrontierMons;
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         gFacilityTrainerMons = gSlateportBattleTentMons;
 
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].monId = gFrontierTempParty[i];
         gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].ivs = GetBoxMonData(&gParties[B_TRAINER_OPPONENT_A][i].box, MON_DATA_ATK_IV);
         gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].personality = GetMonData(&gParties[B_TRAINER_OPPONENT_A][i], MON_DATA_PERSONALITY);
         gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].abilityNum = GetBoxMonData(&gParties[B_TRAINER_OPPONENT_A][i].box, MON_DATA_ABILITY_NUM);
+#endif //FREE_BATTLE_FRONTIER == FALSE
         SetMonData(&gParties[B_TRAINER_OPPONENT_A][i], MON_DATA_HELD_ITEM, &gFacilityTrainerMons[gFrontierTempParty[i]].heldItem);
     }
 }
@@ -339,11 +373,14 @@ static void SetPlayerAndOpponentParties(void)
     u16 monId;
     u8 ivs;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode == FRONTIER_LVL_TENT)
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         gFacilityTrainerMons = gSlateportBattleTentMons;
         monLevel = TENT_MIN_LEVEL;
     }
+#if FREE_BATTLE_FRONTIER == FALSE
     else
     {
         gFacilityTrainerMons = gBattleFrontierMons;
@@ -352,14 +389,20 @@ static void SetPlayerAndOpponentParties(void)
         else
             monLevel = FRONTIER_MAX_LEVEL_50;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (gSpecialVar_0x8005 < 2)
     {
         ZeroPlayerPartyMons();
         for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             monId = gSaveBlock2Ptr->frontier.rentalMons[i].monId;
             ivs = gSaveBlock2Ptr->frontier.rentalMons[i].ivs;
+#else
+            monId = 0;
+            ivs = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
             CreateFacilityMon(&gFacilityTrainerMons[monId], monLevel, ivs, READ_OTID_FROM_SAVE, FLAG_FRONTIER_MON_FACTORY, &gParties[B_TRAINER_PLAYER][i]);
         }
@@ -371,8 +414,13 @@ static void SetPlayerAndOpponentParties(void)
     case 2:
         for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             monId = gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].monId;
             ivs = gSaveBlock2Ptr->frontier.rentalMons[i + FRONTIER_PARTY_SIZE].ivs;
+#else
+            monId = 0;
+            ivs = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             CreateFacilityMon(&gFacilityTrainerMons[monId], monLevel, ivs, READ_OTID_FROM_SAVE, FLAG_FRONTIER_MON_FACTORY, &gParties[B_TRAINER_OPPONENT_A][i]);
         }
         break;
@@ -402,21 +450,31 @@ static void GenerateInitialRentalMons(void)
         monIds[i] = 0;
         heldItems[i] = ITEM_NONE;
     }
+#if FREE_BATTLE_FRONTIER == FALSE
     lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     challengeNum = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+#else
+    challengeNum = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_DOUBLES)
         factoryBattleMode = FRONTIER_MODE_DOUBLES;
     else
         factoryBattleMode = FRONTIER_MODE_SINGLES;
 
     gFacilityTrainerMons = gBattleFrontierMons;
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_50)
     {
         factoryLvlMode = FRONTIER_LVL_OPEN;
         firstMonId = 0;
     }
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         factoryLvlMode = FRONTIER_LVL_50;
         firstMonId = 0;
@@ -465,7 +523,9 @@ static void GenerateInitialRentalMons(void)
         if (j != firstMonId + i)
             continue;
 
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.rentalMons[i].monId = monId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         species[i] = gFacilityTrainerMons[monId].species;
         heldItems[i] = gFacilityTrainerMons[monId].heldItem;
         monIds[i] = monId;
@@ -610,16 +670,24 @@ static void RestorePlayerPartyHeldItems(void)
 {
     u8 i;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         gFacilityTrainerMons = gBattleFrontierMons;
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         gFacilityTrainerMons = gSlateportBattleTentMons;
 
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         SetMonData(&gParties[B_TRAINER_PLAYER][i],
                    MON_DATA_HELD_ITEM,
                    &gFacilityTrainerMons[gSaveBlock2Ptr->frontier.rentalMons[i].monId].heldItem);
+#else
+        SetMonData(&gParties[B_TRAINER_PLAYER][i],
+                   MON_DATA_HELD_ITEM,
+                   &gFacilityTrainerMons[0].heldItem);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 }
 
@@ -660,9 +728,17 @@ void FillFactoryBrainParty(void)
     u8 fixedIV;
     u32 otId;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     u8 challengeNum = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+#else
+    u8 challengeNum = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     fixedIV = GetFactoryMonFixedIV(challengeNum + 2, FALSE);
     monLevel = SetFacilityPtrsGetLevel();
     i = 0;
@@ -677,6 +753,7 @@ void FillFactoryBrainParty(void)
         if (monLevel == FRONTIER_MAX_LEVEL_50 && monId > FRONTIER_MONS_HIGH_TIER)
             continue;
 
+#if FREE_BATTLE_FRONTIER == FALSE
         for (j = 0; j < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons); j++)
         {
             if (monId == gSaveBlock2Ptr->frontier.rentalMons[j].monId)
@@ -684,6 +761,7 @@ void FillFactoryBrainParty(void)
         }
         if (j != (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons))
             continue;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         for (k = 0; k < i; k++)
         {
@@ -752,7 +830,11 @@ static u16 GetFactoryMonId(enum FrontierLevelMode lvlMode, u8 challengeNum, bool
 u8 GetNumPastRentalsRank(u8 battleMode, enum FrontierLevelMode lvlMode)
 {
     u8 ret;
+#if FREE_BATTLE_FRONTIER == FALSE
     u8 rents = gSaveBlock2Ptr->frontier.factoryRentsCount[battleMode][lvlMode];
+#else
+    u8 rents = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (rents < 15)
         ret = 0;
@@ -772,7 +854,11 @@ u8 GetNumPastRentalsRank(u8 battleMode, enum FrontierLevelMode lvlMode)
 
 u64 GetAiScriptsInBattleFactory(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     int lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    int lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (lvlMode == FRONTIER_LVL_TENT)
     {
@@ -781,7 +867,11 @@ u64 GetAiScriptsInBattleFactory(void)
     else
     {
         int battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
         int challengeNum = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+#else
+        int challengeNum = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         if (TRAINER_BATTLE_PARAM.opponentA == TRAINER_FRONTIER_BRAIN)
             return AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY;
@@ -805,23 +895,35 @@ static void FillFactoryFrontierTrainerParty(u16 trainerId, u8 firstMonId)
     {
     // By mistake Battle Tower's Level 50 challenge number is used to determine the IVs for Battle Factory.
     #ifdef BUGFIX
+#if FREE_BATTLE_FRONTIER == FALSE
         enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+        enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
         u8 challengeNum = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+#else
+        u8 challengeNum = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     #else
         u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
         u8 challengeNum = gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][FRONTIER_LVL_50] / FRONTIER_STAGES_PER_CHALLENGE;
     #endif
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < FRONTIER_STAGES_PER_CHALLENGE - 1)
             fixedIV = GetFactoryMonFixedIV(challengeNum, FALSE);
         else
+#endif //FREE_BATTLE_FRONTIER == FALSE
             fixedIV = GetFactoryMonFixedIV(challengeNum, TRUE); // Last trainer in challenge uses higher IVs
     }
     else if (trainerId == TRAINER_EREADER)
     {
     #if FREE_BATTLE_TOWER_E_READER == FALSE
         for (i = firstMonId; i < firstMonId + FRONTIER_PARTY_SIZE; i++)
+#if FREE_BATTLE_FRONTIER == FALSE
             CreateBattleTowerMon(&gParties[B_TRAINER_OPPONENT_A][i], &gSaveBlock2Ptr->frontier.ereaderTrainer.party[i - firstMonId]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     #endif //FREE_BATTLE_TOWER_E_READER
         return;
     }
@@ -865,8 +967,10 @@ static void FillFactoryTentTrainerParty(u16 trainerId, u8 firstMonId)
 void FillFactoryTrainerParty(void)
 {
     ZeroEnemyPartyMons();
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         FillFactoryFrontierTrainerParty(TRAINER_BATTLE_PARAM.opponentA, 0);
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         FillFactoryTentTrainerParty(TRAINER_BATTLE_PARAM.opponentA, 0);
 }

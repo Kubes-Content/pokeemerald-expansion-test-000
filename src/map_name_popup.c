@@ -590,7 +590,11 @@ static void ShowMapNamePopUpWindow(void)
         else
         {
             withoutPrefixPtr = &(mapDisplayHeader[MAP_POPUP_PREFIX_BUFFER_LENGTH]);
+#if FREE_BATTLE_FRONTIER == FALSE
             mapDisplayHeaderSource = sBattlePyramid_MapHeaderStrings[gSaveBlock2Ptr->frontier.curChallengeBattleNum];
+#else
+            mapDisplayHeaderSource = sBattlePyramid_MapHeaderStrings[0];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
         StringCopy(withoutPrefixPtr, mapDisplayHeaderSource);
     }

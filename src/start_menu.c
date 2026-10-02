@@ -452,14 +452,20 @@ static void ShowSafariBallsWindow(void)
 
 static void ShowPyramidFloorWindow(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.curChallengeBattleNum == FRONTIER_STAGES_PER_CHALLENGE)
         sBattlePyramidFloorWindowId = AddWindow(&sWindowTemplate_PyramidPeak);
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         sBattlePyramidFloorWindowId = AddWindow(&sWindowTemplate_PyramidFloor);
 
     PutWindowTilemap(sBattlePyramidFloorWindowId);
     DrawStdWindowFrame(sBattlePyramidFloorWindowId, FALSE);
+#if FREE_BATTLE_FRONTIER == FALSE
     StringCopy(gStringVar1, sPyramidFloorNames[gSaveBlock2Ptr->frontier.curChallengeBattleNum]);
+#else
+    StringCopy(gStringVar1, sPyramidFloorNames[0]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     StringExpandPlaceholders(gStringVar4, gText_BattlePyramidFloor);
     AddTextPrinterParameterized(sBattlePyramidFloorWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
     CopyWindowToVram(sBattlePyramidFloorWindowId, COPYWIN_GFX);

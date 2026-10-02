@@ -43,6 +43,7 @@ static void HandleFacilityTrainerBattleEnd(void)
     case FACILITY_BATTLE_PIKE_SINGLE:
     case FACILITY_BATTLE_PIKE_DOUBLE:
     case FACILITY_BATTLE_PYRAMID:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.battlesCount < 0xFFFFFF)
         {
             gSaveBlock2Ptr->frontier.battlesCount++;
@@ -53,6 +54,7 @@ static void HandleFacilityTrainerBattleEnd(void)
         {
             gSaveBlock2Ptr->frontier.battlesCount = 0xFFFFFF;
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FACILITY_BATTLE_TRAINER_HILL:
     default:
@@ -91,7 +93,11 @@ static void DoFacilityTrainerBattleInternal(u8 facility)
             break;
         case FRONTIER_MODE_MULTIS:
             FillFrontierTrainersParties(FRONTIER_MULTI_PARTY_SIZE);
+#if FREE_BATTLE_FRONTIER == FALSE
             gPartnerTrainerId = gSaveBlock2Ptr->frontier.trainerIds[17];
+#else
+            gPartnerTrainerId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             FillPartnerParty(gPartnerTrainerId);
             gBattleTypeFlags |= BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS;
             break;
@@ -118,9 +124,11 @@ static void DoFacilityTrainerBattleInternal(u8 facility)
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_PALACE;
         if (VarGet(VAR_FRONTIER_BATTLE_MODE) == FRONTIER_MODE_DOUBLES)
         gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
         else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         FillTentTrainerParty(FRONTIER_PARTY_SIZE);
         CreateTask(Task_StartBattleAfterTransition, 1);
         PlayMapChosenOrBattleBGM(0);
@@ -128,9 +136,11 @@ static void DoFacilityTrainerBattleInternal(u8 facility)
         break;
     case FACILITY_BATTLE_ARENA:
         gBattleTypeFlags = BATTLE_TYPE_TRAINER | BATTLE_TYPE_ARENA;
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         FillFrontierTrainerParty(FRONTIER_PARTY_SIZE);
         else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         FillTentTrainerParty(FRONTIER_PARTY_SIZE);
         CreateTask(Task_StartBattleAfterTransition, 1);
         PlayMapChosenOrBattleBGM(0);
@@ -218,8 +228,10 @@ static void FillTrainerParty(u16 trainerId, enum BattleTrainer trainer, u8 monCo
     else if (trainerId == TRAINER_EREADER)
     {
     #if FREE_BATTLE_TOWER_E_READER == FALSE
+#if FREE_BATTLE_FRONTIER == FALSE
         for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
             CreateBattleTowerMon(&gParties[trainer][i], &gSaveBlock2Ptr->frontier.ereaderTrainer.party[i]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     #endif //FREE_BATTLE_TOWER_E_READER
         return;
     }
@@ -233,11 +245,13 @@ static void FillTrainerParty(u16 trainerId, enum BattleTrainer trainer, u8 monCo
         // Record mixed player.
         for (j = 0, i = 0; i < monCount; j++, i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             if (gSaveBlock2Ptr->frontier.towerRecords[trainerId - TRAINER_RECORD_MIXING_FRIEND].party[j].species != SPECIES_NONE
                 && gSaveBlock2Ptr->frontier.towerRecords[trainerId - TRAINER_RECORD_MIXING_FRIEND].party[j].level <= level)
             {
                 CreateBattleTowerMon_HandleLevel(&gParties[trainer][i], &gSaveBlock2Ptr->frontier.towerRecords[trainerId - TRAINER_RECORD_MIXING_FRIEND].party[j], FALSE);
             }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
         return;
     }

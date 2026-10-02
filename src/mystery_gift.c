@@ -186,9 +186,11 @@ void ClearSavedWonderCardAndRelated(void)
     ClearMysteryGiftFlags();
     ClearMysteryGiftVars();
 #endif //FREE_MYSTERY_GIFT
+#if FREE_BATTLE_FRONTIER == FALSE
 #if FREE_BATTLE_TOWER_E_READER == FALSE
     ClearEReaderTrainer(&gSaveBlock2Ptr->frontier.ereaderTrainer);
 #endif //FREE_BATTLE_TOWER_E_READER
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 bool32 SaveWonderCard(const struct WonderCard *card)

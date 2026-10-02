@@ -1760,15 +1760,19 @@ void CallBattleDomeFunction(void)
 
 static void InitDomeChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
     gSaveBlock2Ptr->frontier.disableRecordBattle = FALSE;
     if (!(gSaveBlock2Ptr->frontier.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode] = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     TRAINER_BATTLE_PARAM.opponentA = 0;
@@ -1776,9 +1780,12 @@ static void InitDomeChallenge(void)
 
 static void GetDomeData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     switch (gSpecialVar_0x8005)
     {
     case DOME_DATA_WIN_STREAK:
@@ -1840,13 +1847,19 @@ static void GetDomeData(void)
         gSpecialVar_Result = (gSaveBlock2Ptr->frontier.domeLvlMode * 2) - 3 + gSaveBlock2Ptr->frontier.domeBattleMode;
         break;
     }
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetDomeData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     switch (gSpecialVar_0x8005)
     {
     case DOME_DATA_WIN_STREAK:
@@ -1906,6 +1919,7 @@ static void SetDomeData(void)
         gSaveBlock2Ptr->frontier.selectedPartyMons[3] = T1_READ_16(gSelectedOrderFromParty);
         break;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void InitDomeTrainers(void)
@@ -1926,6 +1940,7 @@ static void InitDomeTrainers(void)
     rankingScores = AllocZeroed(sizeof(u16) * DOME_TOURNAMENT_TRAINERS_COUNT);
     statValues = AllocZeroed(sizeof(int) * NUM_STATS);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.domeLvlMode = gSaveBlock2Ptr->frontier.lvlMode + 1;
     gSaveBlock2Ptr->frontier.domeBattleMode = VarGet(VAR_FRONTIER_BATTLE_MODE) + 1;
     DOME_TRAINERS[0].trainerId = TRAINER_PLAYER;
@@ -1944,6 +1959,7 @@ static void InitDomeTrainers(void)
 
         gSaveBlock2Ptr->frontier.domePlayerPartyData[i].nature = GetNature(&gParties[B_TRAINER_PLAYER][gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1]);
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     // Populate the tourney roster with random frontier trainers (dependent on streak)
     for (i = 1; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
@@ -1956,11 +1972,15 @@ static void InitDomeTrainers(void)
                 trainerId = GetRandomScaledFrontierTrainerId(GetCurrentFacilityWinStreak(), 0);
                 for (j = 1; j < i; j++)
                 {
+#if FREE_BATTLE_FRONTIER == FALSE
                     if (DOME_TRAINERS[j].trainerId == trainerId)
                         break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 }
             } while (j != i);
+#if FREE_BATTLE_FRONTIER == FALSE
             DOME_TRAINERS[i].trainerId = trainerId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
         else
         {
@@ -1969,11 +1989,15 @@ static void InitDomeTrainers(void)
                 trainerId = GetRandomScaledFrontierTrainerId(GetCurrentFacilityWinStreak() + 1, 0);
                 for (j = 1; j < i; j++)
                 {
+#if FREE_BATTLE_FRONTIER == FALSE
                     if (DOME_TRAINERS[j].trainerId == trainerId)
                         break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 }
             } while (j != i);
+#if FREE_BATTLE_FRONTIER == FALSE
             DOME_TRAINERS[i].trainerId = trainerId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
 
         // Choose party
@@ -1985,7 +2009,11 @@ static void InitDomeTrainers(void)
                 for (k = 0; k < j; k++)
                 {
                     // Make sure the mon is valid.
+#if FREE_BATTLE_FRONTIER == FALSE
                     int alreadySelectedMonId = DOME_MONS[i][k];
+#else
+                    int alreadySelectedMonId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     if (alreadySelectedMonId == monId
                         || species[0] == gFacilityTrainerMons[monId].species
                         || species[1] == gFacilityTrainerMons[monId].species
@@ -1994,13 +2022,17 @@ static void InitDomeTrainers(void)
                 }
             } while (k != j);
 
+#if FREE_BATTLE_FRONTIER == FALSE
             DOME_MONS[i][j] = monId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             species[j] = gFacilityTrainerMons[monId].species;
         }
 
+#if FREE_BATTLE_FRONTIER == FALSE
         DOME_TRAINERS[i].isEliminated = FALSE;
         DOME_TRAINERS[i].eliminatedAt = 0;
         DOME_TRAINERS[i].forfeited = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     // rankingScores is used to determine the seed (ranking) of the trainers
@@ -2012,7 +2044,11 @@ static void InitDomeTrainers(void)
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         // trainerId var re-used here as index of selected mons
+#if FREE_BATTLE_FRONTIER == FALSE
         trainerId = gSaveBlock2Ptr->frontier.selectedPartyMons[i] - 1;
+#else
+        trainerId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         rankingScores[0] += GetMonData(&gParties[B_TRAINER_PLAYER][trainerId], MON_DATA_ATK);
         rankingScores[0] += GetMonData(&gParties[B_TRAINER_PLAYER][trainerId], MON_DATA_DEF);
         rankingScores[0] += GetMonData(&gParties[B_TRAINER_PLAYER][trainerId], MON_DATA_SPATK);
@@ -2039,11 +2075,20 @@ static void InitDomeTrainers(void)
     {
         monTypesBits = 0;
         rankingScores[i] = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
         ivs = GetDomeTrainerMonIvs(DOME_TRAINERS[i].trainerId);
+#else
+        ivs = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         for (j = 0; j < FRONTIER_PARTY_SIZE; j++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             CalcDomeMonStats(&gFacilityTrainerMons[DOME_MONS[i][j]],
                              monLevel, ivs, statValues);
+#else
+            CalcDomeMonStats(&gFacilityTrainerMons[0],
+                             monLevel, ivs, statValues);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
             rankingScores[i] += statValues[STAT_ATK];
             rankingScores[i] += statValues[STAT_DEF];
@@ -2051,8 +2096,13 @@ static void InitDomeTrainers(void)
             rankingScores[i] += statValues[STAT_SPDEF];
             rankingScores[i] += statValues[STAT_SPEED];
             rankingScores[i] += statValues[STAT_HP];
+#if FREE_BATTLE_FRONTIER == FALSE
             monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[DOME_MONS[i][j]].species, 0);
             monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[DOME_MONS[i][j]].species, 1);
+#else
+            monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[0].species, 0);
+            monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[0].species, 1);
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
 
         for (monTypesCount = 0, j = 0; j < 32; j++)
@@ -2077,9 +2127,11 @@ static void InitDomeTrainers(void)
             {
                 if (rankingScores[i] == rankingScores[j])
                 {
+#if FREE_BATTLE_FRONTIER == FALSE
                     if (DOME_TRAINERS[j].trainerId == TRAINER_PLAYER)
                         SwapDomeTrainers(i, j, rankingScores);
                     else if (DOME_TRAINERS[i].trainerId > DOME_TRAINERS[j].trainerId)
+#endif //FREE_BATTLE_FRONTIER == FALSE
                         SwapDomeTrainers(i, j, rankingScores);
                 }
             }
@@ -2087,6 +2139,7 @@ static void InitDomeTrainers(void)
     }
 
     // Add Frontier Brain to the tourney if they should be fought at the end of it
+#if FREE_BATTLE_FRONTIER == FALSE
     if (GetFrontierBrainStatus() != FRONTIER_BRAIN_NOT_READY)
     {
         for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
@@ -2109,6 +2162,7 @@ static void InitDomeTrainers(void)
         for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
             DOME_MONS[j][i] = GetFrontierBrainMonSpecies(i);
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     Free(rankingScores);
     Free(statValues);
@@ -2156,20 +2210,26 @@ static void SwapDomeTrainers(int id1, int id2, u16 *statsArray)
     u16 temp;
 
     SWAP(statsArray[id1], statsArray[id2], temp);
+#if FREE_BATTLE_FRONTIER == FALSE
     SWAP(DOME_TRAINERS[id1].trainerId, DOME_TRAINERS[id2].trainerId, temp);
 
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
         SWAP(DOME_MONS[id1][i], DOME_MONS[id2][i], temp);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void BufferDomeRoundText(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     StringCopy(gStringVar1, gRoundsStringTable[gSaveBlock2Ptr->frontier.curChallengeBattleNum]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void BufferDomeOpponentName(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     StringCopy(gStringVar1, gRoundsStringTable[gSaveBlock2Ptr->frontier.curChallengeBattleNum]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     CopyDomeTrainerName(gStringVar2, TRAINER_BATTLE_PARAM.opponentA);
 }
 
@@ -2181,6 +2241,7 @@ static void InitDomeOpponentParty(void)
 
 static void CreateDomeOpponentMon(u8 monPartyId, u16 tournamentTrainerId, u8 tournamentMonId, u32 otId)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     #ifdef BUGFIX
     u8 fixedIv = GetDomeTrainerMonIvs(DOME_TRAINERS[tournamentTrainerId].trainerId);
     #else
@@ -2190,6 +2251,12 @@ static void CreateDomeOpponentMon(u8 monPartyId, u16 tournamentTrainerId, u8 tou
 
     CreateFacilityMon(&gFacilityTrainerMons[DOME_MONS[tournamentTrainerId][tournamentMonId]],
                       level, fixedIv, otId, 0, &gParties[B_TRAINER_OPPONENT_A][monPartyId]);
+#else
+    u8 fixedIv = GetDomeTrainerMonIvs(tournamentTrainerId); // BUG: Using the wrong ID. As a result, all Pokémon have ivs of 3.
+    u8 level = SetFacilityPtrsGetLevel();
+    CreateFacilityMon(&gFacilityTrainerMons[0],
+                      level, fixedIv, otId, 0, &gParties[B_TRAINER_OPPONENT_A][monPartyId]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void CreateDomeOpponentMons(u16 tournamentTrainerId)
@@ -2264,6 +2331,7 @@ static int SelectOpponentMons_Good(u16 tournamentTrainerId, bool8 allowRandom)
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         partyMovePoints[i] = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
         for (moveIndex = 0; moveIndex < MAX_MON_MOVES; moveIndex++)
         {
             for (playerMonId = 0; playerMonId < FRONTIER_PARTY_SIZE; playerMonId++)
@@ -2280,6 +2348,7 @@ static int SelectOpponentMons_Good(u16 tournamentTrainerId, bool8 allowRandom)
                 }
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
     return SelectOpponentMonsFromParty(partyMovePoints, allowRandom);
 }
@@ -2293,6 +2362,7 @@ static int SelectOpponentMons_Bad(u16 tournamentTrainerId, bool8 allowRandom)
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         partyMovePoints[i] = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
         for (moveIndex = 0; moveIndex < MAX_MON_MOVES; moveIndex++)
         {
             for (playerMonId = 0; playerMonId < FRONTIER_PARTY_SIZE; playerMonId++)
@@ -2309,6 +2379,7 @@ static int SelectOpponentMons_Bad(u16 tournamentTrainerId, bool8 allowRandom)
                 }
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
     return SelectOpponentMonsFromParty(partyMovePoints, allowRandom);
 }
@@ -2531,8 +2602,10 @@ static int TournamentIdOfOpponent(int roundId, int trainerId)
     // Get trainer's tournament id
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         if (DOME_TRAINERS[i].trainerId == trainerId)
             break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     // Get trainer's opponent's tournament id
@@ -2546,8 +2619,10 @@ static int TournamentIdOfOpponent(int roundId, int trainerId)
         // Get first non-eliminated trainer in range of possible opponents
         for (j = sIdToOpponentId[i][roundId]; j < opponentMax; j++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             if (sTourneyTreeTrainerOpponentIds[j] != i && !DOME_TRAINERS[sTourneyTreeTrainerOpponentIds[j]].isEliminated)
                 break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
 
         if (j != opponentMax)
@@ -2557,10 +2632,14 @@ static int TournamentIdOfOpponent(int roundId, int trainerId)
     }
     else
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         if (!DOME_TRAINERS[sIdToOpponentId[i][roundId]].isEliminated)
+#endif
             return sIdToOpponentId[i][roundId];
+#if FREE_BATTLE_FRONTIER == FALSE
         else
             return 0xFF; // Already eliminated
+#endif
     }
 }
 
@@ -2572,7 +2651,11 @@ static void SetDomeOpponentId(void)
 // While not an issue in-game, this will overflow if called after the player's opponent for the current round has been eliminated
 static u16 TrainerIdOfPlayerOpponent(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     return DOME_TRAINERS[TournamentIdOfOpponent(gSaveBlock2Ptr->frontier.curChallengeBattleNum, TRAINER_PLAYER)].trainerId;
+#else
+    return 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetDomeOpponentGraphicsId(void)
@@ -2583,17 +2666,24 @@ static void SetDomeOpponentGraphicsId(void)
 static void SaveDomeChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
 static void IncrementDomeStreaks(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode] < 999)
         gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode]++;
     if (gSaveBlock2Ptr->frontier.domeTotalChampionships[battleMode][lvlMode] < 999)
@@ -2601,6 +2691,7 @@ static void IncrementDomeStreaks(void)
 
     if (gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode] > gSaveBlock2Ptr->frontier.domeRecordWinStreaks[battleMode][lvlMode])
         gSaveBlock2Ptr->frontier.domeRecordWinStreaks[battleMode][lvlMode] = gSaveBlock2Ptr->frontier.domeWinStreaks[battleMode][lvlMode];
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // For showing the opponent info card of the upcoming trainer
@@ -2917,12 +3008,17 @@ static void SpriteCB_HorizontalScrollArrow(struct Sprite *sprite)
     int taskId1 = sprite->data[0];
     int arrId = gTasks[gTasks[taskId1].data[4]].data[1];
     int tournmanetTrainerId = sTourneyTreeTrainerIds[arrId];
+#if FREE_BATTLE_FRONTIER == FALSE
     int roundId = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+#else
+    int roundId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (gTasks[taskId1].data[3] == 1)
     {
         if (sprite->data[1])
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             if ((DOME_TRAINERS[tournmanetTrainerId].isEliminated
                 && sInfoCard->pos - 1 < DOME_TRAINERS[tournmanetTrainerId].eliminatedAt))
             {
@@ -2934,6 +3030,7 @@ static void SpriteCB_HorizontalScrollArrow(struct Sprite *sprite)
                 sprite->invisible = FALSE;
             }
             else
+#endif //FREE_BATTLE_FRONTIER == FALSE
             {
                 if (gTasks[taskId1].data[0] == 2)
                     sprite->invisible = TRUE;
@@ -3759,7 +3856,11 @@ static u8 Task_GetInfoCardInput(u8 taskId)
     int taskId2 = gTasks[taskId].data[4];
     int position = gTasks[taskId2].data[1];
     u8 tourneyId = sTourneyTreeTrainerIds[position];
+#if FREE_BATTLE_FRONTIER == FALSE
     u16 roundId = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+#else
+    u16 roundId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (JOY_NEW(A_BUTTON | B_BUTTON))
         input = INFOCARD_INPUT_AB;
@@ -3797,6 +3898,7 @@ static u8 Task_GetInfoCardInput(u8 taskId)
         // Scrolling right from a trainer info card shows their match progression
         else if (JOY_NEW(DPAD_RIGHT))
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             // Can only scroll right from a trainer card until the round they were eliminated
             if (DOME_TRAINERS[tourneyId].isEliminated && sInfoCard->pos - 1 < DOME_TRAINERS[tourneyId].eliminatedAt)
             {
@@ -3809,6 +3911,7 @@ static u8 Task_GetInfoCardInput(u8 taskId)
                 sInfoCard->pos++;
                 input = TRAINERCARD_INPUT_RIGHT;
             }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
 
         if (input == INFOCARD_INPUT_AB)
@@ -4117,7 +4220,11 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
     int x = 0, y = 0;
     u8 palSlot = 0;
     s16 *allocatedArray = AllocZeroed(sizeof(s16) * ALLOC_ARRAY_SIZE);
+#if FREE_BATTLE_FRONTIER == FALSE
     trainerId = DOME_TRAINERS[trainerTourneyId].trainerId;
+#else
+    trainerId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (flags & CARD_ALTERNATE_SLOT)
         arrId = 2 * (FRONTIER_PARTY_SIZE + 1), windowId = WIN_TRAINER_NAME + NUM_INFO_CARD_WINDOWS, palSlot = 2;
@@ -4146,30 +4253,54 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
     {
         if (trainerId == TRAINER_PLAYER)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[trainerTourneyId][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(0,
+                                                      SpriteCB_MonIconDomeInfo,
+                                                      x | sInfoTrainerMonX[i],
+                                                      y + sInfoTrainerMonY[i],
+                                                      0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
         else if (trainerId == TRAINER_FRONTIER_BRAIN)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[trainerTourneyId][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(0,
+                                                      SpriteCB_MonIconDomeInfo,
+                                                      x | sInfoTrainerMonX[i],
+                                                      y + sInfoTrainerMonY[i],
+                                                      0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
         else
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].species,
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sInfoTrainerMonX[i],
                                                                   y + sInfoTrainerMonY[i],
                                                                   0, 0);
-            gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[0].species,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sInfoTrainerMonX[i],
+                                                                  y + sInfoTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
+gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
 
         if (flags & MOVE_CARD)
@@ -4232,12 +4363,16 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
     for (i = 0; i < FRONTIER_PARTY_SIZE; i++)
     {
         textPrinter.currentY = sSpeciesNameTextYCoords[i];
+#if FREE_BATTLE_FRONTIER == FALSE
         if (trainerId == TRAINER_PLAYER)
             textPrinter.currentChar = GetSpeciesName(DOME_MONS[trainerTourneyId][i]);
         else if (trainerId == TRAINER_FRONTIER_BRAIN)
             textPrinter.currentChar = GetSpeciesName(DOME_MONS[trainerTourneyId][i]);
         else
             textPrinter.currentChar = GetSpeciesName(gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].species);
+#else
+        textPrinter.currentChar = GetSpeciesName(0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
         textPrinter.fontId = GetFontIdToFit(textPrinter.currentChar, FONT_SHORT, 0, 60);
 
         textPrinter.windowId = WIN_TRAINER_MON1_NAME + i + windowId;
@@ -4276,12 +4411,16 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
             for (k = 0; k < NUM_MOVE_POINT_TYPES; k++)
             {
                 enum Move move;
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (trainerId == TRAINER_FRONTIER_BRAIN)
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     move = GetFrontierBrainMonMove(i, j);
+#if FREE_BATTLE_FRONTIER == FALSE
                 else if (trainerId == TRAINER_PLAYER)
                     move = gSaveBlock2Ptr->frontier.domePlayerPartyData[i].moves[j];
                 else
                     move = gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].moves[j];
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 u32 accuracy = GetMoveAccuracy(move);
 
                 switch (k)
@@ -4376,10 +4515,14 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
             // Add the EVs for this mon
             for (j = 0; j < NUM_STATS; j++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (trainerId == TRAINER_FRONTIER_BRAIN)
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     allocatedArray[j] = GetFrontierBrainMonEvs(i, j);
+#if FREE_BATTLE_FRONTIER == FALSE
                 else
                     allocatedArray[j] = gSaveBlock2Ptr->frontier.domePlayerPartyData[i].evs[j];
+#endif //FREE_BATTLE_FRONTIER == FALSE
             }
 
             // HP doesnt have a nature modifier, so just add it here
@@ -4388,10 +4531,14 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
             // Add the EVs with the nature modifier for this mon and and track number of negative natures
             for (j = 0; j < NUM_NATURE_STATS; j++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (trainerId == TRAINER_FRONTIER_BRAIN)
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     nature = GetFrontierBrainMonNature(i);
+#if FREE_BATTLE_FRONTIER == FALSE
                 else
                     nature = gSaveBlock2Ptr->frontier.domePlayerPartyData[i].nature;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
                 if (gNaturesInfo[nature].statUp == gNaturesInfo[nature].statDown)
                 {
@@ -4424,16 +4571,22 @@ static void DisplayTrainerInfoOnCard(u8 flags, u8 trainerTourneyId)
         {
             for (j = 0; j < NUM_STATS; j++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].ev != NULL)
                     allocatedArray[j] = gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].ev[j];
                 else
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     allocatedArray[j] = 0;
             }
 
             allocatedArray[NUM_STATS] += allocatedArray[STAT_HP];
             for (j = 0; j < NUM_NATURE_STATS; j++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 nature = gFacilityTrainerMons[DOME_MONS[trainerTourneyId][i]].nature;
+#else
+                nature = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
                 if (gNaturesInfo[nature].statUp == gNaturesInfo[nature].statDown)
                 {
@@ -4566,6 +4719,7 @@ static int BufferDomeWinString(u8 matchNum, u8 *tournamentIds)
     for (i = sCompetitorRangeByMatch[matchNum][0]; i < sCompetitorRangeByMatch[matchNum][0] + sCompetitorRangeByMatch[matchNum][1]; i++)
     {
         tournamentId = sTourneyTreeTrainerIds2[i];
+#if FREE_BATTLE_FRONTIER == FALSE
         if (!DOME_TRAINERS[tournamentId].isEliminated)
         {
             tournamentIds[count] = tournamentId;
@@ -4577,6 +4731,7 @@ static int BufferDomeWinString(u8 matchNum, u8 *tournamentIds)
                 CopyDomeTrainerName(gStringVar1, DOME_TRAINERS[tournamentId].trainerId);
             count++;
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     // Neither trainer has been eliminated, battle hasn't occurred yet
@@ -4587,6 +4742,7 @@ static int BufferDomeWinString(u8 matchNum, u8 *tournamentIds)
     {
         tournamentId = sTourneyTreeTrainerIds2[i];
 
+#if FREE_BATTLE_FRONTIER == FALSE
         if (DOME_TRAINERS[tournamentId].isEliminated
             && DOME_TRAINERS[tournamentId].eliminatedAt >= sCompetitorRangeByMatch[matchNum][2])
         {
@@ -4612,6 +4768,7 @@ static int BufferDomeWinString(u8 matchNum, u8 *tournamentIds)
                     CopyDomeTrainerName(gStringVar1, DOME_TRAINERS[tournamentId].trainerId);
             }
         }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         if (count == 2)
             break;
@@ -4652,11 +4809,15 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     for (i = 0; i < NUM_INFOCARD_TRAINERS; i++)
     {
         tournamentIds[i] = sInfoCard->tournamentIds[i];
+#if FREE_BATTLE_FRONTIER == FALSE
         trainerIds[i] = DOME_TRAINERS[tournamentIds[i]].trainerId;
         if (DOME_TRAINERS[tournamentIds[i]].eliminatedAt <= sCompetitorRangeByMatch[matchNo][2]
             && DOME_TRAINERS[tournamentIds[i]].isEliminated)
             lost[i] = TRUE;
         else
+#else
+        trainerIds[i] = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             lost[i] = FALSE;
     }
 
@@ -4691,29 +4852,53 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     {
         if (trainerIds[0] == TRAINER_PLAYER)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[0]][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(0,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sLeftTrainerMonX[i],
+                                                                  y + sLeftTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
         else if (trainerIds[0] == TRAINER_FRONTIER_BRAIN)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[0]][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(0,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sLeftTrainerMonX[i],
+                                                                  y + sLeftTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
         else
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[tournamentIds[0]][i]].species,
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sLeftTrainerMonX[i],
                                                                   y + sLeftTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[2 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[0].species,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sLeftTrainerMonX[i],
+                                                                  y + sLeftTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[2 + i + arrId]].oam.priority = 0;
         }
 
@@ -4731,29 +4916,53 @@ static void DisplayMatchInfoOnCard(u8 flags, u8 matchNo)
     {
         if (trainerIds[1] == TRAINER_PLAYER)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[1]][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(0,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sRightTrainerMonX[i],
+                                                                  y + sRightTrainerMonY[i],
+                                                                  0, 0);
+#endif //if FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[5 + i + arrId]].oam.priority = 0;
         }
         else if (trainerIds[1] == TRAINER_FRONTIER_BRAIN)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(DOME_MONS[tournamentIds[1]][i],
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(0,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sRightTrainerMonX[i],
+                                                                  y + sRightTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[5 + i + arrId]].oam.priority = 0;
         }
         else
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[DOME_MONS[tournamentIds[1]][i]].species,
                                                                   SpriteCB_MonIconDomeInfo,
                                                                   x | sRightTrainerMonX[i],
                                                                   y + sRightTrainerMonY[i],
                                                                   0, 0);
+#else
+            sInfoCard->spriteIds[5 + i + arrId] = CreateMonIcon(gFacilityTrainerMons[0].species,
+                                                                  SpriteCB_MonIconDomeInfo,
+                                                                  x | sRightTrainerMonX[i],
+                                                                  y + sRightTrainerMonY[i],
+                                                                  0, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             gSprites[sInfoCard->spriteIds[5 + i + arrId]].oam.priority = 0;
         }
 
@@ -4849,8 +5058,10 @@ static void ShowPreviousDomeTourneyTree(void)
     u8 taskId;
 
     SetFacilityTrainerAndMonPtrs();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.lvlMode = gSaveBlock2Ptr->frontier.domeLvlMode - 1;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = DOME_FINAL;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     taskId = CreateTask(Task_ShowTourneyTree, 0);
     gTasks[taskId].tState = 0;
     gTasks[taskId].tNotInteractive = FALSE;
@@ -4977,7 +5188,11 @@ static u8 UpdateTourneyTreeCursor(u8 taskId)
     u8 selection = TOURNEY_TREE_NO_SELECTION;
     int direction = MOVE_DIR_NONE;
     int tourneyTreeCursorSpriteId = gTasks[taskId].data[1];
+#if FREE_BATTLE_FRONTIER == FALSE
     int roundId = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+#else
+    int roundId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (gMain.newKeys == B_BUTTON || (JOY_NEW(A_BUTTON) && tourneyTreeCursorSpriteId == TOURNEY_TREE_CLOSE_BUTTON))
     {
@@ -5040,6 +5255,7 @@ static void ShowNonInteractiveDomeTourneyTree(void)
 
 static void ResolveDomeRoundWinners(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     int i;
 
     if (gSpecialVar_0x8005 == DOME_PLAYER_WON_MATCH)
@@ -5065,6 +5281,7 @@ static void ResolveDomeRoundWinners(void)
         for (i = gSaveBlock2Ptr->frontier.curChallengeBattleNum; i < DOME_ROUNDS_COUNT; i++)
             DecideRoundWinners(i);
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // Decides the winning move of an NPC vs NPC match
@@ -5087,10 +5304,14 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
             enum Move move;
 
             moveScores[moveIndex] = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
             if (DOME_TRAINERS[winnerTournamentId].trainerId == TRAINER_FRONTIER_BRAIN)
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 move = GetFrontierBrainMonMove(i, j);
+#if FREE_BATTLE_FRONTIER == FALSE
             else
                 move = gFacilityTrainerMons[DOME_MONS[winnerTournamentId][i]].moves[j];
+#endif //FREE_BATTLE_FRONTIER == FALSE
             moves[moveIndex] = move;
 
             movePower = GetMovePower(move);
@@ -5110,9 +5331,15 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
                 do
                 {
                     personality = Random32();
+#if FREE_BATTLE_FRONTIER == FALSE
                 } while (gFacilityTrainerMons[DOME_MONS[loserTournamentId][k]].nature != GetNatureFromPersonality(personality));
 
                 targetSpecies = gFacilityTrainerMons[DOME_MONS[loserTournamentId][k]].species;
+#else
+                } while (gFacilityTrainerMons[0].nature != GetNatureFromPersonality(personality));
+
+                targetSpecies = gFacilityTrainerMons[0].species;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
                 if (personality & 1)
                     targetAbility = GetSpeciesAbility(targetSpecies, 1);
@@ -5148,8 +5375,10 @@ static u16 GetWinningMove(int winnerTournamentId, int loserTournamentId, u8 roun
     {
         for (i = 0; i < roundId - 1; i++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             if (gSaveBlock2Ptr->frontier.domeWinningMoves[GetOpposingNPCTournamentIdByRound(winnerTournamentId, i)] == moves[j])
                 break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
         if (i != roundId - 1)
         {
@@ -5282,7 +5511,12 @@ static void Task_ShowTourneyTree(u8 taskId)
         {
             int roundId, var2;
 
+#if FREE_BATTLE_FRONTIER == FALSE
             CopyDomeTrainerName(gDisplayedStringBattle, DOME_TRAINERS[i].trainerId);
+#else
+            CopyDomeTrainerName(gDisplayedStringBattle, 0);
+#endif //FREE_BATTLE_FRONTIER == FALSE
+#if FREE_BATTLE_FRONTIER == FALSE
             if (notInteractive == TRUE)
             {
                 if (DOME_TRAINERS[i].isEliminated)
@@ -5339,13 +5573,16 @@ static void Task_ShowTourneyTree(u8 taskId)
                 }
             }
             else
+#endif //FREE_BATTLE_FRONTIER == FALSE
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (DOME_TRAINERS[i].trainerId == TRAINER_PLAYER)
                 {
                     textPrinter.color.foreground = TEXT_COLOR_LIGHT_GRAY;
                     textPrinter.color.shadow = TEXT_COLOR_RED;
                 }
                 else
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 {
                     textPrinter.color.foreground = TEXT_DYNAMIC_COLOR_5;
                     textPrinter.color.shadow = TEXT_DYNAMIC_COLOR_4;
@@ -5463,6 +5700,7 @@ static void Task_HandleStaticTourneyTreeInput(u8 taskId)
             // Update the advancement lines and gray out eliminated trainer names
             for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 CopyDomeTrainerName(gDisplayedStringBattle, DOME_TRAINERS[i].trainerId);
                 if (DOME_TRAINERS[i].eliminatedAt == gSaveBlock2Ptr->frontier.curChallengeBattleNum - 1
                     && DOME_TRAINERS[i].isEliminated)
@@ -5482,6 +5720,7 @@ static void Task_HandleStaticTourneyTreeInput(u8 taskId)
                     int roundId = gSaveBlock2Ptr->frontier.curChallengeBattleNum - 1;
                     DrawTourneyAdvancementLine(i, roundId);
                 }
+#endif //FREE_BATTLE_FRONTIER == FALSE
             }
         }
         break;
@@ -5639,7 +5878,11 @@ static void ResetSketchedMoves(void)
 
     for (i = 0; i < DOME_BATTLE_PARTY_SIZE; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         int playerMonId = gSaveBlock2Ptr->frontier.selectedPartyMons[gSelectedOrderFromParty[i] - 1] - 1;
+#else
+        int playerMonId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         int count;
 
         for (moveSlot = 0; moveSlot < MAX_MON_MOVES; moveSlot++)
@@ -5665,7 +5908,11 @@ static void RestoreDomePlayerPartyHeldItems(void)
 
     for (i = 0; i < DOME_BATTLE_PARTY_SIZE; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         int playerMonId = gSaveBlock2Ptr->frontier.selectedPartyMons[gSelectedOrderFromParty[i] - 1] - 1;
+#else
+        int playerMonId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         enum Item item = GetMonData(GetSavedPlayerPartyMon(playerMonId), MON_DATA_HELD_ITEM);
         SetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_HELD_ITEM, &item);
     }
@@ -5690,12 +5937,14 @@ static void BufferLastDomeWinnerName(void)
     int i;
 
     SetFacilityTrainerAndMonPtrs();
+#if FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
         if (!DOME_TRAINERS[i].isEliminated)
             break;
     }
     CopyDomeTrainerName(gStringVar1, DOME_TRAINERS[i].trainerId);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // For showing the previous tourney results before the player has entered a challenge
@@ -5717,18 +5966,26 @@ static void InitRandomTourneyTreeResults(void)
     species[0] = SPECIES_NONE;
     species[1] = SPECIES_NONE;
     species[2] = SPECIES_NONE;
+#if FREE_BATTLE_FRONTIER == FALSE
     if ((gSaveBlock2Ptr->frontier.domeLvlMode != -gSaveBlock2Ptr->frontier.domeBattleMode) && gSaveBlock2Ptr->frontier.challengeStatus != CHALLENGE_STATUS_SAVING)
         return;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     statSums = AllocZeroed(sizeof(u16) * DOME_TOURNAMENT_TRAINERS_COUNT);
     statValues = AllocZeroed(sizeof(int) * NUM_STATS);
+#if FREE_BATTLE_FRONTIER == FALSE
     lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     gSaveBlock2Ptr->frontier.lvlMode = FRONTIER_LVL_50;
+#else
+    lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     zero1 = 0;
     zero2 = 0;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.domeLvlMode = zero1 + 1;
     gSaveBlock2Ptr->frontier.domeBattleMode = zero2 + 1;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
@@ -5743,12 +6000,16 @@ static void InitRandomTourneyTreeResults(void)
 
             for (j = 0; j < i; j++)
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (DOME_TRAINERS[j].trainerId == trainerId)
                     break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             }
         } while (j != i);
 
+#if FREE_BATTLE_FRONTIER == FALSE
         DOME_TRAINERS[i].trainerId = trainerId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         for (j = 0; j < FRONTIER_PARTY_SIZE; j++)
         {
             do
@@ -5757,7 +6018,11 @@ static void InitRandomTourneyTreeResults(void)
                 for (k = 0; k < j; k++)
                 {
                     // Make sure the mon is valid.
+#if FREE_BATTLE_FRONTIER == FALSE
                     int alreadySelectedMonId = DOME_MONS[i][k];
+#else
+                    int alreadySelectedMonId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     if (alreadySelectedMonId == monId
                         || species[0] == gFacilityTrainerMons[monId].species
                         || species[1] == gFacilityTrainerMons[monId].species
@@ -5766,12 +6031,16 @@ static void InitRandomTourneyTreeResults(void)
                 }
             } while (k != j);
 
+#if FREE_BATTLE_FRONTIER == FALSE
             DOME_MONS[i][j] = monId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             species[j] = gFacilityTrainerMons[monId].species;
         }
+#if FREE_BATTLE_FRONTIER == FALSE
         DOME_TRAINERS[i].isEliminated = FALSE;
         DOME_TRAINERS[i].eliminatedAt = 0;
         DOME_TRAINERS[i].forfeited = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     monLevel = FRONTIER_MAX_LEVEL_50;
@@ -5779,11 +6048,20 @@ static void InitRandomTourneyTreeResults(void)
     {
         monTypesBits = 0;
         statSums[i] = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
         ivs = GetDomeTrainerMonIvs(DOME_TRAINERS[i].trainerId);
+#else
+        ivs = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         for (j = 0; j < FRONTIER_PARTY_SIZE; j++)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             CalcDomeMonStats(&gFacilityTrainerMons[DOME_MONS[i][j]],
                              monLevel, ivs, statValues);
+#else
+            CalcDomeMonStats(&gFacilityTrainerMons[0],
+                 monLevel, ivs, statValues);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
             statSums[i] += statValues[STAT_ATK];
             statSums[i] += statValues[STAT_DEF];
@@ -5791,8 +6069,13 @@ static void InitRandomTourneyTreeResults(void)
             statSums[i] += statValues[STAT_SPDEF];
             statSums[i] += statValues[STAT_SPEED];
             statSums[i] += statValues[STAT_HP];
+#if FREE_BATTLE_FRONTIER == FALSE
             monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[DOME_MONS[i][j]].species, 0);
             monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[DOME_MONS[i][j]].species, 1);
+#else
+            monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[0].species, 0);
+            monTypesBits |= 1u << GetSpeciesType(gFacilityTrainerMons[0].species, 1);
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
 
         // Because GF hates temporary vars, trainerId acts like monTypesCount here.
@@ -5815,8 +6098,10 @@ static void InitRandomTourneyTreeResults(void)
             }
             else if (statSums[i] == statSums[j])
             {
+#if FREE_BATTLE_FRONTIER == FALSE
                 if (DOME_TRAINERS[i].trainerId > DOME_TRAINERS[j].trainerId)
                     SwapDomeTrainers(i, j, statSums);
+#endif //FREE_BATTLE_FRONTIER == FALSE
             }
         }
     }
@@ -5827,7 +6112,9 @@ static void InitRandomTourneyTreeResults(void)
     for (i = 0; i < DOME_ROUNDS_COUNT; i++)
         DecideRoundWinners(i);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.lvlMode = lvlMode;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static int TrainerIdToTournamentId(u16 trainerId)
@@ -5836,8 +6123,10 @@ static int TrainerIdToTournamentId(u16 trainerId)
 
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         if (DOME_TRAINERS[i].trainerId == trainerId)
             break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     return i;
@@ -5850,8 +6139,10 @@ int TrainerIdToDomeTournamentId(u16 trainerId)
 
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         if (DOME_TRAINERS[i].trainerId == trainerId)
             break;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     return i;
@@ -5878,11 +6169,18 @@ static void DecideRoundWinners(u8 roundId)
 
     for (i = 0; i < DOME_TOURNAMENT_TRAINERS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         if (DOME_TRAINERS[i].isEliminated || DOME_TRAINERS[i].trainerId == TRAINER_PLAYER)
             continue;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         tournamentId1 = i;
+#if FREE_BATTLE_FRONTIER == FALSE
         tournamentId2 = TournamentIdOfOpponent(roundId, DOME_TRAINERS[tournamentId1].trainerId);
+#else
+        tournamentId2 = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
+#if FREE_BATTLE_FRONTIER == FALSE
         // Frontier Brain always wins, check tournamentId1.
         if (DOME_TRAINERS[tournamentId1].trainerId == TRAINER_FRONTIER_BRAIN && tournamentId2 != 0xFF)
         {
@@ -5899,6 +6197,9 @@ static void DecideRoundWinners(u8 roundId)
         }
         // Decide which one of two trainers wins!
         else if (tournamentId2 != 0xFF)
+#else
+        if (tournamentId2 != 0xFF)
+#endif //FREE_BATTLE_FRONTIER == FALSE
         {
             // BUG: points1 and points2 are not cleared at the beginning of the loop resulting in not fair results.
             #ifdef BUGFIX
@@ -5913,11 +6214,17 @@ static void DecideRoundWinners(u8 roundId)
                 {
                     for (monId2 = 0; monId2 < FRONTIER_PARTY_SIZE; monId2++)
                     {
+#if FREE_BATTLE_FRONTIER == FALSE
                         points1 += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentId1][monId1]].moves[moveSlot],
                                                 gFacilityTrainerMons[DOME_MONS[tournamentId2][monId2]].species, EFFECTIVENESS_MODE_AI_VS_AI);
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     }
                 }
+#if FREE_BATTLE_FRONTIER == FALSE
                 species = gFacilityTrainerMons[DOME_MONS[tournamentId1][monId1]].species;
+#else
+                species = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 points1 += GetTotalBaseStat(species) / 10;
             }
             // Random part of the formula.
@@ -5931,11 +6238,17 @@ static void DecideRoundWinners(u8 roundId)
                 {
                     for (monId2 = 0; monId2 < FRONTIER_PARTY_SIZE; monId2++)
                     {
+#if FREE_BATTLE_FRONTIER == FALSE
                         points2 += GetTypeEffectivenessPoints(gFacilityTrainerMons[DOME_MONS[tournamentId2][monId1]].moves[moveSlot],
                                                 gFacilityTrainerMons[DOME_MONS[tournamentId1][monId2]].species, EFFECTIVENESS_MODE_AI_VS_AI);
+#endif //FREE_BATTLE_FRONTIER == FALSE
                     }
                 }
+#if FREE_BATTLE_FRONTIER == FALSE
                 species = gFacilityTrainerMons[DOME_MONS[tournamentId2][monId1]].species;
+#else
+                species = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 points2 += GetTotalBaseStat(species) / 10;
             }
             // Random part of the formula.
@@ -5943,6 +6256,7 @@ static void DecideRoundWinners(u8 roundId)
             // Favor trainers with higher id;
             points2 += tournamentId2;
 
+#if FREE_BATTLE_FRONTIER == FALSE
             if (points1 > points2)
             {
                 DOME_TRAINERS[tournamentId2].isEliminated = TRUE;
@@ -5968,6 +6282,7 @@ static void DecideRoundWinners(u8 roundId)
                 DOME_TRAINERS[tournamentId1].eliminatedAt = roundId;
                 gSaveBlock2Ptr->frontier.domeWinningMoves[tournamentId1] = GetWinningMove(tournamentId2, tournamentId1, roundId);
             }
+#endif //FREE_BATTLE_FRONTIER == FALSE
         }
     }
 }

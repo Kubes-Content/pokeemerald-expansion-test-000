@@ -1274,9 +1274,11 @@ static void Select_InitMonsData(void)
     for (i = 0; i < SELECTABLE_MONS_COUNT; i++)
         sFactorySelectScreen->mons[i].selectedId = 0;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_TENT)
         CreateFrontierFactorySelectableMons(0);
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         CreateSlateportTentSelectableMons(0);
 }
 
@@ -1714,14 +1716,21 @@ static void CreateFrontierFactorySelectableMons(u8 firstMonId)
     u8 level = 0;
     u32 otId = 0;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u8 challengeNum = gSaveBlock2Ptr->frontier.factoryWinStreaks[battleMode][lvlMode] / FRONTIER_STAGES_PER_CHALLENGE;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+    u8 challengeNum = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u8 rentalRank = 0;
 
     gFacilityTrainerMons = gBattleFrontierMons;
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_50)
         level = FRONTIER_MAX_LEVEL_OPEN;
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         level = FRONTIER_MAX_LEVEL_50;
 
     rentalRank = GetNumPastRentalsRank(battleMode, lvlMode);
@@ -1729,7 +1738,11 @@ static void CreateFrontierFactorySelectableMons(u8 firstMonId)
 
     for (i = 0; i < SELECTABLE_MONS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         u16 monId = gSaveBlock2Ptr->frontier.rentalMons[i].monId;
+#else
+        u16 monId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         sFactorySelectScreen->mons[i + firstMonId].monId = monId;
         if (i < rentalRank)
             ivs = GetFactoryMonFixedIV(challengeNum + 1, FALSE);
@@ -1754,7 +1767,11 @@ static void CreateSlateportTentSelectableMons(u8 firstMonId)
 
     for (i = 0; i < SELECTABLE_MONS_COUNT; i++)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         u16 monId = gSaveBlock2Ptr->frontier.rentalMons[i].monId;
+#else
+        u16 monId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         sFactorySelectScreen->mons[i + firstMonId].monId = monId;
         CreateFacilityMon(&gFacilityTrainerMons[monId], level, ivs, otId, 0, &sFactorySelectScreen->mons[i + firstMonId].monData);
     }
@@ -1771,10 +1788,12 @@ static void Select_CopyMonsToPlayerParty(void)
             if (sFactorySelectScreen->mons[j].selectedId == i + 1)
             {
                 gParties[B_TRAINER_PLAYER][i] = sFactorySelectScreen->mons[j].monData;
+#if FREE_BATTLE_FRONTIER == FALSE
                 gSaveBlock2Ptr->frontier.rentalMons[i].monId = sFactorySelectScreen->mons[j].monId;
                 gSaveBlock2Ptr->frontier.rentalMons[i].personality = GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_PERSONALITY);
                 gSaveBlock2Ptr->frontier.rentalMons[i].abilityNum = GetBoxMonData(&gParties[B_TRAINER_PLAYER][i].box, MON_DATA_ABILITY_NUM);
                 gSaveBlock2Ptr->frontier.rentalMons[i].ivs = GetBoxMonData(&gParties[B_TRAINER_PLAYER][i].box, MON_DATA_ATK_IV);
+#endif //FREE_BATTLE_FRONTIER == FALSE
                 break;
             }
         }
@@ -2308,10 +2327,12 @@ static void CopySwappedMonData(void)
     gParties[B_TRAINER_PLAYER][sFactorySwapScreen->playerMonId] = gParties[B_TRAINER_OPPONENT_A][sFactorySwapScreen->enemyMonId];
     friendship = 0;
     SetMonData(&gParties[B_TRAINER_PLAYER][sFactorySwapScreen->playerMonId], MON_DATA_FRIENDSHIP, &friendship);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->playerMonId].monId = gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->enemyMonId + FRONTIER_PARTY_SIZE].monId;
     gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->playerMonId].ivs = gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->enemyMonId + FRONTIER_PARTY_SIZE].ivs;
     gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->playerMonId].personality = GetMonData(&gParties[B_TRAINER_OPPONENT_A][sFactorySwapScreen->enemyMonId], MON_DATA_PERSONALITY);
     gSaveBlock2Ptr->frontier.rentalMons[sFactorySwapScreen->playerMonId].abilityNum = GetBoxMonData(&gParties[B_TRAINER_OPPONENT_A][sFactorySwapScreen->enemyMonId].box, MON_DATA_ABILITY_NUM);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // Main swap states

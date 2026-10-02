@@ -2247,53 +2247,67 @@ void ShowFrontierManiacMessage(void)
     case FRONTIER_MANIAC_TOWER_DOUBLES:
     case FRONTIER_MANIAC_TOWER_MULTIS:
     case FRONTIER_MANIAC_TOWER_LINK:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.towerWinStreaks[facility][FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.towerWinStreaks[facility][FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.towerWinStreaks[facility][FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.towerWinStreaks[facility][FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_DOME:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.domeWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.domeWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.domeWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.domeWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_FACTORY:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.factoryWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.factoryWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.factoryWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.factoryWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_PALACE:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.palaceWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.palaceWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.palaceWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.palaceWinStreaks[FRONTIER_MODE_SINGLES][FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_ARENA:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.arenaWinStreaks[FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.arenaWinStreaks[FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.arenaWinStreaks[FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.arenaWinStreaks[FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_PIKE:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.pikeWinStreaks[FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.pikeWinStreaks[FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.pikeWinStreaks[FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.pikeWinStreaks[FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     case FRONTIER_MANIAC_PYRAMID:
+#if FREE_BATTLE_FRONTIER == FALSE
         if (gSaveBlock2Ptr->frontier.pyramidWinStreaks[FRONTIER_LVL_50]
             >= gSaveBlock2Ptr->frontier.pyramidWinStreaks[FRONTIER_LVL_OPEN])
             winStreak = gSaveBlock2Ptr->frontier.pyramidWinStreaks[FRONTIER_LVL_50];
         else
             winStreak = gSaveBlock2Ptr->frontier.pyramidWinStreaks[FRONTIER_LVL_OPEN];
+#endif //FREE_BATTLE_FRONTIER == FALSE
         break;
     default:
         return;
@@ -2313,7 +2327,11 @@ void BufferBattleTowerElevatorFloors(void)
 
     u8 i;
     u16 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     if (battleMode == FRONTIER_MODE_MULTIS && !FlagGet(FLAG_CHOSEN_MULTI_BATTLE_NPC_PARTNER))
     {
@@ -2322,6 +2340,7 @@ void BufferBattleTowerElevatorFloors(void)
         return;
     }
 
+#if FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < ARRAY_COUNT(sBattleTowerStreakThresholds) - 1; i++)
     {
         if (sBattleTowerStreakThresholds[i] > gSaveBlock2Ptr->frontier.towerWinStreaks[battleMode][lvlMode])
@@ -2331,6 +2350,7 @@ void BufferBattleTowerElevatorFloors(void)
             return;
         }
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     gSpecialVar_0x8005 = 4;
     gSpecialVar_0x8006 = 12;
@@ -3029,7 +3049,12 @@ void UpdateBattlePointsWindow(void)
 {
     u8 string[32];
     u32 x;
+#if FREE_BATTLE_FRONTIER == FALSE
     StringCopy(ConvertIntToDecimalStringN(string, gSaveBlock2Ptr->frontier.battlePoints, STR_CONV_MODE_RIGHT_ALIGN, 4), gText_BP);
+#else
+    for (int i = 0; i < 32; i++)
+        string[i] = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     x = GetStringRightAlignXOffset(FONT_NORMAL, string, 48);
     AddTextPrinterParameterized(sBattlePointsWindowId, FONT_NORMAL, string, x, 1, 0, NULL);
 }
@@ -3061,23 +3086,31 @@ void CloseBattlePointsWindow(void)
 
 void TakeFrontierBattlePoints(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.battlePoints < gSpecialVar_0x8004)
         gSaveBlock2Ptr->frontier.battlePoints = 0;
     else
         gSaveBlock2Ptr->frontier.battlePoints -= gSpecialVar_0x8004;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 void GiveFrontierBattlePoints(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.battlePoints + gSpecialVar_0x8004 > MAX_BATTLE_FRONTIER_POINTS)
         gSaveBlock2Ptr->frontier.battlePoints = MAX_BATTLE_FRONTIER_POINTS;
     else
         gSaveBlock2Ptr->frontier.battlePoints = gSaveBlock2Ptr->frontier.battlePoints + gSpecialVar_0x8004;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 u16 GetFrontierBattlePoints(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     return gSaveBlock2Ptr->frontier.battlePoints;
+#else
+    return 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 void ShowFrontierExchangeCornerItemIconWindow(void)

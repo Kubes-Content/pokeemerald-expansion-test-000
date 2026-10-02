@@ -697,7 +697,11 @@ bool8 StandardWildEncounter(u16 curMetatileBehavior, u16 prevMetatileBehavior)
         }
         if (gMapHeader.mapLayoutId == LAYOUT_BATTLE_FRONTIER_BATTLE_PYRAMID_FLOOR)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             headerId = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+#else
+            headerId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             timeOfDay = GetTimeOfDayForEncounters(headerId, WILD_AREA_LAND);
 
             if (prevMetatileBehavior != curMetatileBehavior && !AllowWildCheckOnNewMetatile())
@@ -878,7 +882,11 @@ bool8 SweetScentWildEncounter(void)
         }
         if (gMapHeader.mapLayoutId == LAYOUT_BATTLE_FRONTIER_BATTLE_PYRAMID_FLOOR)
         {
+#if FREE_BATTLE_FRONTIER == FALSE
             headerId = gSaveBlock2Ptr->frontier.curChallengeBattleNum;
+#else
+            headerId = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             timeOfDay = GetTimeOfDayForEncounters(headerId, WILD_AREA_LAND);
 
             if (TryGenerateWildMon(gBattlePyramidWildMonHeaders[headerId].encounterTypes[timeOfDay].landMonsInfo, WILD_AREA_LAND, 0) != TRUE)
