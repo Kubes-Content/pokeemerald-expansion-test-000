@@ -453,6 +453,7 @@ static void UNUSED UpdateHPAtStart(enum BattlerId battler)
 
 static void InitArenaChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     bool32 isCurrent;
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
@@ -467,6 +468,7 @@ static void InitArenaChallenge(void)
 
     if (!isCurrent)
         gSaveBlock2Ptr->frontier.arenaWinStreaks[lvlMode] = 0;
+#endif
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     TRAINER_BATTLE_PARAM.opponentA = 0;
@@ -474,6 +476,7 @@ static void InitArenaChallenge(void)
 
 static void GetArenaData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     switch (gSpecialVar_0x8005)
@@ -491,10 +494,14 @@ static void GetArenaData(void)
             gSpecialVar_Result = gSaveBlock2Ptr->frontier.winStreakActiveFlags & STREAK_ARENA_50;
         break;
     }
+#else
+    gSpecialVar_Result = 0;
+#endif
 }
 
 static void SetArenaData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     switch (gSpecialVar_0x8005)
@@ -522,29 +529,38 @@ static void SetArenaData(void)
         }
         break;
     }
+#endif
 }
 
 static void SaveArenaChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif
     SaveGameFrontier();
 }
 
 static void SetArenaPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     if (gSaveBlock2Ptr->frontier.arenaWinStreaks[lvlMode] > 41)
         gSaveBlock2Ptr->frontier.arenaPrize = sLongStreakPrizeItems[Random() % ARRAY_COUNT(sLongStreakPrizeItems)];
     else
         gSaveBlock2Ptr->frontier.arenaPrize = sShortStreakPrizeItems[Random() % ARRAY_COUNT(sShortStreakPrizeItems)];
+#endif
 }
 
 static void GiveArenaPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
+
     if (AddBagItem(gSaveBlock2Ptr->frontier.arenaPrize, 1) == TRUE)
     {
         CopyItemName(gSaveBlock2Ptr->frontier.arenaPrize, gStringVar1);
@@ -552,6 +568,7 @@ static void GiveArenaPrize(void)
         gSpecialVar_Result = TRUE;
     }
     else
+#endif
     {
         gSpecialVar_Result = FALSE;
     }

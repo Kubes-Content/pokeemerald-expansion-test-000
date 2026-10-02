@@ -296,8 +296,10 @@ void ResetTrainerHillResults(void)
     s32 i;
 #endif //FREE_TRAINER_HILL
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.savedGame = 0;
     gSaveBlock2Ptr->frontier.unk_EF9 = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 #if FREE_TRAINER_HILL == FALSE
     gSaveBlock1Ptr->trainerHill.bestTime = 0;
     for (i = 0; i < NUM_TRAINER_HILL_MODES; i++)
@@ -423,7 +425,9 @@ static void TrainerHillStartChallenge(void)
     gSaveBlock1Ptr->trainerHill.spokeToOwner = 0;
     gSaveBlock1Ptr->trainerHill.checkedFinalTime = 0;
     gSaveBlock1Ptr->trainerHill.maybeECardScanDuringChallenge = 0;
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.trainerFlags = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     gBattleOutcome = 0;
     gSaveBlock1Ptr->trainerHill.receivedPrize = 0;
 #endif //FREE_TRAINER_HILL
@@ -456,7 +460,9 @@ static void GiveChallengePrize(void)
     {
         CopyItemName(itemId, gStringVar2);
         gSaveBlock1Ptr->trainerHill.receivedPrize = TRUE;
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.unk_EF9 = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         gSpecialVar_Result = 0;
     }
     else
@@ -671,8 +677,10 @@ void LoadTrainerHillObjectEventTemplates(void)
         return;
 
     SetUpDataStruct();
+#if FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < HILL_TRAINERS_PER_FLOOR; i++)
         gSaveBlock2Ptr->frontier.trainerIds[i] = 0xFFFF;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     CpuFill32(0, gSaveBlock1Ptr->objectEventTemplates, sizeof(gSaveBlock1Ptr->objectEventTemplates));
 
     floorId = GetFloorId();
@@ -689,7 +697,9 @@ void LoadTrainerHillObjectEventTemplates(void)
         eventTemplates[i].movementType = ((sHillData->floors[floorId].map.trainerDirections >> bits) & 0xF) + MOVEMENT_TYPE_FACE_UP;
         eventTemplates[i].trainerRange_berryTreeId = (sHillData->floors[floorId].map.trainerRanges >> bits) & 0xF;
         eventTemplates[i].script = TrainerHill_EventScript_TrainerBattle;
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.trainerIds[i] = i + 1;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
     FreeDataStruct();
@@ -842,19 +852,28 @@ const struct WarpEvent* SetWarpDestinationTrainerHillFinalFloor(u8 warpEventId)
 
 u16 LocalIdToHillTrainerId(u8 localId)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     return gSaveBlock2Ptr->frontier.trainerIds[localId - 1];
+#else
+    return 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 bool8 GetHillTrainerFlag(u8 objectEventId)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     u32 trainerIndexStart = GetFloorId() * HILL_TRAINERS_PER_FLOOR;
     u8 bitId = gObjectEvents[objectEventId].localId - 1 + trainerIndexStart;
 
     return gSaveBlock2Ptr->frontier.trainerFlags & (1u << bitId);
+#else
+    return FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 void SetHillTrainerFlag(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     u8 i;
     u8 trainerIndexStart = GetFloorId() * HILL_TRAINERS_PER_FLOOR;
 
@@ -878,6 +897,7 @@ void SetHillTrainerFlag(void)
             }
         }
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 const u8 *GetTrainerHillTrainerScript(void)
@@ -970,7 +990,9 @@ u8 GetNumFloorsInTrainerHillChallenge(void)
 
 static void SetAllTrainerFlags(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.trainerFlags = 0xFF;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // Palette never loaded, OnTrainerHillEReaderChallengeFloor always FALSE
@@ -982,17 +1004,25 @@ void TryLoadTrainerHillEReaderPalette(void)
 
 static void GetGameSaved(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSpecialVar_Result = gSaveBlock2Ptr->frontier.savedGame;
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetGameSaved(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.savedGame = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void ClearGameSaved(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.savedGame = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 // Always FALSE

@@ -361,7 +361,9 @@ bool8 MEScrCmd_addtrainer(struct ScriptContext *ctx)
 {
 #if FREE_BATTLE_TOWER_E_READER == FALSE
     u32 data = ScriptReadWord(ctx) - ctx->mOffset + ctx->mScriptBase;
+#if FREE_BATTLE_FRONTIER == FALSE
     memcpy(&gSaveBlock2Ptr->frontier.ereaderTrainer, (void *)data, sizeof(gSaveBlock2Ptr->frontier.ereaderTrainer));
+#endif //FREE_BATTLE_FRONTIER == FALSE
     ValidateEReaderTrainer();
     StringExpandPlaceholders(gStringVar4, gText_MysteryEventNewTrainer);
     ctx->mStatus = MEVENT_STATUS_SUCCESS;

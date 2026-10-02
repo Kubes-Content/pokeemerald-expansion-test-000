@@ -109,20 +109,28 @@ void CallVerdanturfTentFunction(void)
 
 static void InitVerdanturfTentChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
 }
 
 static void GetVerdanturfTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSpecialVar_Result = gSaveBlock2Ptr->frontier.verdanturfTentPrize;
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetVerdanturfTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.verdanturfTentPrize = gSpecialVar_0x8006;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetVerdanturfTentTrainerGfx(void)
@@ -140,19 +148,26 @@ static void BufferVerdanturfTentTrainerIntro(void)
 static void SaveVerdanturfTentChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
 static void SetRandomVerdanturfTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.verdanturfTentPrize = sVerdanturfTentRewards[Random() % ARRAY_COUNT(sVerdanturfTentRewards)];
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void GiveVerdanturfTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (AddBagItem(gSaveBlock2Ptr->frontier.verdanturfTentPrize, 1) == TRUE)
     {
         CopyItemName(gSaveBlock2Ptr->frontier.verdanturfTentPrize, gStringVar1);
@@ -160,6 +175,7 @@ static void GiveVerdanturfTentPrize(void)
         gSpecialVar_Result = TRUE;
     }
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         gSpecialVar_Result = FALSE;
     }
@@ -172,38 +188,53 @@ void CallFallarborTentFunction(void)
 
 static void InitFallarborTentChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
 }
 
 static void GetFallarborTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSpecialVar_Result = gSaveBlock2Ptr->frontier.fallarborTentPrize;
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetFallarborTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.fallarborTentPrize = gSpecialVar_0x8006;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SaveFallarborTentChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
 static void SetRandomFallarborTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.fallarborTentPrize = sFallarborTentRewards[Random() % ARRAY_COUNT(sFallarborTentRewards)];
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void GiveFallarborTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (AddBagItem(gSaveBlock2Ptr->frontier.fallarborTentPrize, 1) == TRUE)
     {
         CopyItemName(gSaveBlock2Ptr->frontier.fallarborTentPrize, gStringVar1);
@@ -211,6 +242,7 @@ static void GiveFallarborTentPrize(void)
         gSpecialVar_Result = TRUE;
     }
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         gSpecialVar_Result = FALSE;
     }
@@ -228,38 +260,53 @@ void CallSlateportTentFunction(void)
 
 static void InitSlateportTentChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
 }
 
 static void GetSlateportTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSpecialVar_Result = gSaveBlock2Ptr->frontier.slateportTentPrize;
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetSlateportTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.slateportTentPrize = gSpecialVar_0x8006;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SaveSlateportTentChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
 static void SetRandomSlateportTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.slateportTentPrize = sSlateportTentRewards[Random() % ARRAY_COUNT(sSlateportTentRewards)];
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void GiveSlateportTentPrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (AddBagItem(gSaveBlock2Ptr->frontier.slateportTentPrize, 1) == TRUE)
     {
         CopyItemName(gSaveBlock2Ptr->frontier.slateportTentPrize, gStringVar1);
@@ -267,6 +314,7 @@ static void GiveSlateportTentPrize(void)
         gSpecialVar_Result = TRUE;
     }
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         gSpecialVar_Result = FALSE;
     }
@@ -342,7 +390,9 @@ static void GenerateInitialRentalMons(void)
         if (j != i + firstMonId)
             continue;
 
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.rentalMons[i].monId = monSetId;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         species[i] = gFacilityTrainerMons[monSetId].species;
         heldItems[i] = gFacilityTrainerMons[monSetId].heldItem;
         monIds[i] = monSetId;
@@ -364,16 +414,22 @@ static void GenerateOpponentMons(void)
 
     while (1)
     {
+#if FREE_BATTLE_FRONTIER == FALSE
         do
         {
+#endif //FREE_BATTLE_FRONTIER == FALSE
             // Choose a random trainer, ensuring no repeats in this challenge
             trainerId = Random() % NUM_BATTLE_TENT_TRAINERS;
+#if FREE_BATTLE_FRONTIER == FALSE
             for (i = 0; i < gSaveBlock2Ptr->frontier.curChallengeBattleNum; i++)
             {
                 if (gSaveBlock2Ptr->frontier.trainerIds[i] == trainerId)
                     break;
             }
+#endif //FREE_BATTLE_FRONTIER == FALSE
+#if FREE_BATTLE_FRONTIER == FALSE
         } while (i != gSaveBlock2Ptr->frontier.curChallengeBattleNum);
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         TRAINER_BATTLE_PARAM.opponentA = trainerId;
         monSet = gFacilityTrainers[TRAINER_BATTLE_PARAM.opponentA].monSet;
@@ -384,8 +440,10 @@ static void GenerateOpponentMons(void)
         numMons = 0;
     }
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.curChallengeBattleNum < TENT_STAGES_PER_CHALLENGE - 1)
         gSaveBlock2Ptr->frontier.trainerIds[gSaveBlock2Ptr->frontier.curChallengeBattleNum] = TRAINER_BATTLE_PARAM.opponentA;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     monSet = gFacilityTrainers[TRAINER_BATTLE_PARAM.opponentA].monSet;
     i = 0;
@@ -393,6 +451,7 @@ static void GenerateOpponentMons(void)
     {
         sRandMonId = monSet[Random() % numMons];
 
+#if FREE_BATTLE_FRONTIER == FALSE
         // Ensure none of the opponent's Pokémon are the same as the potential rental Pokémon for the player
         for (j = 0; j < (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons); j++)
         {
@@ -401,6 +460,7 @@ static void GenerateOpponentMons(void)
         }
         if (j != (int)ARRAY_COUNT(gSaveBlock2Ptr->frontier.rentalMons))
             continue;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
         // Ensure this species hasn't already been chosen for the opponent
         for (k = 0; k < i; k++)

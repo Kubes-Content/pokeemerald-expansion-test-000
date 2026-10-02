@@ -181,7 +181,9 @@ static void LinkPartnerHandleEndLinkBattle(enum BattlerId battler)
 {
     RecordedBattle_RecordAllBattlerData(&gBattleResources->bufferA[battler][4]);
     gBattleOutcome = gBattleResources->bufferA[battler][1];
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.disableRecordBattle = gBattleResources->bufferA[battler][2];
+#endif
     FadeOutMapMusic(5);
     BeginFastPaletteFade(3);
     BtlController_Complete(battler);

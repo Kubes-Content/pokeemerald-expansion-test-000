@@ -1158,9 +1158,13 @@ void CreateBattleTowerMon_HandleLevel(struct Pokemon *mon, struct BattleTowerPok
     enum Language language;
     u8 value;
 
+#if FREE_BATTLE_FRONTIER == FALSE
     if (gSaveBlock2Ptr->frontier.lvlMode != FRONTIER_LVL_50)
         level = GetFrontierEnemyMonLevel(gSaveBlock2Ptr->frontier.lvlMode);
     else if (lvl50)
+#else
+    if (lvl50)
+#endif //FREE_BATTLE_FRONTIER == FALSE
         level = FRONTIER_MAX_LEVEL_50;
     else
         level = src->level;

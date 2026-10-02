@@ -1395,6 +1395,7 @@ static void InterviewAfter_BravoTrainerBattleTowerProfile(void)
     show->bravoTrainerTower.kind = TVSHOW_BRAVO_TRAINER_BATTLE_TOWER_PROFILE;
     show->bravoTrainerTower.active = TRUE;
     StringCopy(show->bravoTrainerTower.playerName, gSaveBlock2Ptr->playerName);
+#if FREE_BATTLE_FRONTIER == FALSE
     StringCopy(show->bravoTrainerTower.opponentName, gSaveBlock2Ptr->frontier.towerInterview.opponentName);
     show->bravoTrainerTower.species = gSaveBlock2Ptr->frontier.towerInterview.playerSpecies;
     show->bravoTrainerTower.defeatedSpecies = gSaveBlock2Ptr->frontier.towerInterview.opponentSpecies;
@@ -1403,14 +1404,21 @@ static void InterviewAfter_BravoTrainerBattleTowerProfile(void)
     if (gSaveBlock2Ptr->frontier.towerLvlMode == FRONTIER_LVL_50)
         show->bravoTrainerTower.btLevel = FRONTIER_MAX_LEVEL_50;
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         show->bravoTrainerTower.btLevel = FRONTIER_MAX_LEVEL_OPEN;
     show->bravoTrainerTower.interviewResponse = gSpecialVar_0x8004;
     StorePlayerIdInNormalShow(show);
     show->bravoTrainerTower.playerLanguage = gGameLanguage;
+#if FREE_BATTLE_FRONTIER == FALSE
     if (show->bravoTrainerTower.playerLanguage == LANGUAGE_JAPANESE || gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage == LANGUAGE_JAPANESE)
+#else
+    if (show->bravoTrainerTower.playerLanguage == LANGUAGE_JAPANESE)
+#endif //FREE_BATTLE_FRONTIER == FALSE
         show->bravoTrainerTower.opponentLanguage = LANGUAGE_JAPANESE;
+#if FREE_BATTLE_FRONTIER == FALSE
     else
         show->bravoTrainerTower.opponentLanguage = gSaveBlock2Ptr->frontier.towerInterview.opponentLanguage;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 void TryPutSmartShopperOnAir(void)
@@ -1736,7 +1744,11 @@ void TryPutTodaysRivalTrainerOnAir(void)
             if (FlagGet(gFrontierBrainInfo[i].goldSymbolFlag) == TRUE)
                 show->rivalTrainer.nGoldSymbols++;
         }
+#if FREE_BATTLE_FRONTIER == FALSE
         show->rivalTrainer.battlePoints = gSaveBlock2Ptr->frontier.battlePoints;
+#else
+        show->rivalTrainer.battlePoints = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
         StringCopy(show->rivalTrainer.playerName, gSaveBlock2Ptr->playerName);
         StorePlayerIdInRecordMixShow(show);
         show->rivalTrainer.language = gGameLanguage;
@@ -2287,8 +2299,13 @@ void TryPutFrontierTVShowOnAir(u16 winStreak, u8 facilityAndMode)
             show->frontier.species2 = GetMonData(&gParties[B_TRAINER_PLAYER][1], MON_DATA_SPECIES);
             break;
         case FRONTIER_SHOW_TOWER_LINK_MULTIS:
+#if FREE_BATTLE_FRONTIER == FALSE
             show->frontier.species1 = GetMonData(GetSavedPlayerPartyMon(gSaveBlock2Ptr->frontier.selectedPartyMons[0] - 1), MON_DATA_SPECIES);
             show->frontier.species2 = GetMonData(GetSavedPlayerPartyMon(gSaveBlock2Ptr->frontier.selectedPartyMons[1] - 1), MON_DATA_SPECIES);
+#else
+            show->frontier.species1 = 0;
+            show->frontier.species2 = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
             break;
         }
         StorePlayerIdInRecordMixShow(show);

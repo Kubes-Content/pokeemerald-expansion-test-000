@@ -764,7 +764,9 @@ void HandleAction_Run(void)
         }
 
         gBattleOutcome |= B_OUTCOME_LINK_BATTLE_RAN;
+#if FREE_BATTLE_FRONTIER == FALSE
         gSaveBlock2Ptr->frontier.disableRecordBattle = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
     else
     {

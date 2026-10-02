@@ -185,10 +185,18 @@ static void SetSrcLookupPointers(void)
     sOldManSave = &gSaveBlock1Ptr->oldMan;
     sDewfordTrendsSave = gSaveBlock1Ptr->dewfordTrends;
     sRecordMixMailSave = &sRecordMixMail;
+#if FREE_BATTLE_FRONTIER == FALSE
     sBattleTowerSave = &gSaveBlock2Ptr->frontier.towerPlayer;
+#else
+    sBattleTowerSave = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     sLilycoveLadySave = &gSaveBlock1Ptr->lilycoveLady;
     sApprenticesSave = gSaveBlock2Ptr->apprentices;
+#if FREE_BATTLE_FRONTIER == FALSE
     sBattleTowerSave_Duplicate = &gSaveBlock2Ptr->frontier.towerPlayer;
+#else
+    sBattleTowerSave_Duplicate = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void PrepareUnknownExchangePacket(struct PlayerRecordRS *dest)
@@ -1155,11 +1163,16 @@ void GetPlayerHallRecords(struct PlayerHallRecords *dst)
     {
         dst->twoPlayers[j].language = GAME_LANGUAGE;
         CopyTrainerId(dst->twoPlayers[j].id1, gSaveBlock2Ptr->playerTrainerId);
+#if FREE_BATTLE_FRONTIER == FALSE
         CopyTrainerId(dst->twoPlayers[j].id2, gSaveBlock2Ptr->frontier.opponentTrainerIds[j]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
         StringCopy(dst->twoPlayers[j].name1, gSaveBlock2Ptr->playerName);
+#if FREE_BATTLE_FRONTIER == FALSE
         StringCopy(dst->twoPlayers[j].name2, gSaveBlock2Ptr->frontier.opponentNames[j]);
+#endif //FREE_BATTLE_FRONTIER == FALSE
     }
 
+#if FREE_BATTLE_FRONTIER == FALSE
     for (i = 0; i < FRONTIER_LVL_MODE_COUNT; i++)
     {
         dst->onePlayer[RANKING_HALL_TOWER_SINGLES][i].winStreak = gSaveBlock2Ptr->frontier.towerRecordWinStreaks[FRONTIER_MODE_SINGLES][i];
@@ -1174,6 +1187,7 @@ void GetPlayerHallRecords(struct PlayerHallRecords *dst)
 
         dst->twoPlayers[i].winStreak = gSaveBlock2Ptr->frontier.towerRecordWinStreaks[FRONTIER_MODE_LINK_MULTIS][i];
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static bool32 IsApprenticeAlreadySaved(struct Apprentice *mixApprentice, struct Apprentice *apprentices)

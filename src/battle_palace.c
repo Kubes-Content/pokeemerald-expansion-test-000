@@ -83,15 +83,21 @@ void CallBattlePalaceFunction(void)
 
 static void InitPalaceChallenge(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = 0;
     gSaveBlock2Ptr->frontier.curChallengeBattleNum = 0;
     gSaveBlock2Ptr->frontier.challengePaused = FALSE;
     gSaveBlock2Ptr->frontier.disableRecordBattle = FALSE;
     if (!(gSaveBlock2Ptr->frontier.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]))
         gSaveBlock2Ptr->frontier.palaceWinStreaks[battleMode][lvlMode] = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 
     SetDynamicWarp(0, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, WARP_ID_NONE);
     TRAINER_BATTLE_PARAM.opponentA = 0;
@@ -99,9 +105,14 @@ static void InitPalaceChallenge(void)
 
 static void GetPalaceData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
+#else
+    enum FrontierLevelMode lvlMode = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
+#if FREE_BATTLE_FRONTIER == FALSE
     switch (gSpecialVar_0x8005)
     {
     case PALACE_DATA_PRIZE:
@@ -114,10 +125,14 @@ static void GetPalaceData(void)
         gSpecialVar_Result = ((gSaveBlock2Ptr->frontier.winStreakActiveFlags & sWinStreakFlags[battleMode][lvlMode]) != 0);
         break;
     }
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SetPalaceData(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
@@ -136,11 +151,13 @@ static void SetPalaceData(void)
             gSaveBlock2Ptr->frontier.winStreakActiveFlags &= sWinStreakMasks[battleMode][lvlMode];
         break;
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void GetPalaceCommentId(void)
 {
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
     if (gSaveBlock2Ptr->frontier.palaceWinStreaks[battleMode][lvlMode] < 50)
@@ -148,6 +165,7 @@ static void GetPalaceCommentId(void)
     else if (gSaveBlock2Ptr->frontier.palaceWinStreaks[battleMode][lvlMode] < 99)
         gSpecialVar_Result = 3;
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
         gSpecialVar_Result = 4;
 }
 
@@ -165,6 +183,7 @@ static void BufferOpponentIntroSpeech(void)
 
 static void IncrementPalaceStreak(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
     u8 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
 
@@ -176,19 +195,25 @@ static void IncrementPalaceStreak(void)
         if (gSaveBlock2Ptr->frontier.palaceWinStreaks[battleMode][(lvlMode > gSaveBlock2Ptr->frontier.palaceRecordWinStreaks[battleMode][lvlMode]) ? 1 : 0])
             gSaveBlock2Ptr->frontier.palaceRecordWinStreaks[battleMode][lvlMode] = gSaveBlock2Ptr->frontier.palaceWinStreaks[battleMode][lvlMode];
     }
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void SavePalaceChallenge(void)
 {
     ClearEnemyPartyAfterChallenge();
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengeStatus = gSpecialVar_0x8005;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     VarSet(VAR_TEMP_CHALLENGE_STATUS, 0);
+#if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.challengePaused = TRUE;
+#endif //FREE_BATTLE_FRONTIER == FALSE
     SaveGameFrontier();
 }
 
 static void SetRandomPalacePrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     u32 battleMode = VarGet(VAR_FRONTIER_BATTLE_MODE);
     enum FrontierLevelMode lvlMode = gSaveBlock2Ptr->frontier.lvlMode;
 
@@ -196,10 +221,12 @@ static void SetRandomPalacePrize(void)
         gSaveBlock2Ptr->frontier.palacePrize = sBattlePalaceLatePrizes[Random() % ARRAY_COUNT(sBattlePalaceLatePrizes)];
     else
         gSaveBlock2Ptr->frontier.palacePrize = sBattlePalaceEarlyPrizes[Random() % ARRAY_COUNT(sBattlePalaceEarlyPrizes)];
+#endif //FREE_BATTLE_FRONTIER == FALSE
 }
 
 static void GivePalacePrize(void)
 {
+#if FREE_BATTLE_FRONTIER == FALSE
     if (AddBagItem(gSaveBlock2Ptr->frontier.palacePrize, 1) == TRUE)
     {
         CopyItemName(gSaveBlock2Ptr->frontier.palacePrize, gStringVar1);
@@ -207,6 +234,7 @@ static void GivePalacePrize(void)
         gSpecialVar_Result = TRUE;
     }
     else
+#endif //FREE_BATTLE_FRONTIER == FALSE
     {
         gSpecialVar_Result = FALSE;
     }
