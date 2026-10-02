@@ -2376,7 +2376,11 @@ const struct BerryInfo *GetBerryInfo(enum BerryId berry)
 
 struct BerryTree *GetBerryTreeInfo(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     return &gSaveBlock1Ptr->berryTrees[id];
+#else
+    return NULL;
+#endif
 }
 
 bool32 ObjectEventInteractionWaterBerryTree(void)
@@ -2434,10 +2438,12 @@ bool8 TryToWaterBerryTree(void)
 
 void ClearBerryTrees(void)
 {
+#if FREE_BERRY_TREES == FALSE
     int i;
 
     for (i = 0; i < BERRY_TREES_COUNT; i++)
         gSaveBlock1Ptr->berryTrees[i] = gBlankBerryTree;
+#endif
 }
 
 bool32 BerryTreeGrow(struct BerryTree *tree)
@@ -2493,6 +2499,7 @@ static u16 GetMulchAffectedGrowthRate(u16 berryDuration, u8 mulch, u8 stage)
 
 void BerryTreeTimeUpdate(s32 minutes)
 {
+#if FREE_BERRY_TREES == FALSE
     int i;
     u32 drainVal;
     struct BerryTree *tree;
@@ -2573,6 +2580,7 @@ void BerryTreeTimeUpdate(s32 minutes)
             }
         }
     }
+#endif
 }
 
 void PlantBerryTree(u8 id, enum BerryId berry, u8 stage, bool8 allowGrowth)
@@ -2608,22 +2616,36 @@ void PlantBerryTree(u8 id, enum BerryId berry, u8 stage, bool8 allowGrowth)
 
 void RemoveBerryTree(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     gSaveBlock1Ptr->berryTrees[id] = gBlankBerryTree;
+#endif
 }
 
 u8 GetBerryTypeByBerryTreeId(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     return gSaveBlock1Ptr->berryTrees[id].berry;
+#else
+    return 0;
+#endif
 }
 
 u8 GetStageByBerryTreeId(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     return gSaveBlock1Ptr->berryTrees[id].stage;
+#else
+    return 0;
+#endif
 }
 
 u8 GetMulchByBerryTreeId(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     return gSaveBlock1Ptr->berryTrees[id].mulch;
+#else
+    return 0;
+#endif
 }
 
 void GetBerryNameByBerryType(u8 berry, u8 *string)
@@ -2717,7 +2739,11 @@ static u32 GetBerryTreeAge(u8 id, u8 stage)
 
 static u8 GetBerryCountByBerryTreeId(u8 id)
 {
+#if FREE_BERRY_TREES == FALSE
     return gSaveBlock1Ptr->berryTrees[id].berryYield;
+#else
+    return 0;
+#endif
 }
 
 static u16 GetStageDurationByBerryType(u8 berry)
@@ -2751,7 +2777,11 @@ bool8 CanWaterBerryPlot(void)
 {
     if (!OW_BERRY_MOISTURE || OW_BERRY_ALWAYS_WATERABLE)
         return TRUE;
+#if FREE_BERRY_TREES == FALSE
     return (gSaveBlock1Ptr->berryTrees[GetObjectEventBerryTreeId(gSelectedObjectEvent)].moistureLevel == 0);
+#else
+    return FALSE;
+#endif
 }
 
 void ObjectEventInteractionGetBerryTreeData(void)
@@ -2827,7 +2857,9 @@ void ObjectEventInteractionApplyMulch(void)
 {
     u8 mulch = ITEM_TO_MULCH(gSpecialVar_ItemId);
 
+#if FREE_BERRY_TREES == FALSE
     gSaveBlock1Ptr->berryTrees[GetObjectEventBerryTreeId(gSelectedObjectEvent)].mulch = mulch;
+#endif
     StringExpandPlaceholders(gStringVar1, gItemsInfo[gSpecialVar_ItemId].name);
 }
 
@@ -2877,11 +2909,16 @@ bool8 PlayerHasBerries(void)
 
 bool8 ObjectEventInteractionBerryHasWeed(void)
 {
+#if FREE_BERRY_TREES == FALSE
     return gSaveBlock1Ptr->berryTrees[GetObjectEventBerryTreeId(gSelectedObjectEvent)].weeds;
+#else
+    return FALSE;
+#endif
 }
 
 bool8 ObjectEventInteractionBerryHasPests(void)
 {
+#if FREE_BERRY_TREES == FALSE
     enum Species species;
     if (!OW_BERRY_PESTS || !gSaveBlock1Ptr->berryTrees[GetObjectEventBerryTreeId(gSelectedObjectEvent)].pests)
         return FALSE;
@@ -2891,6 +2928,9 @@ bool8 ObjectEventInteractionBerryHasPests(void)
     CreateScriptedWildMon(species, 14 + Random() % 3, ITEM_NONE);
     gSaveBlock1Ptr->berryTrees[GetObjectEventBerryTreeId(gSelectedObjectEvent)].pests = FALSE;
     return TRUE;
+#else
+    return FALSE;
+#endif
 }
 
 // Berry tree growth is frozen at their initial stage (usually, fully grown) until the player has seen the tree
