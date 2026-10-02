@@ -350,11 +350,13 @@ static void DebugAction_Sound_SE_SelectId(u8 taskId);
 static void DebugAction_Sound_MUS(u8 taskId);
 static void DebugAction_Sound_MUS_SelectId(u8 taskId);
 
+#if FREE_BERRY_TREES == FALSE
 static void DebugAction_BerryFunctions_ClearAll(u8 taskId);
 static void DebugAction_BerryFunctions_Ready(u8 taskId);
 static void DebugAction_BerryFunctions_NextStage(u8 taskId);
 static void DebugAction_BerryFunctions_Pests(u8 taskId);
 static void DebugAction_BerryFunctions_Weeds(u8 taskId);
+#endif
 
 static void DebugAction_Player_Name(u8 taskId);
 static void DebugAction_Player_Gender(u8 taskId);
@@ -568,6 +570,7 @@ static const struct DebugMenuOption sDebugMenu_Actions_TimeMenu[] =
     { NULL }
 };
 
+#if FREE_BERRY_TREES == FALSE
 static const struct DebugMenuOption sDebugMenu_Actions_BerryFunctions[] =
 {
     { COMPOUND_STRING("Clear map trees"),      DebugAction_BerryFunctions_ClearAll },
@@ -577,6 +580,7 @@ static const struct DebugMenuOption sDebugMenu_Actions_BerryFunctions[] =
     { COMPOUND_STRING("Give map trees weeds"), DebugAction_BerryFunctions_Weeds },
     { NULL }
 };
+#endif
 
 static const struct DebugMenuOption sDebugMenu_Actions_FollowerNPCMenu[] =
 {
@@ -594,7 +598,9 @@ static const struct DebugMenuOption sDebugMenu_Actions_Utilities[] =
     { COMPOUND_STRING("Time Functions…"),           DebugAction_OpenSubMenu, sDebugMenu_Actions_TimeMenu, },
     { COMPOUND_STRING("Watch credits…"),            DebugAction_Util_WatchCredits },
     { COMPOUND_STRING("Cheat start"),               DebugAction_Util_CheatStart },
+#if FREE_BERRY_TREES == FALSE
     { COMPOUND_STRING("Berry Functions…"),          DebugAction_OpenSubMenu, sDebugMenu_Actions_BerryFunctions },
+#endif
     { COMPOUND_STRING("EWRAM Counters…"),           DebugAction_ExecuteScript, Debug_EventScript_EWRAMCounters },
     { COMPOUND_STRING("Follower NPC…"),             DebugAction_OpenSubMenu, sDebugMenu_Actions_FollowerNPCMenu },
     { COMPOUND_STRING("Test Species Randomizer"),   DebugAction_Selection_Init, &sSpeciesGeneratorSelection },
@@ -4509,6 +4515,7 @@ u32 FindSong(enum SongType type, enum FindSongMode mode, u32 fromSongId)
     }
 }
 
+#if FREE_BERRY_TREES == FALSE
 // *******************************
 // Actions BerryFunctions
 
@@ -4613,6 +4620,7 @@ static void DebugAction_BerryFunctions_Weeds(u8 taskId)
     ScriptContext_Enable();
     Debug_DestroyMenu_Full(taskId);
 }
+#endif
 
 // *******************************
 // Actions Party/Boxes

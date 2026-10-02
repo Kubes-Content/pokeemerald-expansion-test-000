@@ -1135,7 +1135,9 @@ struct SaveBlock1
     /*0x1270*/ u8 flags[NUM_FLAG_BYTES];
     /*0x139C*/ u16 vars[VARS_COUNT];
     /*0x159C*/ u32 gameStats[NUM_GAME_STATS];
+#if FREE_BERRY_TREES == FALSE
     /*0x169C*/ struct BerryTree berryTrees[BERRY_TREES_COUNT];
+#endif
 #if FREE_SECRET_BASES == FALSE
     /*0x1A9C*/ struct SecretBase secretBases[SECRET_BASES_COUNT];
 #endif
