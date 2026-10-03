@@ -5,6 +5,7 @@
 
 // list additional fields as if inside brackets of SaveBlock1's definition: include/global.h
 #define KUBES_SAVE_BLOCK_1_DATA \
+    struct TownDungeonGamePersistentData townDungeonData;
 /* */
 
 #endif // KUBES_SAVE_BLOCK_1_DATA

@@ -19,8 +19,8 @@ static void GivePlayerRandomMon() {
 
 static void ResetTownDungeonPersistentData()
 {
-    struct TownDungeonGamePersistentData* townDungeonDataPtr = &gSaveBlock3Ptr->townDungeonData;
-    memset(townDungeonDataPtr, 0 , sizeof(gSaveBlock3Ptr->townDungeonData));
+    struct TownDungeonGamePersistentData* townDungeonDataPtr = GetTownDungeonGamePersistentData();
+    memset(townDungeonDataPtr, 0 , sizeof(struct TownDungeonGamePersistentData));
     InitializeTownDungeonGameConfig(townDungeonDataPtr);
 }
 

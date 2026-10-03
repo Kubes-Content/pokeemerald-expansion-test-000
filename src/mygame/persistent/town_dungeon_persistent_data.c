@@ -13,7 +13,7 @@
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData()
 {
-    return &gSaveBlock3Ptr->townDungeonData;
+    return &gSaveBlock1Ptr->townDungeonData;
 }
 
 struct TownDungeonPersistentData* GetCurrentTownDungeonData()
