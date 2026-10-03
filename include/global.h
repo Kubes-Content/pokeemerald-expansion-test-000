@@ -1223,6 +1223,7 @@ struct SaveBlock1
     struct DaycareMon route5DayCareMon;
 #endif
     // sizeof: 0x3???
+    KUBES_SAVE_BLOCK_1_DATA
 };
 
 extern struct SaveBlock1 *gSaveBlock1Ptr;
