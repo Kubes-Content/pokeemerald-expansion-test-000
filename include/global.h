@@ -627,6 +627,7 @@ struct SaveBlock2
 #if FREE_BATTLE_FRONTIER == FALSE
     /*0x64C*/ struct BattleFrontier frontier;
 #endif //FREE_BATTLE_FRONTIER == FALSE
+    KUBES_SAVE_BLOCK_2_DATA
 }; // sizeof=0xF2C
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
