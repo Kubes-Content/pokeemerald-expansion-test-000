@@ -29,17 +29,6 @@ static struct CellVariant GetEntryCaveMap()
     return GetConnectableCell(&townStandInCell, RelativeCellConnection_Create(CONNECTION_NORTH));
 }
 
-static struct CellVariant GenerateSingleCellStep(struct TownDungeonPersistentData* this, u8 newCellDataIndex,
-                                                 const struct CellVariant* entryCell,
-                                                 enum Connection directionFromEntryCell,
-                                                 struct DummyPickupDescription pickupDescriptionArr[MAX_PICKUPS_PER_DUNGEON])
-{
-    const struct CellVariant newCell = GetConnectableCell(entryCell, RelativeCellConnection_Create(directionFromEntryCell));
-    this->dungeonCellsData[newCellDataIndex] = DungeonCellData_Create(newCell.mapEnum, 3, pickupDescriptionArr); // TODO function is not responsible for literal integer
-
-    return newCell;
-}
-
 static enum Connection Reverse(const enum Connection direction)
 {
     fatal_assertf(direction >= CONNECTION_SOUTH);
