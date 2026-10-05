@@ -69,18 +69,18 @@ static void Task_PickupItemObject(const u8 taskId)
     if (*tickCount == 0)
     {
         PlaySE(SE_SELECT);
-        const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+        struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
         struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
         // TODO give item or if player is out of room display a message
         // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
-        struct DummyDungeonCellData* cellData = &caveData->dungeonCellsData[gameData->currentCellIndex];
+        struct DummyDungeonCellData* cellData = &caveData->cellsData[gameData->currentCellIndex];
         const u8 pickupStaticIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectId];
 
-        struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[pickupStaticIndex];
-        pickupDescription->isTaken = TRUE;
+        *PickupIsTakenPtr(cellData, pickupStaticIndex) = TRUE;
 
+        const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, pickupStaticIndex);
         const u16 itemEnum = pickupDescription->itemEnum;
-        const u8 itemQuantity = pickupDescription->quantity;
+        const u8 itemQuantity = 1; // TODO magic number
         AddBagItem(itemEnum, itemQuantity);
         // TODO persist in state like clones did (remove clone functions)
         // TODO popup item description and image // look at how this is done in Emerald
@@ -134,7 +134,7 @@ bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
     const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
 
-    const struct DummyDungeonCellData* currentCaveCellData = &caveData->dungeonCellsData[gameData->currentCellIndex];
+    const struct DummyDungeonCellData* currentCaveCellData = &caveData->cellsData[gameData->currentCellIndex];
     const u8 staticPickupIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectEventId];
 
     if (gameData->context != CONTEXT_CAVE)

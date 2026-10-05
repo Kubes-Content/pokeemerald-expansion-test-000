@@ -14,7 +14,7 @@ static struct DungeonCellConnection GetDungeonWarpDestination(const u8 enteredWa
     const struct TownDungeonPersistentData* townData = GetCurrentTownDungeonData();
     const struct CaveData* caveData = &townData->caveData;
 
-    const struct DummyDungeonCellData* currentCellData = &caveData->dungeonCellsData[gameData->currentCellIndex];
+    const struct DummyDungeonCellData* currentCellData = &caveData->cellsData[gameData->currentCellIndex];
     return currentCellData->connections[enteredWarpId];
 }
 
@@ -25,7 +25,7 @@ void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
 
     const struct DungeonCellConnection data = GetDungeonWarpDestination(enteredWarpId);
     // TODO don't use literals for town enum and destinationWarpId
-    const u16 destinationMapEnum = data.isTown ? MAP_CAVE_TOWN_00 : caveData->dungeonCellsData[data.cellIndex].cellMapEnum;
+    const u16 destinationMapEnum = data.isTown ? MAP_CAVE_TOWN_00 : caveData->cellsData[data.cellIndex].cellMapEnum;
     const s8 destinationWarpId   = data.isTown ? 0 : (s8) data.warpId;
     GetTownDungeonGamePersistentData()->currentCellIndex = data.isTown ? 0 : data.cellIndex;
 
@@ -40,7 +40,7 @@ void SetDynamicWarpFromDungeonTownWarp([[maybe_unused]] u8 enteredWarpId)
 
     // todo ASSUMES that we always enter into first cell of a dungeon // extract behavior
     gameData->currentCellIndex = 0;
-    const struct DummyDungeonCellData destinationCellData = caveData->dungeonCellsData[gameData->currentCellIndex];
+    const struct DummyDungeonCellData destinationCellData = caveData->cellsData[gameData->currentCellIndex];
 
     const u16 caveEntryCellMapEnum = destinationCellData.cellMapEnum; // todo use getter
     const s8 caveEntranceCellWarpId = currentTownData->caveEntryCellMapWarpId;

@@ -33,6 +33,7 @@ struct TownDungeonGamePersistentData
     u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
     u8 objectStaticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
     enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
+    struct DummyPickupDescription sharedCavePickupDescriptions[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
     struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 };
 

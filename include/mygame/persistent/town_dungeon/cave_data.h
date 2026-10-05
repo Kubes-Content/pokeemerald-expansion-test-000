@@ -14,17 +14,14 @@
 #define MAX_DUNGEON_CELL_COUNT 8
 #define MAX_PICKUPS_PER_DUNGEON 8
 #define MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL 4
+#define NUM_PICKUP_DESCRIPTIONS_PER_CELL 8
 
 struct DummyPickupDescription
 {
-    u8 isTaken : 1;
     u16 itemEnum : BIT_SIZE(ITEMS_COUNT - 1); // should be able to give nothing so that I can use a pickup like a toggle or obstacle
-    u8 quantity;
-    s16 x : BIT_SIZE(32 - 1) + 1; // todo better define our max dungeon cell extents
-    s16 y : BIT_SIZE(32 - 1) + 1;
     u16 objectEventGraphicsEnum : BIT_SIZE(NUM_OBJ_EVENT_GFX - 1);
 };
-struct DummyPickupDescription PickupDescription_Create(u8 isTaken, u16 itemEnum, u8 quantity, s16 x, s16 y, u16 objectEventGraphicsEnum);
+struct DummyPickupDescription PickupDescription_Create(u16 itemEnum, u16 objectEventGraphicsEnum);
 
 struct DungeonCellConnection
 {
@@ -37,19 +34,25 @@ struct DungeonCellConnection DungeonCellConnection_Create(s8 cellIndex, u8 warpI
 
 struct DummyDungeonCellData
 {
-    u16 cellMapEnum : BIT_SIZE(MAP_COUNT - 1);
+    u16 cellMapEnum : BIT_SIZE(MAP_COUNT - 1); // todo wrap in struct CellDescription
     u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
-    struct DummyPickupDescription dummyPickupDescription[MAX_PICKUPS_PER_DUNGEON];
+    u8 takenPickups[MAX_PICKUPS_PER_DUNGEON];
+    u8 relevantPickupIndices[MAX_PICKUPS_PER_DUNGEON];
     struct DungeonCellConnection connections[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL]; // todo initialize with new game
 };
-struct DummyDungeonCellData DungeonCellData_Create(u16 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const struct DummyPickupDescription dummyPickupDescriptionArr[MAX_PICKUPS_PER_DUNGEON]);
+struct DummyDungeonCellData DungeonCellData_Create(u16 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const u8 dummyPickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL]);
 
 struct CaveData
 {
-    u8 dungeonCellMaxIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
-    u8 objectHoldingGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
-    struct DummyDungeonCellData dungeonCellsData[MAX_DUNGEON_CELL_COUNT];
+    u8 maxIndexForCell : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
+    u8 objectWithGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
+    struct DummyDungeonCellData cellsData[MAX_DUNGEON_CELL_COUNT];
 };
 struct CaveData CaveData_Create();
+
+struct TownDungeonGamePersistentData;
+struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, u8 index);
+
+bool8* PickupIsTakenPtr(struct DummyDungeonCellData* cellData, u8 staticIndex);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H
