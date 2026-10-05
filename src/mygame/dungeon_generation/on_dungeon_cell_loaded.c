@@ -34,7 +34,8 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[gameData->currentCellIndex]; // refactor todo get current cell's index from game data
+    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+    const struct DummyDungeonCellData* cellData = &caveData->dungeonCellsData[gameData->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[staticIndex];
     const u8 instanceIndex = SpawnBaseObject(pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
@@ -70,7 +71,8 @@ static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, u8* unused
 
 static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 {
-    struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex];
+    struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+    const struct DummyDungeonCellData* cellData = &caveData->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex];
 
     // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
 
@@ -91,7 +93,8 @@ static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
-    const struct DummyDungeonCellData* cellData = &this->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
+    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+    const struct DummyDungeonCellData* cellData = &caveData->dungeonCellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
     // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {

@@ -120,10 +120,7 @@ continue_connection:
 // unwantedConnections is relative to entry/owning cell
 static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, u8* const generatedCellCount, struct CellVariant caveCellVariants[MAX_DUNGEON_CELL_COUNT], const u8 segmentCellCount, const struct CellVariant* entryCell, const u8 entryCellIndex, struct RelativeCellConnection* unwantedConnections, u8 unwantedConnectionsCount, struct DummyPickupDescription pickupDescriptionArr[MAX_PICKUPS_PER_DUNGEON]) // NOLINT(*-non-const-parameter)
 {
-    // TODO generate a base path instead
-        // randomly pick any direction other than the one that's already used
-        // generate a new cell there
-        // rinse and repeat until we hit half length, rounded up; would we need to multiply by 10 to get that?
+    struct CaveData* caveData = &townData->caveData;
 
     const struct CellVariant* previousCell = entryCell;
     u8 previousCellIndex = entryCellIndex;
@@ -133,8 +130,8 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
     {
         fatal_assertf(*generatedCellCount < MAX_DUNGEON_CELL_COUNT, "Generating %d with a max of %d", *generatedCellCount + 1, (u8) MAX_DUNGEON_CELL_COUNT);
         const u8 newCellIndex = *generatedCellCount;
-        struct DummyDungeonCellData* previousCellData = &townData->dungeonCellsData[previousCellIndex];
-        struct DummyDungeonCellData* newCellData = &townData->dungeonCellsData[newCellIndex];
+        struct DummyDungeonCellData* previousCellData = &caveData->dungeonCellsData[previousCellIndex];
+        struct DummyDungeonCellData* newCellData = &caveData->dungeonCellsData[newCellIndex];
 
         // randomly pick an unused connection in previousCell
 
@@ -168,6 +165,8 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
 // TODO this shouldn't be in this file
 static void GenerateCaveData(struct TownDungeonPersistentData* this)
 {
+    struct CaveData* caveData = &this->caveData;
+
     struct CellVariant caveCellVariants[MAX_DUNGEON_CELL_COUNT];
     caveCellVariants[0] = GetEntryCaveMap();
 
@@ -181,18 +180,18 @@ static void GenerateCaveData(struct TownDungeonPersistentData* this)
         pickupDescriptionArr[2] = PickupDescription_Create(0, ITEM_SUPER_REPEL, 1, 7 ,15, OBJ_EVENT_GFX_KISS_CUSHION);
     }
 
-    fatal_assertf(MAX_DUNGEON_CELL_COUNT >= this->dungeonCellMaxIndex + 1, "MAX_DUNGEON_CELL_COUNT too low for generation test");
+    fatal_assertf(MAX_DUNGEON_CELL_COUNT >= caveData->dungeonCellMaxIndex + 1, "MAX_DUNGEON_CELL_COUNT too low for generation test");
 
     // TODO support entering cave from any direction, NOT TIED TO CARDINAL DIRECTION, abstracted to wrap cardinal direction until we implement a better solution in its place
 
-    this->dungeonCellsData[generatedCellCount] = DungeonCellData_Create(entryCell->mapEnum, 3, pickupDescriptionArr); // todo reimplement, generate all cells
+    caveData->dungeonCellsData[generatedCellCount] = DungeonCellData_Create(entryCell->mapEnum, 3, pickupDescriptionArr); // todo reimplement, generate all cells
     //
     const s8 townCellIndex = -1; // todo this should probably be a constant of some form
     const u8 townDoorWarpId = 0; // one day this guy will be fetched dynamically. one day.
     const struct DungeonCellConnection connectionFromDungeonToTown = DungeonCellConnection_Create(townCellIndex, townDoorWarpId);
     //
     const u8 cell0ToTownConnectionIndex = 0; // TODO is this because 0 is the south warp id? idk, how would I know?
-    this->dungeonCellsData[generatedCellCount].connections[cell0ToTownConnectionIndex] = connectionFromDungeonToTown; // duplicates enum and warpId used in GetEntryCell
+    caveData->dungeonCellsData[generatedCellCount].connections[cell0ToTownConnectionIndex] = connectionFromDungeonToTown; // duplicates enum and warpId used in GetEntryCell
 
     // wait. is connects' index literally the warp id?
     // shouldn't that be more explicit? like with a function? you monster.
@@ -204,7 +203,7 @@ static void GenerateCaveData(struct TownDungeonPersistentData* this)
         fatal_assertf(entryCell->hasEastWarp);
     }
 
-    const u8 dungeonCellCount = this->dungeonCellMaxIndex + 1;
+    const u8 dungeonCellCount = caveData->dungeonCellMaxIndex + 1;
     const u8 rootPathMinimumLength = dungeonCellCount / 2 + dungeonCellCount % 2;
 
     {
@@ -245,7 +244,7 @@ redo:
         tryCount++;
 
         const u8 ownerCellIndex = Random() % rootPathMinimumLength;
-        struct DummyDungeonCellData* ownerCellData = &this->dungeonCellsData[ownerCellIndex];
+        struct DummyDungeonCellData* ownerCellData = &caveData->dungeonCellsData[ownerCellIndex];
         struct CellVariant* ownerCellVariant = &caveCellVariants[ownerCellIndex];
         // TODO get owner's variant
             // do I have to keep an array of each cellvariant to rereference via cell index?
@@ -311,10 +310,8 @@ redo:
 
 static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
 {
-    this->dummyTownData;
-
-    this->dungeonCellMaxIndex = 4 - 1; //MAX_DUNGEON_CELL_COUNT - 1;
-    this->caveEntryCellMapWarpId = 0; // todo assuming entrance cell's entrance warp is id 0 // change
+    this->dummyTownData = TownData_Create();
+    this->caveData = CaveData_Create();
 
     GenerateCaveData(this);
 }
@@ -325,44 +322,4 @@ void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
     this->currentCellIndex = 0;
     struct TownDungeonPersistentData* initialTownData = GetCurrentTownDungeonData();
     InitializeTownDungeonConfig(initialTownData);
-}
-
-static struct DungeonCellConnection GetDungeonWarpDestination(const u8 enteredWarpId)
-{
-    // TODO we have to actually...
-        // per warp save the destination map + id
-            // and on both ends: from/to
-    // TODO cell data should map destination via enteredWarpId
-
-    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TownDungeonPersistentData* townData = GetCurrentTownDungeonData();
-    const struct DummyDungeonCellData* currentCellData = &townData->dungeonCellsData[gameData->currentCellIndex];
-    return currentCellData->connections[enteredWarpId];
-}
-
-// TODO separate cell data to its own .c file
-
-void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
-{
-    const struct DungeonCellConnection data = GetDungeonWarpDestination(enteredWarpId);
-    // TODO don't use literals for town enum and destinationWarpId
-    const u16 destinationMapEnum = data.isTown ? MAP_CAVE_TOWN_00 : GetCurrentTownDungeonData()->dungeonCellsData[data.cellIndex].cellMapEnum;
-    const s8 destinationWarpId   = data.isTown ? 0 : (s8) data.warpId;
-    GetTownDungeonGamePersistentData()->currentCellIndex = data.isTown ? 0 : data.cellIndex;
-
-    SetDynamicWarp(0, MAP_GROUP(destinationMapEnum), MAP_NUM(destinationMapEnum), destinationWarpId);
-}
-
-void SetDynamicWarpFromDungeonTownWarp([[maybe_unused]] u8 enteredWarpId)
-{
-    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-
-    // todo ASSUMES that we always enter into first cell of a dungeon // extract behavior
-    gameData->currentCellIndex = 0;
-    const struct DummyDungeonCellData destinationCellData = currentTownData->dungeonCellsData[gameData->currentCellIndex];
-
-    const u16 caveEntryCellMapEnum = destinationCellData.cellMapEnum; // todo use getter
-    const s8 caveEntranceCellWarpId = currentTownData->caveEntryCellMapWarpId;
-    SetDynamicWarp(0, MAP_GROUP(caveEntryCellMapEnum), MAP_NUM(caveEntryCellMapEnum), caveEntranceCellWarpId);
 }

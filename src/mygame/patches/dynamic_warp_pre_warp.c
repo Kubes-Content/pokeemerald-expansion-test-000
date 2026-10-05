@@ -7,7 +7,7 @@
 
 #include "overworld.h"
 #include "constants/maps.h"
-#include "mygame/persistent/town_dungeon_persistent_data.h"
+#include "mygame/patches/dynamic_warp/town_dungeon_warps.h"
 
 void PreDynamicWarpPatch(const u8 enteredWarpId)
 {

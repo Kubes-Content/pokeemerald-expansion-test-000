@@ -44,4 +44,12 @@ struct DummyDungeonCellData
 };
 struct DummyDungeonCellData DungeonCellData_Create(u16 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const struct DummyPickupDescription dummyPickupDescriptionArr[MAX_PICKUPS_PER_DUNGEON]);
 
+struct CaveData
+{
+    u8 dungeonCellMaxIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
+    u8 objectHoldingGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
+    struct DummyDungeonCellData dungeonCellsData[MAX_DUNGEON_CELL_COUNT];
+};
+struct CaveData CaveData_Create();
+
 #endif // GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H

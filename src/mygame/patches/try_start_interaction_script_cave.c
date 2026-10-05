@@ -19,12 +19,13 @@
 
 static u32 WindowTest(const u8* text)
 {
-    // todo extract window logic
+    // extract window logic
+        // TODO WHY IS IT NOT NOTED WHERE YOU FOUND HOW TO DO THIS? DO YOU HATE ME?
 
     struct WindowTemplate template;
 
     const u8 topBottom = 15;
-    const u8 topCenter = 8;
+    //const u8 topCenter = 8;
     const u8 top = topBottom - 1;
     SetWindowTemplateFields(&template, 0, 1, top, 28, 3, 15, 8);
 
@@ -69,9 +70,10 @@ static void Task_PickupItemObject(const u8 taskId)
     {
         PlaySE(SE_SELECT);
         const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+        struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
         // TODO give item or if player is out of room display a message
         // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
-        struct DummyDungeonCellData* cellData = &GetCurrentTownDungeonData()->dungeonCellsData[gameData->currentCellIndex];
+        struct DummyDungeonCellData* cellData = &caveData->dungeonCellsData[gameData->currentCellIndex];
         const u8 pickupStaticIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectId];
 
         struct DummyPickupDescription* pickupDescription = &cellData->dummyPickupDescription[pickupStaticIndex];
@@ -130,8 +132,9 @@ destroy_task:
 bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
 {
     const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    const struct DummyDungeonCellData* currentCaveCellData = &currentTownData->dungeonCellsData[gameData->currentCellIndex];
+    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+
+    const struct DummyDungeonCellData* currentCaveCellData = &caveData->dungeonCellsData[gameData->currentCellIndex];
     const u8 staticPickupIndex = gameData->objectStaticPickupIndexByInstanceIndex[objectEventId];
 
     if (gameData->context != CONTEXT_CAVE)
