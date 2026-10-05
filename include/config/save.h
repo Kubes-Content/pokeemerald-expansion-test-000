@@ -5,19 +5,19 @@
 #define SKIP_SAVE_CONFIRMATION              FALSE   // If TRUE, skips the "There is already a saved file" confirmation when overwriting a save.
 
 // SaveBlock1 configs
-#define FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK1    FALSE   // Free up unused Pokédex seen flags (52 bytes).
-#define FREE_TRAINER_HILL                   FALSE   // Frees up Trainer Hill data (28 bytes).
-#define FREE_TRAINER_TOWER                  FALSE   // Frees up Trainer Tower data (x bytes).
-#define FREE_MYSTERY_EVENT_BUFFERS          FALSE   // Frees up ramScript (1104 bytes).
-#define FREE_MATCH_CALL                     FALSE   // Frees up match call and rematch / VS Seeker data. (104 bytes).
-#define FREE_UNION_ROOM_CHAT                FALSE   // Frees up union room chat (212 bytes).
-#define FREE_ENIGMA_BERRY                   FALSE   // Frees up E-Reader Enigma Berry data (52 bytes).
-#define FREE_LINK_BATTLE_RECORDS            FALSE   // Frees up link battle record data (88 bytes).
-#define FREE_MYSTERY_GIFT                   FALSE   // Frees up Mystery Gift data (876 bytes).
-#define FREE_POKEBLOCKS                     FALSE   // Frees up PokéBlock data (280 bytes).
-#define FREE_BERRY_TREES                    FALSE   // Frees up berry tree data (1536 bytes).
-#define FREE_SECRET_BASES                   FALSE   // Frees up secret base data (3200 bytes).
-#define FREE_TV_SHOWS                       FALSE   // Frees up tv show data (900 bytes).
+#define FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK1    TRUE    // Free up unused Pokédex seen flags (52 bytes).
+#define FREE_TRAINER_HILL                   TRUE    // Frees up Trainer Hill data (28 bytes).
+#define FREE_TRAINER_TOWER                  TRUE    // Frees up Trainer Tower data (x bytes).
+#define FREE_MYSTERY_EVENT_BUFFERS          TRUE    // Frees up ramScript (1104 bytes).
+#define FREE_MATCH_CALL                     TRUE    // Frees up match call and rematch / VS Seeker data. (104 bytes).
+#define FREE_UNION_ROOM_CHAT                TRUE    // Frees up union room chat (212 bytes).
+#define FREE_ENIGMA_BERRY                   TRUE    // Frees up E-Reader Enigma Berry data (52 bytes).
+#define FREE_LINK_BATTLE_RECORDS            TRUE    // Frees up link battle record data (88 bytes).
+#define FREE_MYSTERY_GIFT                   TRUE    // Frees up Mystery Gift data (876 bytes).
+#define FREE_POKEBLOCKS                     TRUE    // Frees up PokéBlock data (280 bytes).
+#define FREE_BERRY_TREES                    TRUE    // Frees up berry tree data (1536 bytes).
+#define FREE_SECRET_BASES                   TRUE    // Frees up secret base data (3200 bytes).
+#define FREE_TV_SHOWS                       TRUE    // Frees up tv show data (900 bytes).
                                             // SaveBlock1 total: 8432 bytes
 // SaveBlock2 configs
 #define FREE_BATTLE_TOWER_E_READER          FALSE   // Frees up Battle Tower E-Reader data (188 bytes).
