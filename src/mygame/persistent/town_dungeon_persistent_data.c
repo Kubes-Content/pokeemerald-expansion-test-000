@@ -289,12 +289,6 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
     GenerateCaveData(this);
 }
 
-struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this)
-{
-    _Static_assert(sizeof(struct TemporaryCaveState) <= sizeof(this->temporaryStatePerContext.bytes), "Data size mismatch.");
-    return (void*) this->temporaryStatePerContext.bytes;
-}
-
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
 {
     this->currentTown = 0;

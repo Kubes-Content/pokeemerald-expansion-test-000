@@ -57,6 +57,12 @@ struct TemporaryCaveState TemporaryCaveState_CreateEmpty()
     return returnValue;
 }
 
+struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this)
+{
+    _Static_assert(sizeof(struct TemporaryCaveState) <= sizeof(this->temporaryStatePerContext.bytes), "Data size mismatch.");
+    return (void*) this->temporaryStatePerContext.bytes;
+}
+
 void ClearTemporaryCaveState(struct TemporaryCaveState* this)
 {
     // TODO vvv why 1? vvv

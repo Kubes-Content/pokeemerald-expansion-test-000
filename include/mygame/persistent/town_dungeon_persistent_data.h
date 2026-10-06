@@ -42,7 +42,6 @@ struct TownDungeonGamePersistentData
     struct DummyPickupDescription sharedCavePickupDescriptions[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
     struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 };
-struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
 struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);

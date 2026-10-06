@@ -14,6 +14,8 @@
 #define MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL 4
 #define NUM_PICKUP_DESCRIPTIONS_PER_CELL 8
 
+struct TownDungeonGamePersistentData;
+
 struct DummyPickupDescription
 {
     u16 itemEnum : BIT_SIZE(ITEMS_COUNT - 1); // should be able to give nothing so that I can use a pickup like a toggle or obstacle
@@ -55,9 +57,9 @@ struct TemporaryCaveState
     u8 objectStaticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
 };
 struct TemporaryCaveState TemporaryCaveState_CreateEmpty();
+struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);
 void ClearTemporaryCaveState(struct TemporaryCaveState* this);
 
-struct TownDungeonGamePersistentData;
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, u8 index);
 
 bool8* PickupIsTakenPtr(struct DummyDungeonCellData* cellData, u8 staticIndex);
