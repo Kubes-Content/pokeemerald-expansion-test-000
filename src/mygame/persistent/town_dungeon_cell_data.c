@@ -49,6 +49,20 @@ struct CaveData CaveData_Create()
     return returnValue;
 }
 
+struct TemporaryCaveState TemporaryCaveState_CreateEmpty()
+{
+    struct TemporaryCaveState returnValue;
+    returnValue.currentCellIndex = 0;
+    ClearTemporaryCaveState(&returnValue);
+    return returnValue;
+}
+
+void ClearTemporaryCaveState(struct TemporaryCaveState* this)
+{
+    // TODO vvv why 1? vvv
+    memset(&this->objectStaticPickupIndexByInstanceIndex, 1, sizeof(this->objectStaticPickupIndexByInstanceIndex));
+}
+
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, const u8 index)
 {
     return &gameData->sharedCavePickupDescriptions[cellData->relevantPickupIndices[index]];

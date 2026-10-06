@@ -294,7 +294,7 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
 {
     this->currentTown = 0;
-    this->currentCellIndex = 0;
+    this->temporaryCaveState = TemporaryCaveState_CreateEmpty();
 
     for (u8 i = 0; i < NUM_PICKUP_DESCRIPTIONS_PER_CELL; i++)
     {

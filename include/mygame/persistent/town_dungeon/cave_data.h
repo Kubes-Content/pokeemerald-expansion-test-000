@@ -3,6 +3,8 @@
 //
 #ifndef GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H
 #define GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H
+#include <string.h>
+
 #include "metaprogram.h"
 #include "gba/types.h"
 #include "constants/items.h"
@@ -49,6 +51,15 @@ struct CaveData
     struct DummyDungeonCellData cellsData[MAX_DUNGEON_CELL_COUNT];
 };
 struct CaveData CaveData_Create();
+
+// savable data that mostly just represents the cell you're currently in (regenerates on entering cell/cave)
+struct TemporaryCaveState
+{
+    u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
+    u8 objectStaticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
+};
+struct TemporaryCaveState TemporaryCaveState_CreateEmpty();
+void ClearTemporaryCaveState(struct TemporaryCaveState* this);
 
 struct TownDungeonGamePersistentData;
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, u8 index);

@@ -25,23 +25,25 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 
     const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
 
-    assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
+    assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1){}
     const u8 idThatPreventsUnloadingWhileOffscreen = OBJ_EVENT_ID_FOLLOWER; // todo extract
     gObjectEvents[objectEventIndex].localId = idThatPreventsUnloadingWhileOffscreen;
 
     return objectEventIndex;
 }
 
+// todo refactor
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
-    const struct DummyDungeonCellData* cellData = &caveData->cellsData[gameData->currentCellIndex]; // refactor todo get current cell's index from game data
+    const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, staticIndex);
     // TODO dynamic spawn positions
     const u8 instanceIndex = SpawnBaseObject(5 + staticIndex, 15, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
-    gameData->objectStaticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
+    temporaryCaveState->objectStaticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
 
     return instanceIndex;
 }
@@ -73,8 +75,10 @@ static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, u8* unused
 
 static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 {
-    struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
-    const struct DummyDungeonCellData* cellData = &caveData->cellsData[GetTownDungeonGamePersistentData()->currentCellIndex];
+    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+    const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
     // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
 
@@ -95,8 +99,10 @@ static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
-    struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
-    struct DummyDungeonCellData* cellData = &caveData->cellsData[GetTownDungeonGamePersistentData()->currentCellIndex]; // refactor todo get current cell's index from game data
+    struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData; // todo why not pass this as arg too?
+    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData(); // todo why not pass this as arg too?
+    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
     // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
@@ -111,8 +117,10 @@ static void SpawnPickups(struct TownDungeonPersistentData* this)
 void OnDungeonCellLoaded()
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    memset(&gameData->objectStaticPickupIndexByInstanceIndex, 1, sizeof(gameData->objectStaticPickupIndexByInstanceIndex));
-    SpawnPickups(currentTownData);
+
+    ClearTemporaryCaveState(temporaryCaveState);
     gameData->context = CONTEXT_CAVE;
+    SpawnPickups(currentTownData);
 }
