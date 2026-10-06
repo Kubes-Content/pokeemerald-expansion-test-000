@@ -36,7 +36,7 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
     const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, staticIndex);
@@ -75,8 +75,8 @@ static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, u8* unused
 
 static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 {
-    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
     const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
@@ -100,8 +100,8 @@ static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 static void SpawnPickups(struct TownDungeonPersistentData* this)
 {
     struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData; // todo why not pass this as arg too?
-    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData(); // todo why not pass this as arg too?
-    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData(); // todo why not pass this as arg too?
+    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
     // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
@@ -117,7 +117,7 @@ static void SpawnPickups(struct TownDungeonPersistentData* this)
 void OnDungeonCellLoaded()
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
 
     ClearTemporaryCaveState(temporaryCaveState);

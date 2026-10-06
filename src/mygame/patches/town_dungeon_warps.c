@@ -10,8 +10,8 @@
 
 static struct DungeonCellConnection GetDungeonWarpDestination(const u8 enteredWarpId)
 {
-    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct TownDungeonPersistentData* townData = GetCurrentTownDungeonData();
     const struct CaveData* caveData = &townData->caveData;
 
@@ -29,7 +29,7 @@ void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
     const u16 destinationMapEnum = data.isTown ? MAP_CAVE_TOWN_00 : caveData->cellsData[data.cellIndex].cellMapEnum;
     const s8 destinationWarpId   = data.isTown ? 0 : (s8) data.warpId;
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     temporaryCaveState->currentCellIndex = data.isTown ? 0 : data.cellIndex;
 
     SetDynamicWarp(0, MAP_GROUP(destinationMapEnum), MAP_NUM(destinationMapEnum), destinationWarpId);
@@ -38,12 +38,12 @@ void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
 void SetDynamicWarpFromDungeonTownWarp([[maybe_unused]] u8 enteredWarpId)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
     const struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
     const struct CaveData* caveData = &currentTownData->caveData;
 
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     // todo ASSUMES that we always enter into first cell of a dungeon // extract behavior
-    temporaryCaveState->currentCellIndex = 0;
+    *temporaryCaveState = TemporaryCaveState_CreateEmpty();
     const struct DummyDungeonCellData destinationCellData = caveData->cellsData[temporaryCaveState->currentCellIndex];
 
     const u16 caveEntryCellMapEnum = destinationCellData.cellMapEnum; // todo use getter

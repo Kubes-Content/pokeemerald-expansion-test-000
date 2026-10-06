@@ -27,14 +27,22 @@ enum TownDungeonMapContext
     CONTEXTS_COUNT
 };
 
+union TemporaryStatePerContext
+{
+    u8 bytes[32];
+    max_align_t align;
+};
+
 struct TownDungeonGamePersistentData
 {
+    union TemporaryStatePerContext temporaryStatePerContext;
+
     u8 currentTown : BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
-    struct TemporaryCaveState temporaryCaveState;
     enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
     struct DummyPickupDescription sharedCavePickupDescriptions[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
     struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 };
+struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
 struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);

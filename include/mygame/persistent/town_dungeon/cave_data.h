@@ -3,15 +3,11 @@
 //
 #ifndef GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H
 #define GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H
-#include <string.h>
-
 #include "metaprogram.h"
 #include "gba/types.h"
 #include "constants/items.h"
 #include "constants/event_objects.h"
 #include "mygame/patches/global/constants.h"
-
-// TODO move all function definitions to .c
 
 #define MAX_DUNGEON_CELL_COUNT 8
 #define MAX_PICKUPS_PER_DUNGEON 8

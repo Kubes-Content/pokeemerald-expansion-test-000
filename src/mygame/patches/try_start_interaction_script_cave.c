@@ -70,7 +70,7 @@ static void Task_PickupItemObject(const u8 taskId)
     {
         PlaySE(SE_SELECT);
         struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-        const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+        const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
         struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
         // TODO give item or if player is out of room display a message
         // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
@@ -132,8 +132,8 @@ destroy_task:
 // returns TRUE when intercepted
 bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
 {
-    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TemporaryCaveState* temporaryCaveState = &gameData->temporaryCaveState;
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
 
     const struct DummyDungeonCellData* currentCaveCellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];

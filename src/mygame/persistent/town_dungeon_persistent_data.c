@@ -4,8 +4,6 @@
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 #include "global.h"
 
-#include "item.h"
-#include "overworld.h"
 #include "random.h"
 #include "constants/event_objects.h"
 #include "mygame/dungeon_generation/dungeon_generation_global.h"
@@ -291,10 +289,16 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
     GenerateCaveData(this);
 }
 
+struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this)
+{
+    _Static_assert(sizeof(struct TemporaryCaveState) <= sizeof(this->temporaryStatePerContext.bytes), "Data size mismatch.");
+    return (void*) this->temporaryStatePerContext.bytes;
+}
+
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
 {
     this->currentTown = 0;
-    this->temporaryCaveState = TemporaryCaveState_CreateEmpty();
+    *GetTemporaryCaveStatePtr(this) = TemporaryCaveState_CreateEmpty();
 
     for (u8 i = 0; i < NUM_PICKUP_DESCRIPTIONS_PER_CELL; i++)
     {
