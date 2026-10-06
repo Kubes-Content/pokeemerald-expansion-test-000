@@ -25,8 +25,9 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 
     const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
 
-    if (objectEventIndex != OBJECT_EVENTS_COUNT)
-        gObjectEvents[objectEventIndex].localId = OBJ_EVENT_ID_FOLLOWER; // prevents unloading when outside of frame
+    assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
+    const u8 idThatPreventsUnloadingWhileOffscreen = OBJ_EVENT_ID_FOLLOWER; // todo extract
+    gObjectEvents[objectEventIndex].localId = idThatPreventsUnloadingWhileOffscreen;
 
     return objectEventIndex;
 }
