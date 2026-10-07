@@ -5,6 +5,7 @@
 
 #include "overworld.h"
 #include "random.h"
+#include "mygame/util/MapHeader.h"
 
 struct CellVariant CellVariant_CreateEmpty()
 {
@@ -38,19 +39,23 @@ static void GetAllCellMapEnums(u16* const mapEnumArray, const u8 count)
         mapEnumArray[i] = MAP_CAVE_TOWN_DUNGEON_ROOM_TEST_01;
 }
 
-static struct CellVariant DetermineCellVariant(const u16 mapEnum)
+static struct CellVariant DetermineCellVariant(const enum MapEnum mapEnum)
 {
     const struct MapHeader* const mapHeader = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(mapEnum), MAP_NUM(mapEnum));
-    struct CellVariant cell = CellVariant_CreateEmpty();
+    const u8 allWarpsArrLength = 10;
+    struct WarpEvent allWarpsArr[allWarpsArrLength];
+    const u8 warpCount = GetAllWarps(mapEnum, allWarpsArr, allWarpsArrLength);
 
+    struct CellVariant cell = CellVariant_CreateEmpty();
     cell.mapEnum = mapEnum;
 
-    for (u8 i = 0; i < mapHeader->events->warpCount; i++) // todo ctor CellVariantRestrictions
+    for (u8 warpIndex = 0; warpIndex < warpCount; warpIndex++)
     {
         const s32 width = mapHeader->mapLayout->width;
         const s32 height = mapHeader->mapLayout->height;
-        const s16 x = mapHeader->events->warps[i].x;
-        const s16 y = mapHeader->events->warps[i].y;
+        const s16 x = allWarpsArr[warpIndex].x;
+        const s16 y = allWarpsArr[warpIndex].y;
+
         if (x < 2)
             cell.hasWestWarp = TRUE;
         else if (x >= width - 2)

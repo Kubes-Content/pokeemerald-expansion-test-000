@@ -1,13 +1,12 @@
 #include "global.h"
 
 #include "event_object_movement.h"
-#include "gba/defines.h"
 #include "global.fieldmap.h"
-#include "overworld.h"
 #include "constants/event_objects.h"
 #include "constants/trainer_types.h"
-
+#include "gba/defines.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
+#include "mygame/util/MapHeader.h"
 
 // todo extract
 static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
@@ -48,25 +47,19 @@ static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIn
     return instanceIndex;
 }
 
-static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, u8* unusedDoorsXArr, u8* unusedDoorsYArr, u8 arrLength)
+static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, struct WarpEvent* unusedWarpsArr, u8 arrLength)
 {
-    const struct MapHeader* const mapHeader = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(cellData->cellMapEnum), MAP_NUM(cellData->cellMapEnum));
+    struct WarpEvent allWarpsArr[arrLength];
+    const u8 warpCount = GetAllWarps(cellData->cellMapEnum, allWarpsArr, arrLength);
+
     u8 unusedWarpsCount = 0;
 
-    fatal_assertf(mapHeader->events->warpCount <= arrLength);
-
-    for (u8 i = 0; i < mapHeader->events->warpCount; i++) // todo ctor CellVariantRestrictions
+    for (u8 i = 0; i < warpCount; i++)
     {
         if (cellData->connections[i].isValid)
             continue;
 
-        /*const s32 width = mapHeader->mapLayout->width;
-        const s32 height = mapHeader->mapLayout->height;*/
-        const s16 x = mapHeader->events->warps[i].x;
-        const s16 y = mapHeader->events->warps[i].y;
-
-        unusedDoorsXArr[unusedWarpsCount] = x;
-        unusedDoorsYArr[unusedWarpsCount] = y;
+        unusedWarpsArr[unusedWarpsCount] = allWarpsArr[i];
         unusedWarpsCount++;
     }
 
@@ -82,17 +75,15 @@ static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
 
     // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
 
-    const u8 unusedDoorsCapacity = 4;
-    u8 unusedDoorsX[unusedDoorsCapacity];
-    u8 unusedDoorsY[unusedDoorsCapacity];
-    const u8 unusedDoorsCount = GetUnusedWarps(cellData, unusedDoorsX, unusedDoorsY, unusedDoorsCapacity);
+    const u8 unusedDoorsCapacity = 4; // TODO this is gonna be a problem...
+    struct WarpEvent unusedWarps[unusedDoorsCapacity];
+    const u8 unusedDoorsCount = GetUnusedWarps(cellData, unusedWarps, unusedDoorsCapacity);
 
     // spawn pickups over unused warps
     for (u8 i = 0; i < unusedDoorsCount; i++)
     {
-        //cellData->cellPickupDefinitionCount
-        const u8 x = unusedDoorsX[i];
-        const u8 y = unusedDoorsY[i];
+        const u8 x = unusedWarps[i].x;
+        const u8 y = unusedWarps[i].y;
         [[maybe_unused]] const u8 instanceIndex = SpawnBaseObject(x, y, OBJ_EVENT_GFX_MOVING_BOX);
     }
 }
