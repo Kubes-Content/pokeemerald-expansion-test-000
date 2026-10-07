@@ -143,7 +143,7 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
 
         // TODO simplify
 
-        *newCellData = DungeonCellData_Create(newCell->mapEnum, 3, pickupDescriptionArr);
+        *newCellData = DungeonCellData_Create(GetCellVariantMapEnum(newCell), 3, pickupDescriptionArr);
 
         const u8 previousCellFromWarpId = GetPlaceholderCellWarpIdForDirection(connectionFromPreviousCellToNewCell.direction);
         const u8 newCellToWarpId        = GetPlaceholderCellWarpIdForDirection(connectionFromNewCellToPreviousCell.direction);
@@ -186,7 +186,7 @@ static void GenerateCaveData(struct TownDungeonPersistentData* this)
 
         // TODO support entering cave from any direction, NOT TIED TO CARDINAL DIRECTION, abstracted to wrap cardinal direction until we implement a better solution in its place
 
-        caveData->cellsData[generatedCellCount] = DungeonCellData_Create(entryCell->mapEnum, caveEntryCellPickupCount, pickupDescriptionArr); // todo reimplement, generate all cells
+        caveData->cellsData[generatedCellCount] = DungeonCellData_Create(GetCellVariantMapEnum(entryCell), caveEntryCellPickupCount, pickupDescriptionArr); // todo reimplement, generate all cells
     }
     //
     const s8 townCellIndex = -1; // todo this should probably be a constant of some form

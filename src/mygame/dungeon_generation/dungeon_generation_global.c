@@ -8,13 +8,7 @@
 
 struct CellVariant CellVariant_CreateEmpty()
 {
-    return (struct CellVariant) {
-        .mapEnum = 0,
-        .hasNorthWarp = 0,
-        .hasSouthWarp = 0,
-        .hasEastWarp = 0,
-        .hasWestWarp = 0,
-    };
+    return CellVariant_Create(0,0,0,0,0);
 }
 
 struct CellVariant CellVariant_Create(u16 mapEnum, bool8 hasNorthWarp, bool8 hasSouthWarp, bool8 hasEastWarp, bool8 hasWestWarp)
@@ -123,6 +117,11 @@ struct CellVariant GetConnectableCell(const struct CellVariant* const A, const s
     fatal_assertf(CellsCanConnect(A, connectionType, &B));
 
     return B;
+}
+
+u16 GetCellVariantMapEnum(const struct CellVariant* cellVariant)
+{
+    return cellVariant->mapEnum;
 }
 
 bool8 RelativeCellConnection_Equal(const struct RelativeCellConnection* A, const struct RelativeCellConnection* B)

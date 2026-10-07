@@ -15,6 +15,7 @@ struct CellVariant
 };
 struct CellVariant CellVariant_CreateEmpty();
 struct CellVariant CellVariant_Create(u16 mapEnum, bool8 hasNorthWarp, bool8 hasSouthWarp, bool8 hasEastWarp, bool8 hasWestWarp);
+u16 GetCellVariantMapEnum(const struct CellVariant* cellVariant);
 
 struct RelativeCellConnection
 {
