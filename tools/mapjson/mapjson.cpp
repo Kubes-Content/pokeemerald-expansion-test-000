@@ -613,7 +613,7 @@ string generate_map_constants_text(string groups_filepath, Json groups_data, vec
 
     text << "//\n// DO NOT MODIFY THIS FILE! It is auto-generated from data/maps/map_groups.json\n//\n\n";
 
-    text << "enum\n{\n";
+    text << "enum MapEnum\n{\n";
 
     int group_num = 0;
     vector<int> map_count_vec; //DEBUG
