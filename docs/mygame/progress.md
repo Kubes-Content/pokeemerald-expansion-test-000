@@ -1,3 +1,11 @@
+- [ ] connections have
+  - warp location {} compare to map bounds || other context
+    - no need to save
+  - requirements/qualities (water must connect to water, doors must connect to doors, land must connect to land)
+    - walkable
+    - swimmable
+    - diveable
+  - CanConnect(&A, &B);
 - [ ] use cave pickups to test atla being picked up
   - why don't they just share a type with pickups?
     - create an enum that represents if its atla or something else
