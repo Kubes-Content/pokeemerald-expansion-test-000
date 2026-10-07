@@ -42,7 +42,8 @@ static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIn
     // TODO dynamic spawn positions
     const u8 instanceIndex = SpawnBaseObject(5 + staticIndex, 15, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
-    temporaryCaveState->objectStaticPickupIndexByInstanceIndex[instanceIndex] = staticIndex; // OnInteract will leverage this
+    struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[instanceIndex];
+    *objectIdentifier = ObjectIdentifier_Create(OBJ_ID_PICKUP, staticIndex);
 
     return instanceIndex;
 }

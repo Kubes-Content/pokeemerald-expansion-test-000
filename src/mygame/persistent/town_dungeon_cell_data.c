@@ -63,10 +63,17 @@ struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersis
     return (void*) this->temporaryStatePerContext.bytes;
 }
 
+struct ObjectIdentifier ObjectIdentifier_Create(const enum ObjectIdentifierType type, const u8 staticIndex)
+{
+    return (struct ObjectIdentifier) {
+        .type = type,
+        .staticIndex = staticIndex,
+    };
+}
+
 void ClearTemporaryCaveState(struct TemporaryCaveState* this)
 {
-    // TODO vvv why 1? vvv
-    memset(&this->objectStaticPickupIndexByInstanceIndex, 1, sizeof(this->objectStaticPickupIndexByInstanceIndex));
+    memset(&this->objectIdByInstanceIndex, 0, sizeof(this->objectIdByInstanceIndex));
 }
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, const u8 index)

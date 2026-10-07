@@ -50,11 +50,37 @@ struct CaveData
 };
 struct CaveData CaveData_Create();
 
+enum ObjectIdentifierType
+{
+    OBJ_ID_DEFAULT,
+    OBJ_ID_NOTHING,
+    OBJ_ID_PICKUP,
+    OBJ_ID_MONSTER,
+    OBJECT_IDENTIFIER_TYPE_COUNT
+};
+
+struct ObjectIdentifier
+{
+    enum ObjectIdentifierType type: BIT_SIZE(OBJECT_IDENTIFIER_TYPE_COUNT);
+    u8 staticIndex: BIT_SIZE(OBJECT_EVENTS_COUNT);
+};
+struct ObjectIdentifier ObjectIdentifier_Create(enum ObjectIdentifierType type, u8 staticIndex);
+
 // savable data that mostly just represents the cell you're currently in (regenerates on entering cell/cave)
 struct TemporaryCaveState
 {
     u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
-    u8 objectStaticPickupIndexByInstanceIndex[OBJECT_EVENTS_COUNT]; // todo you could pack these to fit in half of the size
+    struct ObjectIdentifier objectIdByInstanceIndex[OBJECT_EVENTS_COUNT]; // TODO init with cave state, zeroed out should be fine
+    // TODO how do we differentiate pickups/NPCs/interactable when player interacts?
+        // so any object has the same runtime state
+        // 1. enum of its class (pickup, monster, other)
+        // 2. index value dependent on that class
+            // pickups use the index to get their index into the root pickup desc. array
+            // NPCs use the index to get their index into the root NPC desc. array
+                // to allow variable behavior (monsters vs. trainers vs. civilians vs. moving obstacle)
+        // standardize connection of pickups and NPCs to their root desc. array
+            // so the pattern's easy to repeat
+    // clr instance on destroy
 };
 struct TemporaryCaveState TemporaryCaveState_CreateEmpty();
 struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);

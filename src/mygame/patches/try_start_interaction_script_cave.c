@@ -75,7 +75,9 @@ static void Task_PickupItemObject(const u8 taskId)
         // TODO give item or if player is out of room display a message
         // ASSUMING: that this is an object in a dungeon // todo we need a more universal solution longterm
         struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
-        const u8 pickupStaticIndex = temporaryCaveState->objectStaticPickupIndexByInstanceIndex[objectId];
+        const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectId];
+        const u8 pickupStaticIndex = objectIdentifier->staticIndex;
+        fatal_assertf(objectIdentifier->type == OBJ_ID_PICKUP);
 
         *PickupIsTakenPtr(cellData, pickupStaticIndex) = TRUE;
 
@@ -137,7 +139,9 @@ bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
 
     const struct DummyDungeonCellData* currentCaveCellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
-    const u8 staticPickupIndex = temporaryCaveState->objectStaticPickupIndexByInstanceIndex[objectEventId];
+    const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectEventId];
+    const u8 staticPickupIndex = objectIdentifier->staticIndex;
+    fatal_assertf(objectIdentifier->type == OBJ_ID_PICKUP);
 
     if (gameData->context != CONTEXT_CAVE)
         return FALSE;

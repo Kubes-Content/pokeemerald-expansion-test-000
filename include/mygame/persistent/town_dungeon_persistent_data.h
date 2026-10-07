@@ -29,7 +29,7 @@ enum TownDungeonMapContext
 
 union TemporaryStatePerContext
 {
-    u8 bytes[32];
+    u8 bytes[16 * 8];
     max_align_t align;
 };
 
