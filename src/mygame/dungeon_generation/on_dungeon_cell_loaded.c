@@ -32,12 +32,8 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 }
 
 // todo refactor
-static u8 SpawnDungeonPickup(struct TownDungeonPersistentData* this, u8 staticIndex)
+static u8 SpawnDungeonPickup(const u8 staticIndex, struct TownDungeonGamePersistentData* gameData, struct TemporaryCaveState* temporaryCaveState, const struct DummyDungeonCellData* cellData)
 {
-    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
-    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
-    const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex]; // refactor todo get current cell's index from game data
     const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, staticIndex);
     // TODO dynamic spawn positions
     const u8 instanceIndex = SpawnBaseObject(5 + staticIndex, 15, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
@@ -67,13 +63,8 @@ static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, struct War
     return unusedWarpsCount;
 }
 
-static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
+static void SpawnGarbageOverUnusedDoors(const struct DummyDungeonCellData* cellData)
 {
-    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
-    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
-    const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
-    const struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
-
     // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
 
     const u8 unusedDoorsCapacity = 4; // TODO this is gonna be a problem...
@@ -89,20 +80,17 @@ static void SpawnGarbageOverUnusedDoors(struct TownDungeonPersistentData* this)
     }
 }
 
-static void SpawnPickups(struct TownDungeonPersistentData* this)
+static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const struct TownDungeonPersistentData* this, struct TemporaryCaveState* temporaryCaveState, struct DummyDungeonCellData* cellData)
 {
-    struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData; // todo why not pass this as arg too?
-    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData(); // todo why not pass this as arg too?
-    const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
-    struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
-    // TODO replace 1 w/ MAX_PICKUPS_PER_DUNGEON
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
         if (!*PickupIsTakenPtr(cellData, staticIndex))
-            SpawnDungeonPickup(this, staticIndex);
+        {
+            SpawnDungeonPickup(staticIndex, gameData, temporaryCaveState, cellData);
+        }
     }
 
-    SpawnGarbageOverUnusedDoors(this);
+    SpawnGarbageOverUnusedDoors(cellData);
 }
 
 // ReSharper disable once CppUseInternalLinkage
@@ -111,8 +99,10 @@ void OnDungeonCellLoaded()
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
+    struct CaveData* caveData = &currentTownData->caveData; // todo why not pass this as arg too?
+    struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
     ClearTemporaryCaveState(temporaryCaveState);
     gameData->context = CONTEXT_CAVE;
-    SpawnPickups(currentTownData);
+    SpawnPickups(gameData, currentTownData, temporaryCaveState, cellData);
 }
