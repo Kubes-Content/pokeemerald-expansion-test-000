@@ -10,9 +10,8 @@
 #include "mygame/patches/global/constants.h"
 
 #define MAX_DUNGEON_CELL_COUNT 8
-#define MAX_PICKUPS_PER_DUNGEON 8
+#define MAX_PICKUPS_PER_CELL 8
 #define MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL 4
-#define NUM_PICKUP_DESCRIPTIONS_PER_CELL 8
 
 struct TownDungeonGamePersistentData;
 
@@ -32,21 +31,21 @@ struct DungeonCellConnection
 };
 struct DungeonCellConnection DungeonCellConnection_Create(s8 cellIndex, u8 warpId);
 
-struct DummyDungeonCellData
+struct DungeonCellData
 {
     u16 cellMapEnum : BIT_SIZE(MAP_COUNT - 1); // todo wrap in struct CellDescription
-    u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_DUNGEON - 1);
-    u8 takenPickups[MAX_PICKUPS_PER_DUNGEON];
-    u8 relevantPickupIndices[MAX_PICKUPS_PER_DUNGEON];
-    struct DungeonCellConnection connections[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL]; // todo initialize with new game
+    u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_CELL - 1);
+    u8 takenPickups[MAX_PICKUPS_PER_CELL];
+    u8 pickupDescriptionGameDataIndices[MAX_PICKUPS_PER_CELL]; // paired to an object event's instance id
+    struct DungeonCellConnection connections[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL];
 };
-struct DummyDungeonCellData DungeonCellData_Create(u16 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const u8 dummyPickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL]);
+struct DungeonCellData DungeonCellData_Create(u16 caveEntryCellMapEnum, s8 caveEntryCellPickupCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL]);
 
 struct CaveData
 {
     u8 maxIndexForCell : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1); // cell ct - 1
-    u8 objectWithGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
-    struct DummyDungeonCellData cellsData[MAX_DUNGEON_CELL_COUNT];
+    u8 monsterObjectWithGateKeyStaticIndex : BIT_SIZE(OBJECT_EVENTS_COUNT - 1);
+    struct DungeonCellData cellsData[MAX_DUNGEON_CELL_COUNT];
 };
 struct CaveData CaveData_Create();
 
@@ -86,8 +85,8 @@ struct TemporaryCaveState TemporaryCaveState_CreateEmpty();
 struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);
 void ClearTemporaryCaveState(struct TemporaryCaveState* this);
 
-struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, u8 index);
+struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, u8 index);
 
-bool8* PickupIsTakenPtr(struct DummyDungeonCellData* cellData, u8 staticIndex);
+bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, u8 staticIndex);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H

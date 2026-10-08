@@ -116,7 +116,7 @@ continue_connection:
         // in that case are the indices not the connection's local warpId?
 // todo fix: this assumes that entryCell is a room with a single pre-established connection to another cell
 // unwantedConnections is relative to entry/owning cell
-static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, u8* const generatedCellCount, struct CellVariant caveCellVariants[MAX_DUNGEON_CELL_COUNT], const u8 segmentCellCount, const struct CellVariant* entryCell, const u8 entryCellIndex, struct RelativeCellConnection* unwantedConnections, u8 unwantedConnectionsCount, u8 pickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL]) // NOLINT(*-non-const-parameter)
+static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, u8* const generatedCellCount, struct CellVariant caveCellVariants[MAX_DUNGEON_CELL_COUNT], const u8 segmentCellCount, const struct CellVariant* entryCell, const u8 entryCellIndex, struct RelativeCellConnection* unwantedConnections, u8 unwantedConnectionsCount, u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL]) // NOLINT(*-non-const-parameter)
 {
     struct CaveData* caveData = &townData->caveData;
 
@@ -128,8 +128,8 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
     {
         fatal_assertf(*generatedCellCount < MAX_DUNGEON_CELL_COUNT, "Generating %d with a max of %d", *generatedCellCount + 1, (u8) MAX_DUNGEON_CELL_COUNT);
         const u8 newCellIndex = *generatedCellCount;
-        struct DummyDungeonCellData* previousCellData = &caveData->cellsData[previousCellIndex];
-        struct DummyDungeonCellData* newCellData = &caveData->cellsData[newCellIndex];
+        struct DungeonCellData* previousCellData = &caveData->cellsData[previousCellIndex];
+        struct DungeonCellData* newCellData = &caveData->cellsData[newCellIndex];
 
         // randomly pick an unused connection in previousCell
 
@@ -143,7 +143,7 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
 
         // TODO simplify
 
-        *newCellData = DungeonCellData_Create(GetCellVariantMapEnum(newCell), 3, pickupDescriptionArr);
+        *newCellData = DungeonCellData_Create(GetCellVariantMapEnum(newCell), 3, pickupDescriptionGameDataIndicesArr);
 
         const u8 previousCellFromWarpId = GetPlaceholderCellWarpIdForDirection(connectionFromPreviousCellToNewCell.direction);
         const u8 newCellToWarpId        = GetPlaceholderCellWarpIdForDirection(connectionFromNewCellToPreviousCell.direction);
@@ -163,7 +163,7 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
 static void CreatePickupIndicesArrayForCell(u8* arr, u8 arrCapacity, u8 arrCount)
 {
     for (u8 i = 0; i < arrCapacity; i++)
-        arr[i] = Random() % arrCount;
+        arr[i] = Random() % arrCount; // why though?
 }
 
 // TODO this shouldn't be in this file
@@ -179,14 +179,15 @@ static void GenerateCaveData(struct TownDungeonPersistentData* this)
 
     const s8 caveEntryCellPickupCount = 3; // todo this should be an argument
     {
-        u8 pickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
-        CreatePickupIndicesArrayForCell(pickupDescriptionArr, NUM_PICKUP_DESCRIPTIONS_PER_CELL, caveEntryCellPickupCount);
+        u8 pickupDescriptionGameDataIndicesArrSize = MAX_PICKUPS_PER_CELL;
+        u8 pickupDescriptionGameDataIndicesArr[pickupDescriptionGameDataIndicesArrSize];
+        CreatePickupIndicesArrayForCell(pickupDescriptionGameDataIndicesArr, pickupDescriptionGameDataIndicesArrSize, caveEntryCellPickupCount);
 
         fatal_assertf(MAX_DUNGEON_CELL_COUNT >= caveData->maxIndexForCell + 1, "MAX_DUNGEON_CELL_COUNT too low for generation test");
 
         // TODO support entering cave from any direction, NOT TIED TO CARDINAL DIRECTION, abstracted to wrap cardinal direction until we implement a better solution in its place
 
-        caveData->cellsData[generatedCellCount] = DungeonCellData_Create(GetCellVariantMapEnum(entryCell), caveEntryCellPickupCount, pickupDescriptionArr); // todo reimplement, generate all cells
+        caveData->cellsData[generatedCellCount] = DungeonCellData_Create(GetCellVariantMapEnum(entryCell), caveEntryCellPickupCount, pickupDescriptionGameDataIndicesArr); // todo reimplement, generate all cells
     }
     //
     const s8 townCellIndex = -1; // todo this should probably be a constant of some form
@@ -230,10 +231,11 @@ static void GenerateCaveData(struct TownDungeonPersistentData* this)
             unwantedConnections[0] = connectionFromPreviousCellToPriorCell;
         const u8 cellsToGenerateForRootPath = rootPathMinimumLength - 1; // first cell already generated
 
-        u8 pickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
-        CreatePickupIndicesArrayForCell(pickupDescriptionArr, NUM_PICKUP_DESCRIPTIONS_PER_CELL, caveEntryCellPickupCount);
+        const u8 pickupDescriptionGameDataIndicesArrSize = MAX_PICKUPS_PER_CELL;
+        u8 pickupDescriptionGameDataIndicesArr[pickupDescriptionGameDataIndicesArrSize];
+        CreatePickupIndicesArrayForCell(pickupDescriptionGameDataIndicesArr, pickupDescriptionGameDataIndicesArrSize, caveEntryCellPickupCount);
 
-        GenerateCavePathSegment(this, &generatedCellCount, caveCellVariants, cellsToGenerateForRootPath, entryCell, entryCellIndex, unwantedConnections, unwantedConnectionsCount, pickupDescriptionArr);
+        GenerateCavePathSegment(this, &generatedCellCount, caveCellVariants, cellsToGenerateForRootPath, entryCell, entryCellIndex, unwantedConnections, unwantedConnectionsCount, pickupDescriptionGameDataIndicesArr);
     }
 
     // GEN SUB-PATHS
@@ -251,7 +253,7 @@ redo:
         tryCount++;
 
         const u8 ownerCellIndex = Random() % rootPathMinimumLength;
-        const struct DummyDungeonCellData* ownerCellData = &caveData->cellsData[ownerCellIndex];
+        const struct DungeonCellData* ownerCellData = &caveData->cellsData[ownerCellIndex];
         const struct CellVariant* ownerCellVariant = &caveCellVariants[ownerCellIndex];
 
         struct RelativeCellConnection unwantedConnectionsArr[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL];
@@ -273,11 +275,12 @@ redo:
             if (unusedConnectionsCount == 0) goto redo; // find a cell with unused doors
         }
 
-        u8 pickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL];
-        CreatePickupIndicesArrayForCell(pickupDescriptionArr, NUM_PICKUP_DESCRIPTIONS_PER_CELL, caveEntryCellPickupCount);
+        const u8 pickupDescriptionGameDataIndicesArrSize = MAX_PICKUPS_PER_CELL;
+        u8 pickupDescriptionGameDataIndicesArr[pickupDescriptionGameDataIndicesArrSize];
+        CreatePickupIndicesArrayForCell(pickupDescriptionGameDataIndicesArr, pickupDescriptionGameDataIndicesArrSize, caveEntryCellPickupCount);
 
         const u8 subPathLength = 1;
-        GenerateCavePathSegment(this, &generatedCellCount, caveCellVariants, subPathLength, ownerCellVariant, ownerCellIndex, unwantedConnectionsArr, unwantedConnectionsCount, pickupDescriptionArr);
+        GenerateCavePathSegment(this, &generatedCellCount, caveCellVariants, subPathLength, ownerCellVariant, ownerCellIndex, unwantedConnectionsArr, unwantedConnectionsCount, pickupDescriptionGameDataIndicesArr);
     }
 }
 
@@ -294,7 +297,7 @@ void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
     this->currentTown = 0;
     *GetTemporaryCaveStatePtr(this) = TemporaryCaveState_CreateEmpty();
 
-    for (u8 i = 0; i < NUM_PICKUP_DESCRIPTIONS_PER_CELL; i++)
+    for (u8 i = 0; i < NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON; i++)
     {
         struct DummyPickupDescription* thisDescription = &this->sharedCavePickupDescriptions[i];
         const u8 pickupOptions = 3;

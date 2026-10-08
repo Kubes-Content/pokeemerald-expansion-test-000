@@ -26,13 +26,13 @@ struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, co
     };
 }
 
-struct DummyDungeonCellData DungeonCellData_Create(const u16 caveEntryCellMapEnum, const s8 caveEntryCellPickupCount, const u8 dummyPickupDescriptionArr[NUM_PICKUP_DESCRIPTIONS_PER_CELL])
+struct DungeonCellData DungeonCellData_Create(const u16 caveEntryCellMapEnum, const s8 caveEntryCellPickupCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL])
 {
-    struct DummyDungeonCellData result = {
+    struct DungeonCellData result = {
         .cellMapEnum = caveEntryCellMapEnum,
         .cellPickupDefinitionCount = caveEntryCellPickupCount,
     };
-    memcpy(&result.relevantPickupIndices, dummyPickupDescriptionArr, sizeof(result.relevantPickupIndices));
+    memcpy(&result.pickupDescriptionGameDataIndices, pickupDescriptionGameDataIndicesArr, sizeof(result.pickupDescriptionGameDataIndices));
     memset(&result.connections, 0, sizeof(result.connections));
     memset(&result.takenPickups, 0, sizeof(result.takenPickups));
 
@@ -45,7 +45,7 @@ struct CaveData CaveData_Create()
     memset(&returnValue.cellsData, 0, sizeof(returnValue.cellsData)); // redundant todo remove when root data struct is no longer zeroed out on new game
     returnValue.maxIndexForCell = 4 - 1;
     assertf(returnValue.maxIndexForCell < MAX_DUNGEON_CELL_COUNT){}
-    returnValue.objectWithGateKeyStaticIndex = 0;
+    returnValue.monsterObjectWithGateKeyStaticIndex = 0;
     return returnValue;
 }
 
@@ -76,12 +76,12 @@ void ClearTemporaryCaveState(struct TemporaryCaveState* this)
     memset(&this->objectIdByInstanceIndex, 0, sizeof(this->objectIdByInstanceIndex));
 }
 
-struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DummyDungeonCellData* cellData, const u8 index)
+struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, const u8 index)
 {
-    return &gameData->sharedCavePickupDescriptions[cellData->relevantPickupIndices[index]];
+    return &gameData->sharedCavePickupDescriptions[cellData->pickupDescriptionGameDataIndices[index]];
 }
 
-bool8* PickupIsTakenPtr(struct DummyDungeonCellData* cellData, u8 staticIndex)
+bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, u8 staticIndex)
 {
     return &cellData->takenPickups[staticIndex];
 }

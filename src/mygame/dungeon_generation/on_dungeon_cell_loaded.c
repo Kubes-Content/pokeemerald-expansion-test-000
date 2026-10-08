@@ -32,7 +32,7 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 }
 
 // todo refactor
-static u8 SpawnDungeonPickup(const u8 staticIndex, struct TownDungeonGamePersistentData* gameData, struct TemporaryCaveState* temporaryCaveState, const struct DummyDungeonCellData* cellData)
+static u8 SpawnDungeonPickup(const u8 staticIndex, struct TownDungeonGamePersistentData* gameData, struct TemporaryCaveState* temporaryCaveState, const struct DungeonCellData* cellData)
 {
     const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, staticIndex);
     // TODO dynamic spawn positions
@@ -44,7 +44,7 @@ static u8 SpawnDungeonPickup(const u8 staticIndex, struct TownDungeonGamePersist
     return instanceIndex;
 }
 
-static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, struct WarpEvent* unusedWarpsArr, u8 arrLength)
+static u8 GetUnusedWarps(const struct DungeonCellData* cellData, struct WarpEvent* unusedWarpsArr, u8 arrLength)
 {
     struct WarpEvent allWarpsArr[arrLength];
     const u8 warpCount = GetAllWarps(cellData->cellMapEnum, allWarpsArr, arrLength);
@@ -63,7 +63,7 @@ static u8 GetUnusedWarps(const struct DummyDungeonCellData* cellData, struct War
     return unusedWarpsCount;
 }
 
-static void SpawnGarbageOverUnusedDoors(const struct DummyDungeonCellData* cellData)
+static void SpawnGarbageOverUnusedDoors(const struct DungeonCellData* cellData)
 {
     // ASSUMING THAT LOCAL WARP ID IS CONNECTIONS INDEX
 
@@ -80,7 +80,7 @@ static void SpawnGarbageOverUnusedDoors(const struct DummyDungeonCellData* cellD
     }
 }
 
-static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const struct TownDungeonPersistentData* this, struct TemporaryCaveState* temporaryCaveState, struct DummyDungeonCellData* cellData)
+static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const struct TownDungeonPersistentData* this, struct TemporaryCaveState* temporaryCaveState, struct DungeonCellData* cellData)
 {
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
@@ -100,7 +100,7 @@ void OnDungeonCellLoaded()
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
     struct CaveData* caveData = &currentTownData->caveData; // todo why not pass this as arg too?
-    struct DummyDungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
+    struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
     ClearTemporaryCaveState(temporaryCaveState);
     gameData->context = CONTEXT_CAVE;
