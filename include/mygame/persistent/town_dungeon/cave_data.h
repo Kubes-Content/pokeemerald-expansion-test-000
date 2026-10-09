@@ -10,6 +10,7 @@
 #include "constants/species.h"
 #include "mygame/patches/global/constants.h"
 #include "mygame/persistent/town_dungeon/cave/cell_ow_monster_data.h"
+#include "mygame/persistent/town_dungeon/cave/cell_pickup_config.h"
 
 #define MAX_DUNGEON_CELL_COUNT 8
 #define MAX_PICKUPS_PER_CELL 8
@@ -46,12 +47,11 @@ struct DungeonCellData
     u16 cellMapEnum : BIT_SIZE(MAP_COUNT - 1); // todo wrap in struct CellDescription
     u8 cellPickupDefinitionCount : BIT_SIZE(MAX_PICKUPS_PER_CELL - 1); // todo shouldn't be minus one....
     u8 cellMonsterDefinitionCount : BIT_SIZE(MAX_OVERWORLD_MONSTERS_PER_CELL);
-    u8 takenPickups[MAX_PICKUPS_PER_CELL];
-    u8 pickupDescriptionGameDataIndices[MAX_PICKUPS_PER_CELL];
+    struct CellPickupConfig pickupConfigs[MAX_PICKUPS_PER_CELL];
     struct CellOverworldMonsterConfig monsterConfigs[MAX_OVERWORLD_MONSTERS_PER_CELL];
     struct DungeonCellConnection connections[MAX_DUNGEON_CELL_CONNECTIONS_PER_CELL];
 };
-struct DungeonCellData DungeonCellData_Create(u16 cellMapEnum, s8 cellPickupDefinitionCount, s8 cellMonsterDefinitionCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL], struct CellOverworldMonsterConfig monsterConfigsArr[MAX_OVERWORLD_MONSTERS_PER_CELL]);
+struct DungeonCellData DungeonCellData_Create(u16 cellMapEnum, s8 cellPickupDefinitionCount, s8 cellMonsterDefinitionCount, struct CellPickupConfig pickupConfigs[MAX_PICKUPS_PER_CELL], struct CellOverworldMonsterConfig monsterConfigsArr[MAX_OVERWORLD_MONSTERS_PER_CELL]);
 
 struct CaveData
 {

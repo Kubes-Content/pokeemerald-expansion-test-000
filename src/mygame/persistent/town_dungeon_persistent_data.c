@@ -112,88 +112,70 @@ continue_connection:
     fatalf("No result found for PickAnyOtherCellMapRelativeConnection"); // TODO useful message
 }
 
-// reduce validSharedPickupDescriptions from NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON to not pick from the full description array
-    // todo a nicer way to pick a range across the descriptions array, like index 2 to index 6, or even wrapping around the array
-static void CreatePickupIndicesArrayForCell(u8* pickupSharedGameDataIndicesArr, const u8 pickupSharedGameDataIndicesArrCapacity,
-                                            const u8 pickupSharedGameDataIndicesArrCount, const u8 validSharedPickupDescriptions)
+// TODO extract
+// usedCoordinates2dArr's size is (layout->width * layout->height)
+static bool8 IsTilePassable(const struct MapLayout* layout, const u8 x, const u8 y, const bool8* usedCoordinates2dArr)
 {
-    fatal_assertf(pickupSharedGameDataIndicesArrCapacity >= pickupSharedGameDataIndicesArrCount);
-
-    for (u8 i = 0; i < pickupSharedGameDataIndicesArrCount; i++)
-        pickupSharedGameDataIndicesArr[i] = Random() % validSharedPickupDescriptions;
+    const bool8 containsAGeneratedCollidableObject = usedCoordinates2dArr[x + y * layout->width];
+    const bool8 passableTile = UNPACK_COLLISION(layout->map[x + y * layout->width]) == COLLISION_NONE;
+    return !containsAGeneratedCollidableObject && passableTile;
 }
 
-// TODO extract
-static bool8 IsTilePassable(const struct MapLayout* layout, u8 x, u8 y)
+static void FindOpenCoordinate(const struct MapLayout* layout, const bool8* usedCoordinates2dArr, u8* xPtr, u8* yPtr)
 {
-    return UNPACK_COLLISION(layout->map[x + y * layout->width]) == COLLISION_NONE;
+    const u8 maxAttempts = 29;
+    for (u8 attempt = 0; attempt < maxAttempts; attempt++)
+    {
+        *xPtr = Random() % layout->width;
+        *yPtr = Random() % layout->height;
+
+        const bool8 alreadyChosenLocation = usedCoordinates2dArr[*xPtr + *yPtr * layout->width];
+        if (alreadyChosenLocation) continue;
+
+        if (!IsTilePassable(layout, *xPtr, *yPtr, usedCoordinates2dArr)) continue;
+
+        goto chosen;
+    }
+    fatalf();
+    chosen:;
+}
+
+// reduce validSharedPickupDescriptions from NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON to not pick from the full description array
+    // todo a nicer way to pick a range across the descriptions array, like index 2 to index 6, or even wrapping around the array
+static void CreatePickupPermanentCellData(const struct MapLayout* layout, struct CellPickupConfig* pickupConfigsArr, const u8 pickupConfigsArrCapacity,
+                                            const u8 pickupConfigsArrCount, const u8 validSharedPickupDescriptions, bool8* usedCoordinates2dArr)
+{
+    fatal_assertf(pickupConfigsArrCapacity >= pickupConfigsArrCount);
+
+    for (u8 i = 0; i < pickupConfigsArrCount; i++)
+    {
+        u8 x, y;
+        FindOpenCoordinate(layout, usedCoordinates2dArr, &x, &y);
+
+        pickupConfigsArr[i] = CellPickupConfig_Create(x, y, Random() % validSharedPickupDescriptions);
+
+        usedCoordinates2dArr[x + y * layout->width] = TRUE;
+    }
 }
 
 // TODO we need a temporary bool mask of the map - to determine if we have already chosen to place an object at a coordinate
     // a bool8 2D array
     // I don't think we even need to pass the size since it'll be based on the target map
 static void CreateMonsterPermanentCellData(const struct MapLayout* layout, struct CellOverworldMonsterConfig* cellMonsterConfigsArr, const u8 cellMonsterConfigsArrCapacity,
-                                            const u8 cellMonsterConfigsArrCount, const u8 validSharedMonsterDescriptions)
+                                            const u8 cellMonsterConfigsArrCount, const u8 validSharedMonsterDescriptions, bool8* usedCoordinates2dArr)
 {
     fatal_assertf(cellMonsterConfigsArrCapacity >= cellMonsterConfigsArrCount);
 
-    // TODO arr for already chosen coordinates
-    u8 chosenXCoordinates[cellMonsterConfigsArrCount];
-    u8 chosenYCoordinates[cellMonsterConfigsArrCount];
+    // TODO 2d bool arr for already chosen coordinates
 
     for (u8 i = 0; i < cellMonsterConfigsArrCount; i++)
     {
-        const u8 maxAttempts = 29;
-        for (u8 attempt = 0; attempt < maxAttempts; attempt++)
-        {
-            const u8 x = Random() % layout->width;
-            const u8 y = Random() % layout->height;
-
-            bool8 alreadyChosenLocation = FALSE;
-            for (u8 i2 = 0; i2 < i; i2++)
-            {
-                if (chosenXCoordinates[i2] != x
-                    || chosenYCoordinates[i2] != y)
-                    continue;
-
-                alreadyChosenLocation = TRUE;
-                break;
-            }
-            if (alreadyChosenLocation) continue;
-
-            if (!IsTilePassable(layout, x,y)) continue;
-
-            chosenXCoordinates[i] = x;
-            chosenYCoordinates[i] = y;
-
-            goto chosen;
-        }
-        fatalf();
-chosen:;
-
-        const u8 x = chosenXCoordinates[i];
-        const u8 y = chosenYCoordinates[i];
+        u8 x, y;
+        FindOpenCoordinate(layout, usedCoordinates2dArr, &x, &y);
 
         cellMonsterConfigsArr[i] = CellOverworldMonsterConfig_Create(x, y, Random() % validSharedMonsterDescriptions);
+        usedCoordinates2dArr[x + y * layout->width] = TRUE;
     }
-
-
-    /*// TODO TEST, REMOVE
-    fatal_assertf(!IsTilePassable(layout, 0,0));
-    fatal_assertf(!IsTilePassable(layout, 1,1), "wall0");
-    fatal_assertf(!IsTilePassable(layout, layout->width - 2,1), "wall1");
-    fatal_assertf(!IsTilePassable(layout, 0, layout->height - 1), "corner0");
-    fatal_assertf(!IsTilePassable(layout, 6, layout->height - 1), "wall2");
-    fatal_assertf(!IsTilePassable(layout, layout->width - 1, layout->height - 1), "corner1");
-    fatal_assertf(IsTilePassable(layout, 2, 2), "f");
-    fatal_assertf(!IsTilePassable(layout, MAP_OFFSET, MAP_OFFSET), "offset");
-    fatal_assertf(!IsTilePassable(layout, MAP_OFFSET+2, MAP_OFFSET+1), "wall3");
-    fatal_assertf(IsTilePassable(layout, MAP_OFFSET+2, MAP_OFFSET+2), "floor");
-    //IsMapTilePassable
-
-    // TODO generated home locations
-    for (u8 i = 0; i < cellMonsterConfigsArrCount; i++)
-        cellMonsterConfigsArr[i] = CellOverworldMonsterConfig_Create(i + 5, 14, Random() % validSharedMonsterDescriptions);*/
 }
 
 static void GenerateCellData(struct CaveData* caveData, const struct CellVariant* cellVariant, const u8 cellIndex, const s8 cellPickupDefinitionCount, const s8 cellMonsterDefinitionCount)
@@ -201,17 +183,21 @@ static void GenerateCellData(struct CaveData* caveData, const struct CellVariant
     const struct MapHeader* header = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(cellVariant->mapEnum), MAP_NUM(cellVariant->mapEnum));
     const struct MapLayout* layout = GetMapLayout(header->mapLayoutId);
 
-    const u8 pickupDescriptionGameDataIndicesArrSize = MAX_PICKUPS_PER_CELL;
-    u8 pickupDescriptionGameDataIndicesArr[pickupDescriptionGameDataIndicesArrSize];
-    CreatePickupIndicesArrayForCell(pickupDescriptionGameDataIndicesArr, pickupDescriptionGameDataIndicesArrSize, cellPickupDefinitionCount, NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON);
+    // bool map of where we've already spawned things // todo bitmask
+    bool8 usedCoordinates2dArr[layout->width * layout->height];
+
+    // TODO randomize pickup locations
+    const u8 pickupConfigsArrSize = MAX_PICKUPS_PER_CELL;
+    struct CellPickupConfig pickupConfigsArr[pickupConfigsArrSize];
+    CreatePickupPermanentCellData(layout, pickupConfigsArr, pickupConfigsArrSize, cellPickupDefinitionCount, NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
 
     const u8 xSize = MAX_OVERWORLD_MONSTERS_PER_CELL;
-    struct CellOverworldMonsterConfig x[xSize];
-    CreateMonsterPermanentCellData(layout, x, xSize, cellMonsterDefinitionCount, NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON);
+    struct CellOverworldMonsterConfig monsterConfigsArr[xSize];
+    CreateMonsterPermanentCellData(layout, monsterConfigsArr, xSize, cellMonsterDefinitionCount, NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
 
     // TODO support entering cave from any direction, NOT TIED TO CARDINAL DIRECTION, abstracted to wrap cardinal direction until we implement a better solution in its place
 
-    caveData->cellsData[cellIndex] = DungeonCellData_Create(GetCellVariantMapEnum(cellVariant), cellPickupDefinitionCount, cellMonsterDefinitionCount, pickupDescriptionGameDataIndicesArr, x); // todo reimplement, generate all cells
+    caveData->cellsData[cellIndex] = DungeonCellData_Create(GetCellVariantMapEnum(cellVariant), cellPickupDefinitionCount, cellMonsterDefinitionCount, pickupConfigsArr, monsterConfigsArr); // todo reimplement, generate all cells
 }
 
 // todo fix: this assumes that entryCell is a room with a single pre-established connection to another cell

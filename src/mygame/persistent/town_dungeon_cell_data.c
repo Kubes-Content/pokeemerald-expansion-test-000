@@ -37,17 +37,16 @@ struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, co
     };
 }
 
-struct DungeonCellData DungeonCellData_Create(const u16 cellMapEnum, const s8 cellPickupDefinitionCount, const s8 cellMonsterDefinitionCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL], struct CellOverworldMonsterConfig monsterConfigsArr[MAX_OVERWORLD_MONSTERS_PER_CELL])
+struct DungeonCellData DungeonCellData_Create(const u16 cellMapEnum, const s8 cellPickupDefinitionCount, const s8 cellMonsterDefinitionCount, struct CellPickupConfig pickupConfigs[MAX_PICKUPS_PER_CELL], struct CellOverworldMonsterConfig monsterConfigsArr[MAX_OVERWORLD_MONSTERS_PER_CELL])
 {
     struct DungeonCellData result = {
         .cellMapEnum = cellMapEnum,
         .cellPickupDefinitionCount = cellPickupDefinitionCount,
         .cellMonsterDefinitionCount = cellMonsterDefinitionCount,
     };
-    memcpy(&result.pickupDescriptionGameDataIndices, pickupDescriptionGameDataIndicesArr, sizeof(result.pickupDescriptionGameDataIndices));
+    memcpy(&result.pickupConfigs, pickupConfigs, sizeof(result.pickupConfigs));
     memcpy(&result.monsterConfigs, monsterConfigsArr, sizeof(result.monsterConfigs));
     memset(&result.connections, 0, sizeof(result.connections));
-    memset(&result.takenPickups, 0, sizeof(result.takenPickups));
 
     return result;
 }
@@ -93,10 +92,10 @@ void ClearTemporaryCaveState(struct TemporaryCaveState* this)
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, const u8 index)
 {
-    return &gameData->sharedCavePickupDescriptions[cellData->pickupDescriptionGameDataIndices[index]];
+    return &gameData->sharedCavePickupDescriptions[cellData->pickupConfigs[index].sharedDescriptionIndex];
 }
 
-bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, u8 staticIndex)
+bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, const u8 staticIndex)
 {
-    return &cellData->takenPickups[staticIndex];
+    return &cellData->pickupConfigs[staticIndex].isTaken;
 }

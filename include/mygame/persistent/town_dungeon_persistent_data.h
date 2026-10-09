@@ -5,12 +5,9 @@
 #define GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H
 #include "gba/types.h"
 #include "metaprogram.h"
+#include "mygame/town_dungeon_macros.h"
 #include "town_dungeon/cave_data.h"
 #include "town_dungeon/town_data.h"
-
-#define DUNGEON_TOWN_COUNT 2
-#define NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON 8
-#define NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON 8
 
 struct TownDungeonPersistentData
 {

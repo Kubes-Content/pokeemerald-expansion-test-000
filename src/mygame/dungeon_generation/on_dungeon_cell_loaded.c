@@ -35,8 +35,8 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 static u8 SpawnDungeonPickup(const u8 staticIndex, struct TownDungeonGamePersistentData* gameData, struct TemporaryCaveState* temporaryCaveState, const struct DungeonCellData* cellData)
 {
     const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, staticIndex);
-    // TODO dynamic spawn positions
-    const u8 instanceIndex = SpawnBaseObject(5 + staticIndex, 15, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
+    const struct CellPickupConfig* cellPickupConfig = &cellData->pickupConfigs[staticIndex];
+    const u8 instanceIndex = SpawnBaseObject(cellPickupConfig->x, cellPickupConfig->y, pickupDescription->objectEventGraphicsEnum);//SpawnLocalClone(LOCALID_DYNAMIC_INTERACTABLE_TEMPLATE, pickupDescription->x, pickupDescription->y, pickupDescription->objectEventGraphicsEnum);
 
     struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[instanceIndex];
     *objectIdentifier = ObjectIdentifier_Create(OBJ_ID_PICKUP, staticIndex);

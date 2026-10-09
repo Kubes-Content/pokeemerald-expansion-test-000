@@ -6,12 +6,13 @@
 #include "metaprogram.h"
 #include "gba/types.h"
 #include "mygame/patches/global/constants.h"
+#include "mygame/town_dungeon_macros.h"
 
 // UCoords8 exists, but we can't include global.h since this is included in global_patches.h
 
 struct CellOverworldMonsterConfig
 {
-    u8 sharedDescriptionIndex;
+    u8 sharedDescriptionIndex : BIT_SIZE(NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON - 1);
     u8 homeX : BIT_SIZE(MAX_COORDINATE);
     u8 homeY : BIT_SIZE(MAX_COORDINATE);
 };
