@@ -2,9 +2,9 @@
 
 #include "event_object_movement.h"
 #include "global.fieldmap.h"
+#include "task.h"
 #include "constants/event_objects.h"
 #include "constants/trainer_types.h"
-#include "gba/defines.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 #include "mygame/util/MapHeader.h"
 
@@ -24,8 +24,8 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 
     const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
 
-    assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1){}
-    const u8 idThatPreventsUnloadingWhileOffscreen = OBJ_EVENT_ID_FOLLOWER; // todo extract
+    fatal_assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
+    const u8 idThatPreventsUnloadingWhileOffscreen = OBJ_EVENT_ID_NPC_FOLLOWER; // todo extract
     gObjectEvents[objectEventIndex].localId = idThatPreventsUnloadingWhileOffscreen;
 
     return objectEventIndex;
@@ -93,6 +93,68 @@ static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const s
     SpawnGarbageOverUnusedDoors(cellData);
 }
 
+[[nodiscard]]
+static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
+                             struct TemporaryCaveState* temporaryCaveState,
+                             struct TownDungeonPersistentData* currentTownData,
+                             struct DungeonCellData* cellData,
+                             const u8 staticIndex)
+{
+    struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
+    struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
+    // TODO generated spawn positions
+    const u16 graphicsId = sharedMonsterDescription->objectEventGraphicsEnum;
+    const u8 instanceIndex = SpawnBaseObject(cellOverworldMonsterConfig->homeX, cellOverworldMonsterConfig->homeY, graphicsId);
+
+    struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[instanceIndex];
+    *objectIdentifier = ObjectIdentifier_Create(OBJ_ID_MONSTER, staticIndex);
+
+    return instanceIndex;
+}
+
+static void MoveMonsterTestTask(u8 taskId) // move south until they can't or counter runs out
+{
+    s16* data = gTasks[taskId].data;
+    s16* countPtr = &data[0];
+    const u8 objectInstanceIndex = data[1];
+    struct ObjectEvent* objectEvent = &gObjectEvents[objectInstanceIndex];
+
+    if (ObjectEventIsHeldMovementActive(objectEvent) && !ObjectEventClearHeldMovementIfFinished(objectEvent)) return;
+
+    const u8 direction = DIR_SOUTH;
+
+    if (*countPtr > 999) return DestroyTask(taskId);
+
+    (*countPtr)++;
+
+    const u8 collisionInDirection = GetCollisionInDirection(objectEvent, direction);
+    if (collisionInDirection != COLLISION_NONE) return;
+
+    ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
+}
+
+static void BeginMoveTest(u8 objectInstanceIndex)
+{
+    u8 taskId = CreateTask(MoveMonsterTestTask, 0);
+    s16* data = gTasks[taskId].data;
+    data[0] = 0; // count
+    data[1] = objectInstanceIndex;
+}
+
+static void SpawnMonsters(struct TownDungeonGamePersistentData* gameData,
+                          struct TemporaryCaveState* temporaryCaveState,
+                          struct TownDungeonPersistentData* currentTownData,
+                          struct DungeonCellData* cellData)
+{
+    for (u8 i = 0; i < cellData->cellMonsterDefinitionCount; i++)
+    {
+        [[maybe_unused]] const u8 instanceIndex = SpawnMonsterObject(gameData, temporaryCaveState, currentTownData, cellData, i);
+
+        BeginMoveTest(instanceIndex);
+    }
+
+}
+
 // ReSharper disable once CppUseInternalLinkage
 void OnDungeonCellLoaded()
 {
@@ -102,7 +164,8 @@ void OnDungeonCellLoaded()
     struct CaveData* caveData = &currentTownData->caveData; // todo why not pass this as arg too?
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
-    ClearTemporaryCaveState(temporaryCaveState);
     gameData->context = CONTEXT_CAVE;
+    ClearTemporaryCaveState(temporaryCaveState);
     SpawnPickups(gameData, currentTownData, temporaryCaveState, cellData);
+    SpawnMonsters(gameData, temporaryCaveState, currentTownData, cellData);
 }

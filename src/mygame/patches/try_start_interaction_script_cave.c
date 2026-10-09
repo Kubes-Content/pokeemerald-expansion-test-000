@@ -5,6 +5,7 @@
 
 #include "global.h"
 
+#include "battle_setup.h"
 #include "event_object_movement.h"
 #include "item.h"
 #include "main.h"
@@ -13,6 +14,7 @@
 #include "sound.h"
 #include "string_util.h"
 #include "task.h"
+#include "wild_encounter.h"
 #include "constants/songs.h"
 
 #define A_B_START_SELECT (A_BUTTON | B_BUTTON | START_BUTTON | SELECT_BUTTON)
@@ -135,22 +137,37 @@ destroy_task:
 bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    if (gameData->context != CONTEXT_CAVE) return FALSE;
+
     const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
 
     const struct DungeonCellData* currentCaveCellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
     const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectEventId];
-    const u8 staticPickupIndex = objectIdentifier->staticIndex;
-    fatal_assertf(objectIdentifier->type == OBJ_ID_PICKUP);
 
-    if (gameData->context != CONTEXT_CAVE)
-        return FALSE;
-    if (staticPickupIndex >= currentCaveCellData->cellPickupDefinitionCount)
-        return FALSE;
+    switch(objectIdentifier->type)
+    {
+    case OBJ_ID_NOTHING:
+        return TRUE;
+    case OBJ_ID_PICKUP:;
+        const u8 staticPickupIndex = objectIdentifier->staticIndex;
+        if (staticPickupIndex >= currentCaveCellData->cellPickupDefinitionCount) // ???
+            return FALSE;
 
-    // TODO give player thing
-    const u8 taskId = CreateTask(Task_PickupItemObject, 0);
-    gTasks[taskId].data[0] = objectEventId;
-    gTasks[taskId].data[1] = 0;
-    return TRUE;
+        // TODO give player thing
+        const u8 taskId = CreateTask(Task_PickupItemObject, 0);
+        gTasks[taskId].data[0] = objectEventId;
+        gTasks[taskId].data[1] = 0;
+        return TRUE;
+    case OBJ_ID_MONSTER:;
+        const u8 staticMonsterIndex = objectIdentifier->staticIndex;
+        const struct CellOverworldMonsterConfig* config = &currentCaveCellData->monsterConfigs[staticMonsterIndex];
+        const u8 gameDataDescriptionIndex = config->sharedDescriptionIndex;
+        const struct OverworldMonsterDescription* sharedDescription = &gameData->sharedMonsterDescriptions[gameDataDescriptionIndex];
+        CreateWildMon(sharedDescription->monSpecies, 5); // TODO dynamic level
+        BattleSetup_StartWildBattle();
+        return TRUE;
+    default:
+        fatalf();
+    }
 }

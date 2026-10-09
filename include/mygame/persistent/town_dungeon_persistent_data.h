@@ -10,6 +10,7 @@
 
 #define DUNGEON_TOWN_COUNT 2
 #define NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON 8
+#define NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON 8
 
 struct TownDungeonPersistentData
 {
@@ -40,11 +41,13 @@ struct TownDungeonGamePersistentData
     u8 currentTown : BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
     enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
     struct DummyPickupDescription sharedCavePickupDescriptions[NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON];
+    struct OverworldMonsterDescription sharedMonsterDescriptions[NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON];
     struct TownDungeonPersistentData dungeonTownData[DUNGEON_TOWN_COUNT];
 };
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
 struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this);
+void ClearTemporaryStatePerContext(struct TownDungeonGamePersistentData* this);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H

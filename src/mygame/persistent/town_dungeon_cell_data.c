@@ -6,12 +6,23 @@
 #include <string.h>
 
 #include "assertf.h"
+#include "constants/species.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 
 struct DummyPickupDescription PickupDescription_Create(const u16 itemEnum, const u16 objectEventGraphicsEnum)
 {
     return (struct DummyPickupDescription) {
         .itemEnum = itemEnum,
+        .objectEventGraphicsEnum = objectEventGraphicsEnum,
+    };
+}
+
+struct OverworldMonsterDescription OverworldMonsterDescription_Create(const enum Species monSpecies, const u16 objectEventGraphicsEnum)
+{
+    fatal_assertf(objectEventGraphicsEnum < OBJ_EVENT_GFX_RED_NORMAL, "Attempting to use a FRLG sprite.");
+
+    return (struct OverworldMonsterDescription) {
+        .monSpecies = monSpecies,
         .objectEventGraphicsEnum = objectEventGraphicsEnum,
     };
 }
@@ -26,13 +37,15 @@ struct DungeonCellConnection DungeonCellConnection_Create(const s8 cellIndex, co
     };
 }
 
-struct DungeonCellData DungeonCellData_Create(const u16 caveEntryCellMapEnum, const s8 caveEntryCellPickupCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL])
+struct DungeonCellData DungeonCellData_Create(const u16 cellMapEnum, const s8 cellPickupDefinitionCount, const s8 cellMonsterDefinitionCount, const u8 pickupDescriptionGameDataIndicesArr[MAX_PICKUPS_PER_CELL], struct CellOverworldMonsterConfig monsterConfigsArr[MAX_OVERWORLD_MONSTERS_PER_CELL])
 {
     struct DungeonCellData result = {
-        .cellMapEnum = caveEntryCellMapEnum,
-        .cellPickupDefinitionCount = caveEntryCellPickupCount,
+        .cellMapEnum = cellMapEnum,
+        .cellPickupDefinitionCount = cellPickupDefinitionCount,
+        .cellMonsterDefinitionCount = cellMonsterDefinitionCount,
     };
     memcpy(&result.pickupDescriptionGameDataIndices, pickupDescriptionGameDataIndicesArr, sizeof(result.pickupDescriptionGameDataIndices));
+    memcpy(&result.monsterConfigs, monsterConfigsArr, sizeof(result.monsterConfigs));
     memset(&result.connections, 0, sizeof(result.connections));
     memset(&result.takenPickups, 0, sizeof(result.takenPickups));
 
@@ -57,9 +70,11 @@ struct TemporaryCaveState TemporaryCaveState_CreateEmpty()
     return returnValue;
 }
 
+// ReSharper disable once CppParameterMayBeConstPtrOrRef
 struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this)
 {
     _Static_assert(sizeof(struct TemporaryCaveState) <= sizeof(this->temporaryStatePerContext.bytes), "Data size mismatch.");
+    fatal_assertf(this->context == CONTEXT_CAVE);
     return (void*) this->temporaryStatePerContext.bytes;
 }
 
