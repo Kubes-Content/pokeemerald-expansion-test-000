@@ -70,4 +70,4 @@ __pycache__
 !.idea/
 .idea/*
 !.idea/c_cpp_properties.json
-docs/mygame/aside/
+docs/mygame/aside
