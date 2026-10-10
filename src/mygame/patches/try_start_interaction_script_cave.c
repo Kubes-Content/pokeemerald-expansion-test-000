@@ -16,6 +16,7 @@
 #include "task.h"
 #include "wild_encounter.h"
 #include "constants/songs.h"
+#include "mygame/persistent/town_dungeon/cave_data.h"
 
 #define A_B_START_SELECT (A_BUTTON | B_BUTTON | START_BUTTON | SELECT_BUTTON)
 
@@ -160,12 +161,7 @@ bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
         gTasks[taskId].data[1] = 0;
         return TRUE;
     case OBJ_ID_MONSTER:;
-        const u8 staticMonsterIndex = objectIdentifier->staticIndex;
-        const struct CellOverworldMonsterConfig* config = &currentCaveCellData->monsterConfigs[staticMonsterIndex];
-        const u8 gameDataDescriptionIndex = config->sharedDescriptionIndex;
-        const struct OverworldMonsterDescription* sharedDescription = &gameData->sharedMonsterDescriptions[gameDataDescriptionIndex];
-        CreateWildMon(sharedDescription->monSpecies, 5); // TODO dynamic level
-        BattleSetup_StartWildBattle();
+        StartCaveBattle(gameData, currentCaveCellData, objectIdentifier);
         return TRUE;
     default:
         fatalf();

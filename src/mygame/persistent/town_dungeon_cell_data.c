@@ -4,8 +4,11 @@
 #include "mygame/persistent/town_dungeon/cave_data.h"
 
 #include <string.h>
+#include "global.h"
 
 #include "assertf.h"
+#include "battle_setup.h"
+#include "wild_encounter.h"
 #include "constants/species.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 
@@ -84,6 +87,8 @@ struct ObjectIdentifier ObjectIdentifier_Create(const enum ObjectIdentifierType 
 
 void ClearTemporaryCaveState(struct TemporaryCaveState* this)
 {
+    this->battleQueued = FALSE;
+    this->aiWaitDuration = 0;
     memset(&this->objectIdByInstanceIndex, 0, sizeof(this->objectIdByInstanceIndex));
 }
 
@@ -100,4 +105,14 @@ bool8 PickupIsTaken(const struct DungeonCellData* cellData, const u8 staticIndex
 void SetPickupIsTaken(struct DungeonCellData* cellData, const u8 staticIndex, const bool8 value)
 {
     cellData->pickupConfigs[staticIndex].isTaken = value;
+}
+
+void StartCaveBattle(const struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* currentCaveCellData, const struct ObjectIdentifier* objectIdentifier)
+{
+    const u8 staticMonsterIndex = objectIdentifier->staticIndex;
+    const struct CellOverworldMonsterConfig* config = &currentCaveCellData->monsterConfigs[staticMonsterIndex];
+    const u8 gameDataDescriptionIndex = config->sharedDescriptionIndex;
+    const struct OverworldMonsterDescription* sharedDescription = &gameData->sharedMonsterDescriptions[gameDataDescriptionIndex];
+    CreateWildMon(sharedDescription->monSpecies, 5); // TODO dynamic level
+    BattleSetup_StartWildBattle();
 }

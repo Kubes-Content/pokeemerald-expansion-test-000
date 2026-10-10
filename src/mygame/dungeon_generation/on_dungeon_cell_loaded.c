@@ -2,6 +2,7 @@
 
 #include "event_object_movement.h"
 #include "global.fieldmap.h"
+#include "main.h"
 #include "task.h"
 #include "constants/event_objects.h"
 #include "constants/trainer_types.h"
@@ -148,6 +149,8 @@ static void TickCaveMonster(struct TownDungeonGamePersistentData* gameData,
 
 void CaveTick(u8 taskId)
 {
+    if (gMain.inBattle) return;
+
     // u8* data = (void*) gTasks[taskId].data;
 
     // if (!gPaletteFade.active) {} // TODO prevent aggro while fading; don't prevent movement
@@ -157,6 +160,14 @@ void CaveTick(u8 taskId)
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
     struct CaveData* caveData = &currentTownData->caveData;
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
+
+    if (temporaryCaveState->battleQueued) return;
+
+    if (temporaryCaveState->aiWaitDuration > 0)
+    {
+        temporaryCaveState->aiWaitDuration--;
+        return;
+    }
 
     const u8 objectIdByInstanceIndexLength = sizeof(temporaryCaveState->objectIdByInstanceIndex) / sizeof(temporaryCaveState->objectIdByInstanceIndex[0]);
     for (u8 objectInstanceIndex = 0; objectInstanceIndex < objectIdByInstanceIndexLength; objectInstanceIndex++)

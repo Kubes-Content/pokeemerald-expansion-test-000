@@ -466,11 +466,13 @@ void OnRunTasks_FnBegin(const u8 firstActiveTaskId)
 
 bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* objectEvent, s16 x, s16 y, bool32 addCoords, struct ObjectEvent* otherObject)
 {
+    if (!objectEvent->isPlayer && !otherObject->isPlayer) return TRUE; // if other things collide do nothing for now, but consume the event
+
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
 
     if (gameData->context == CONTEXT_CAVE)
     {
-        const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
+        struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
         const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
         const struct DungeonCellData* currentCaveCellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
@@ -478,10 +480,30 @@ bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* object
         const u8 objectInstanceIndex = monsterObject - gObjectEvents;
 
         const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectInstanceIndex];
+        if (objectIdentifier->type == OBJ_ID_MONSTER)
+        {
+            if (!temporaryCaveState->battleQueued) 
+            {
+                temporaryCaveState->battleQueued = TRUE;
 
-        //StartCaveBattle(gameData, currentCaveCellData, objectIdentifier);
-        return TRUE;
+                // todo flag for if battle is already queued // todo reset where we resume root task from battle
+                    // so that you can't call this twice
+                StartCaveBattle(gameData, currentCaveCellData, objectIdentifier);
+            }
+            return TRUE;
+        }
+        if (objectIdentifier->type == OBJ_ID_PICKUP) return TRUE;
     }
 
     return FALSE;
+}
+
+void OnCB2_InitBattle_FnBegin(void)
+{
+    struct TownDungeonGamePersistentData* this = GetTownDungeonGamePersistentData();
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(this);
+    const u8 defaultWaitDuration = 128;
+
+    temporaryCaveState->battleQueued = FALSE;
+    temporaryCaveState->aiWaitDuration = defaultWaitDuration;
 }
