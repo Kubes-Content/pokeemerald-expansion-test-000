@@ -6546,7 +6546,7 @@ u32 GetObjectObjectCollidesWith(struct ObjectEvent *objectEvent, s16 x, s16 y, b
             {
                 if (AreElevationsCompatible(objectEvent->currentElevation, curObject->currentElevation))
                 {
-                    if (OnGetObjectObjectCollidesWith_OWECollisionBegin(objectEvent, x, y, addCoords))
+                    if (GetObjectObjectCollidesWith_OWECollisionBegin(objectEvent, x, y, addCoords, curObject))
                         return i;
 
                     if (DespawnOWEDueToNPCCollision(curObject, objectEvent))

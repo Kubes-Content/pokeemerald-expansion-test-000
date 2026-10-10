@@ -56,6 +56,6 @@ u8 SetRootTask(struct TownDungeonGamePersistentData* this, TaskFunc func);
 
 void PreDynamicWarp(u8 enteredWarpId);
 void OnRunTasks_FnBegin(u8 firstActiveTaskId);
-bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent *objectEvent, s16 x, s16 y, bool32 addCoords);
+bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent *objectEvent, s16 x, s16 y, bool32 addCoords, struct ObjectEvent* otherObject);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H

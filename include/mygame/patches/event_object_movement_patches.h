@@ -7,6 +7,6 @@
 
 struct ObjectEvent;
 
-bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent *objectEvent, s16 x, s16 y, bool32 addCoords);
+bool8 GetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent *objectEvent, s16 x, s16 y, bool32 addCoords, struct ObjectEvent* otherObject);
 
 #endif // GUARD_KUBES_EVENT_OBJECT_MOVEMENT_PATCHES_H
