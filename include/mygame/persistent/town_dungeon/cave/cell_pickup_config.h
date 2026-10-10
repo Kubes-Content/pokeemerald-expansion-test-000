@@ -10,7 +10,7 @@
 
 struct CellPickupConfig
 {
-    bool8 isTaken;// : BIT_SIZE(1);
+    bool8 isTaken : BIT_SIZE(1);
     u8 sharedDescriptionIndex : BIT_SIZE(NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON - 1);
     u8 x : BIT_SIZE(MAX_COORDINATE);
     u8 y : BIT_SIZE(MAX_COORDINATE);

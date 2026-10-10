@@ -84,7 +84,7 @@ static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const s
 {
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
-        if (!*PickupIsTakenPtr(cellData, staticIndex))
+        if (!PickupIsTaken(cellData, staticIndex))
         {
             SpawnDungeonPickup(staticIndex, gameData, temporaryCaveState, cellData);
         }

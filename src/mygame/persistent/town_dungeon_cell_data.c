@@ -92,7 +92,12 @@ struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersis
     return &gameData->sharedCavePickupDescriptions[cellData->pickupConfigs[index].sharedDescriptionIndex];
 }
 
-bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, const u8 staticIndex)
+bool8 PickupIsTaken(const struct DungeonCellData* cellData, const u8 staticIndex)
 {
-    return &cellData->pickupConfigs[staticIndex].isTaken;
+    return cellData->pickupConfigs[staticIndex].isTaken;
+}
+
+void SetPickupIsTaken(struct DungeonCellData* cellData, const u8 staticIndex, const bool8 value)
+{
+    cellData->pickupConfigs[staticIndex].isTaken = value;
 }

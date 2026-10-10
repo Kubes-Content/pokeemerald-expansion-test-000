@@ -81,7 +81,7 @@ static void Task_PickupItemObject(const u8 taskId)
         const u8 pickupStaticIndex = objectIdentifier->staticIndex;
         fatal_assertf(objectIdentifier->type == OBJ_ID_PICKUP);
 
-        *PickupIsTakenPtr(cellData, pickupStaticIndex) = TRUE;
+        SetPickupIsTaken(cellData, pickupStaticIndex, TRUE);
 
         const struct DummyPickupDescription* pickupDescription = GetPickupDescription(gameData, cellData, pickupStaticIndex);
         const u16 itemEnum = pickupDescription->itemEnum;

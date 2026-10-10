@@ -98,7 +98,8 @@ void ClearTemporaryCaveState(struct TemporaryCaveState* this);
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, u8 index);
 
-bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, u8 staticIndex);
+bool8 PickupIsTaken(const struct DungeonCellData* cellData, u8 staticIndex);
+void SetPickupIsTaken(struct DungeonCellData* cellData, u8 staticIndex, bool8 value);
 
 void CaveTick(u8 taskId);
 
