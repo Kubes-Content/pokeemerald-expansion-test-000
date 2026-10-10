@@ -463,3 +463,23 @@ void OnRunTasks_FnBegin(const u8 firstActiveTaskId)
 
     if (gameData->context == CONTEXT_CAVE) CaveTick(255);
 }
+
+bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* objectEvent, s16 x, s16 y, bool32 addCoords)
+{
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+
+    if (gameData->context == CONTEXT_CAVE)
+    {
+        const struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
+        const struct CaveData* caveData = &GetCurrentTownDungeonData()->caveData;
+        const struct DungeonCellData* currentCaveCellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
+
+        const u8 objectInstanceIndex = objectEvent - gObjectEvents;
+        const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectInstanceIndex];
+
+        //StartCaveBattle(gameData, currentCaveCellData, objectIdentifier);
+        return TRUE;
+    }
+
+    return FALSE;
+}

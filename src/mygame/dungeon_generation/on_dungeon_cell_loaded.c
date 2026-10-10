@@ -25,8 +25,12 @@ static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
     const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
 
     fatal_assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
-    const u8 idThatPreventsUnloadingWhileOffscreen = OBJ_EVENT_ID_NPC_FOLLOWER; // todo extract
-    gObjectEvents[objectEventIndex].localId = idThatPreventsUnloadingWhileOffscreen;
+    struct ObjectEvent* gObjectEvent = &gObjectEvents[objectEventIndex];
+    gObjectEvent->localId = OBJECT_EVENTS_COUNT + 1;
+    gObjectEvent->trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER; // prevent despawning when offscreen
+#define sOverworldEncounterLevel    trainerRange_berryTreeId // from wild_encounter_ow.c
+    gObjectEvent->sOverworldEncounterLevel = 128; // prevent despawning when offscreen // from wild_encounter_ow.c:OWE_NO_DESPAWN_FLAG
+#undef sOverworldEncounterLevel
 
     return objectEventIndex;
 }
@@ -135,8 +139,8 @@ static void TickCaveMonster(struct TownDungeonGamePersistentData* gameData,
 
     // TODO get movement behavior from description
 
-    const u8 direction = DIR_SOUTH;
-    const u8 collisionInDirection = GetCollisionInDirection(objectEvent, direction);
+    const enum Direction direction = DIR_SOUTH;
+    const enum Collision collisionInDirection = GetCollisionInDirection(objectEvent, direction);
     if (collisionInDirection != COLLISION_NONE) return;
 
     ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
