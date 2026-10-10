@@ -22,15 +22,16 @@ static struct DungeonCellConnection GetDungeonWarpDestination(const u8 enteredWa
 void SetDynamicWarpFromDungeonCellWarp(const u8 enteredWarpId)
 {
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     const struct TownDungeonPersistentData* currentTownDungeonData = GetCurrentTownDungeonData();
     const struct CaveData* caveData = &currentTownDungeonData->caveData;
     const struct DungeonCellConnection data = GetDungeonWarpDestination(enteredWarpId);
 
+    fatal_assertf(data.isValid, "invalid destination for warp: cell %d warp %d.", temporaryCaveState->currentCellIndex, enteredWarpId);
 
     // TODO don't use literals for town enum and destinationWarpId
     const u16 destinationMapEnum = data.isTown ? MAP_CAVE_TOWN_00 : caveData->cellsData[data.cellIndex].cellMapEnum;
     const s8 destinationWarpId   = data.isTown ? 0 : (s8) data.warpId;
-    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     temporaryCaveState->currentCellIndex = data.isTown ? 0 : data.cellIndex;
 
     fatal_assertf(gameData->context == CONTEXT_CAVE);

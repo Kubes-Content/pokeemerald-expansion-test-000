@@ -240,6 +240,8 @@ static void GenerateCavePathSegment(struct TownDungeonPersistentData* townData, 
         previousCellData->connections[previousCellFromWarpId] = DungeonCellConnection_Create(newCellIndex, newCellToWarpId);
         newCellData->connections[newCellToWarpId]             = DungeonCellConnection_Create(previousCellIndex, previousCellFromWarpId);
 
+        MgbaPrintf(MGBA_LOG_WARN, "connected cell %d warp %d TO cell %d warp %d", previousCellIndex, previousCellFromWarpId, newCellIndex, newCellToWarpId);
+
         previousCell = newCell;
         previousCellIndex = newCellIndex;
 
@@ -339,6 +341,33 @@ redo:
         const u8 subPathLength = 1;
         GenerateCavePathSegment(this, &generatedCellCount, caveCellVariants, subPathLength, ownerCellVariant, ownerCellIndex, unwantedConnectionsArr, unwantedConnectionsCount, caveEntryCellPickupCount, caveEntryCellMonsterCount);
     }
+
+    // debug connections
+
+#ifndef NDEBUG
+    u8 invalidCount = 0;
+    for (u8 i = 0; i <= caveData->maxIndexForCell; i++)
+    {
+        const struct DungeonCellData* dungeonCellData = &caveData->cellsData[i];
+        const u8 connectionsLength = sizeof(dungeonCellData->connections) / sizeof(dungeonCellData->connections[0]);
+        for (u8 connectionIndex = 0; connectionIndex < connectionsLength; connectionIndex++)
+        {
+            const struct DungeonCellConnection* dungeonCellConnection = &dungeonCellData->connections[connectionIndex];
+            if (!dungeonCellConnection->isValid) continue;
+            if (dungeonCellConnection->isTown) continue;
+
+            const struct DungeonCellData* otherCellData = &caveData->cellsData[dungeonCellConnection->cellIndex];
+            const struct DungeonCellConnection* oppositeCellConnection = &otherCellData->connections[dungeonCellConnection->warpId];
+
+            if (!oppositeCellConnection->isValid)
+            {
+                fatalf("failed connection cell %d warp %d TO cell %d warp %d", i, connectionIndex, dungeonCellConnection->cellIndex, dungeonCellConnection->warpId);
+                invalidCount++;
+            }
+        }
+    }
+    fatal_assertf(invalidCount == 0);
+#endif
 }
 
 static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
