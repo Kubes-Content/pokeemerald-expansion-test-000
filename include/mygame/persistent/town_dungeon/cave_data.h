@@ -29,9 +29,8 @@ struct DummyPickupDescription PickupDescription_Create(u16 itemEnum, u16 objectE
 struct OverworldMonsterDescription
 {
     enum Species monSpecies : BIT_SIZE(NUM_SPECIES - 1);
-    u16 objectEventGraphicsEnum : BIT_SIZE(NUM_OBJ_EVENT_GFX - 1);
 };
-struct OverworldMonsterDescription OverworldMonsterDescription_Create(enum Species monSpecies, u16 objectEventGraphicsEnum);
+struct OverworldMonsterDescription OverworldMonsterDescription_Create(enum Species monSpecies);
 
 struct DungeonCellConnection
 {

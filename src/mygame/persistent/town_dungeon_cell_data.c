@@ -17,13 +17,10 @@ struct DummyPickupDescription PickupDescription_Create(const u16 itemEnum, const
     };
 }
 
-struct OverworldMonsterDescription OverworldMonsterDescription_Create(const enum Species monSpecies, const u16 objectEventGraphicsEnum)
+struct OverworldMonsterDescription OverworldMonsterDescription_Create(const enum Species monSpecies)
 {
-    fatal_assertf(objectEventGraphicsEnum < OBJ_EVENT_GFX_RED_NORMAL, "Attempting to use a FRLG sprite.");
-
     return (struct OverworldMonsterDescription) {
         .monSpecies = monSpecies,
-        .objectEventGraphicsEnum = objectEventGraphicsEnum,
     };
 }
 

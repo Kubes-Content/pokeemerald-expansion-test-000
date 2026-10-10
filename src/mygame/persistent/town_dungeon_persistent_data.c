@@ -371,29 +371,11 @@ void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
             fatalf("pickupOptions' bounds exceeded.");
     }
 
-    for (u8 i = 0; i < NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON; i++)
+    const u8 sharedMonsterDescriptionsLength = sizeof(this->sharedMonsterDescriptions) / sizeof(this->sharedMonsterDescriptions[0]);
+    for (u8 i = 0; i < sharedMonsterDescriptionsLength; i++)
     {
-        struct OverworldMonsterDescription* thisDescription = &this->sharedMonsterDescriptions[i];
-
-        const u8 chosenIndex = i;
-
-        if (chosenIndex == 0)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_AZURILL, OBJ_EVENT_GFX_AZURILL);
-        else if (chosenIndex == 1)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_ZIGZAGOON, OBJ_EVENT_GFX_ZIGZAGOON_1);
-        else if (chosenIndex == 2)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_AZUMARILL, OBJ_EVENT_GFX_AZUMARILL);
-        else if (chosenIndex == 3)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_BLASTOISE, OBJ_EVENT_GFX_BIG_BLASTOISE_DOLL);
-        else if (chosenIndex == 4)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_BALTOY, OBJ_EVENT_GFX_BALTOY_DOLL);
-        else if (chosenIndex == 5)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_WINGULL, OBJ_EVENT_GFX_WINGULL);
-        else if (chosenIndex == 6)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_SUDOWOODO, OBJ_EVENT_GFX_SUDOWOODO);
-        else if (chosenIndex == 7)
-            *thisDescription = OverworldMonsterDescription_Create(SPECIES_KIRLIA, OBJ_EVENT_GFX_KIRLIA);
-        else fatalf();
+        const enum Species maxKnownOverworldSpecies = 386;
+        this->sharedMonsterDescriptions[i] = OverworldMonsterDescription_Create(Random() % maxKnownOverworldSpecies + 1);
     }
 
     struct TownDungeonPersistentData* initialTownData = GetCurrentTownDungeonData();

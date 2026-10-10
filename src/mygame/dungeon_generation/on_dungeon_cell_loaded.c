@@ -102,7 +102,7 @@ static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
 {
     struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
     struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
-    const u16 graphicsId = sharedMonsterDescription->objectEventGraphicsEnum;
+    const u16 graphicsId = sharedMonsterDescription->monSpecies + OBJ_EVENT_MON; // see OBJ_EVENT_GFX_SPECIES
     const u8 instanceIndex = SpawnBaseObject(cellOverworldMonsterConfig->homeX, cellOverworldMonsterConfig->homeY, graphicsId);
 
     struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[instanceIndex];
