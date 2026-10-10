@@ -1,38 +1,14 @@
-- [ ] connections have
-  - warp location {} compare to map bounds || other context
-    - no need to save
-  - requirements/qualities (water must connect to water, doors must connect to doors, land must connect to land)
-    - walkable
-    - swimmable
-    - diveable
-  - CanConnect(&A, &B);
-- [ ] use cave pickups to test atla being picked up
-  - why don't they just share a type with pickups?
-    - create an enum that represents if its atla or something else
-      - instead of qty they can use that field as the atla index
-- [ ] overworld enemies in caves
-  - maybe expansion has some stuff built for this already?
-    - or will that just slow me down? assuming I want to change most of how it works
-- [ ] spawn atla independently of pickups
-  - how to assign as the drop of an overworld enemy in a cell within the cave
-    - you'd have to have the overworld enemy stuff built
-- [ ] town decoration
-  - obstacles placed into overworld
-    - placing things automatically
-      - aspects/layout altered by RNG for variation
-    - placing things manually
-      - how would I
-        - place a small tree (1x1)
-          - how do I spawn a tree over anything? doesn't it come with a background?
-        - place a small house?
-          - in a way that you can organically move around it
-      - for saving: I'm thinking...
-        - small obstacles use x,y coordinate for bounds
-        - anything bigger has an x,y coordinate and an enum to determine its bounds
-          - would something simpler not be better?
-            - rather than having a save block for small AND bigger objects?
-    - planting a seed and seeing it grow as you progress
-      - what would drive growth?
+[ ] load monster's movement pattern
+
+[ ] pickups/monsters should not spawn on top of warp
+  because player may spawn onto it
+  [ ] or in front of a north door .. so check if north is a transition tile?
+  will the tile the player walks down onto from north door be occupied while entering?
+    so that monsters know to avoid it
+      or do I need to prevent monsters from ever touching a tile before a north door?
+
+---
+
 - [ ] gen. dungeon. pass 2
   - [ ] spawn all objects in cell
     - [x] pickups
@@ -60,5 +36,8 @@
     - prefer 2 adjacent rooms to 1 adjacent room to 3 adjacent rooms to 4
       - we want to link cells together without globbing
       - prefer to connect to rooms with less than 2 pre-existing connections
+- [ ] spawn atla independently of pickups
+  - how to assign as the drop of an overworld enemy in a cell within the cave
+    - you'd have to have the overworld enemy stuff built
 - [ ] gen. 'atla' pickups that persist per room
 - [ ] test different pickups per room

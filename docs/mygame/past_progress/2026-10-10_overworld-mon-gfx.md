@@ -1,0 +1,7 @@
+- [x] overworld enemies in caves
+  - what tech exists for overworld monster behavior?
+    - do I even need/want what already exists?
+  - https://github.com/Pawkkie/Team-Aquas-Asset-Repo/tree/main/Overworld%20Pokemon%20Sprites/Rahtak
+    - is this already integrated in expansion? how would I spawn an object that uses one of those sprites?
+      - OBJ_GFX doesnt seem to have everything
+        - OBJ_EVENT_GFX_SPECIES(ARTICUNO)
