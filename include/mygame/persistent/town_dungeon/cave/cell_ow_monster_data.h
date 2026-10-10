@@ -12,9 +12,10 @@
 
 struct CellOverworldMonsterConfig
 {
-    u8 sharedDescriptionIndex : BIT_SIZE(NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON - 1);
-    u8 homeX : BIT_SIZE(MAX_COORDINATE);
-    u8 homeY : BIT_SIZE(MAX_COORDINATE);
+    bool8 isDead                 : BIT_SIZE(1);
+    u8    sharedDescriptionIndex : BIT_SIZE(NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON - 1);
+    u8    homeX                  : BIT_SIZE(MAX_COORDINATE);
+    u8    homeY                  : BIT_SIZE(MAX_COORDINATE);
 };
 struct CellOverworldMonsterConfig CellOverworldMonsterConfig_Create(u8 homeX, u8 homeY, u8 sharedDescriptionIndex);
 

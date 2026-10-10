@@ -9,6 +9,7 @@
 #include "random.h"
 #include "constants/event_objects.h"
 #include "mygame/dungeon_generation/dungeon_generation_global.h"
+#include "mygame/patches/dynamic_warp/town_dungeon_warps.h"
 
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData()
@@ -350,6 +351,7 @@ static void InitializeTownDungeonConfig(struct TownDungeonPersistentData* this)
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
 {
     this->currentTown = 0;
+    this->rootTaskId = NUM_TASKS;
     ClearTemporaryStatePerContext(this);
 
     // todo random initial set
@@ -401,4 +403,44 @@ void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this)
 void ClearTemporaryStatePerContext(struct TownDungeonGamePersistentData* this)
 {
     memset(&this->temporaryStatePerContext, 0, sizeof(this->temporaryStatePerContext));
+}
+
+bool8 RootTaskIsRunning(const struct TownDungeonGamePersistentData* this)
+{
+    return this->rootTaskId != NUM_TASKS;
+}
+
+void KillRootTask(struct TownDungeonGamePersistentData* this)
+{
+    fatal_assertf(RootTaskIsRunning(this));
+
+    DestroyTask(this->rootTaskId);
+
+    this->rootTaskId = NUM_TASKS;
+}
+
+u8 SetRootTask(struct TownDungeonGamePersistentData* this, const TaskFunc func)
+{
+    fatal_assertf(!RootTaskIsRunning(this));
+
+    const u8 taskId = CreateTask(func, 0);
+    fatal_assertf(taskId != NUM_TASKS);
+
+    return this->rootTaskId = taskId;
+}
+
+void PreDynamicWarp(u8 enteredWarpId)
+{
+    struct TownDungeonGamePersistentData* rootGameData = GetTownDungeonGamePersistentData();
+
+    if (RootTaskIsRunning(rootGameData))
+        KillRootTask(rootGameData);
+
+    // todo extract this behavior to town_dungeon_persistent_data.c
+    if (rootGameData->context == CONTEXT_TOWN)
+        SetDynamicWarpFromDungeonTownWarp(enteredWarpId);
+    else if (rootGameData->context == CONTEXT_CAVE)
+        SetDynamicWarpFromDungeonCellWarp(enteredWarpId);
+    else if (rootGameData->context == CONTEXT_DEFAULT) {}
+    else fatal_assertf(FALSE);
 }

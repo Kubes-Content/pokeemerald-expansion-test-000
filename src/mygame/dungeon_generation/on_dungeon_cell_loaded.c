@@ -102,7 +102,6 @@ static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
 {
     struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
     struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
-    // TODO generated spawn positions
     const u16 graphicsId = sharedMonsterDescription->objectEventGraphicsEnum;
     const u8 instanceIndex = SpawnBaseObject(cellOverworldMonsterConfig->homeX, cellOverworldMonsterConfig->homeY, graphicsId);
 
@@ -110,35 +109,6 @@ static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
     *objectIdentifier = ObjectIdentifier_Create(OBJ_ID_MONSTER, staticIndex);
 
     return instanceIndex;
-}
-
-static void MoveMonsterTestTask(u8 taskId) // move south until they can't or counter runs out
-{
-    s16* data = gTasks[taskId].data;
-    s16* countPtr = &data[0];
-    const u8 objectInstanceIndex = data[1];
-    struct ObjectEvent* objectEvent = &gObjectEvents[objectInstanceIndex];
-
-    if (ObjectEventIsHeldMovementActive(objectEvent) && !ObjectEventClearHeldMovementIfFinished(objectEvent)) return;
-
-    const u8 direction = DIR_SOUTH;
-
-    if (*countPtr > 999) return DestroyTask(taskId);
-
-    (*countPtr)++;
-
-    const u8 collisionInDirection = GetCollisionInDirection(objectEvent, direction);
-    if (collisionInDirection != COLLISION_NONE) return;
-
-    ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
-}
-
-static void BeginMoveTest(u8 objectInstanceIndex)
-{
-    u8 taskId = CreateTask(MoveMonsterTestTask, 0);
-    s16* data = gTasks[taskId].data;
-    data[0] = 0; // count
-    data[1] = objectInstanceIndex;
 }
 
 static void SpawnMonsters(struct TownDungeonGamePersistentData* gameData,
@@ -149,10 +119,59 @@ static void SpawnMonsters(struct TownDungeonGamePersistentData* gameData,
     for (u8 i = 0; i < cellData->cellMonsterDefinitionCount; i++)
     {
         [[maybe_unused]] const u8 instanceIndex = SpawnMonsterObject(gameData, temporaryCaveState, currentTownData, cellData, i);
-
-        BeginMoveTest(instanceIndex);
     }
 
+}
+
+static void TickCaveMonster(struct TownDungeonGamePersistentData* gameData,
+                            struct TemporaryCaveState* temporaryCaveState, struct
+                            CellOverworldMonsterConfig* cellConfig, u8 objectInstanceIndex)
+{
+    if (cellConfig->isDead) return;
+
+    struct ObjectEvent* objectEvent = &gObjectEvents[objectInstanceIndex];
+
+    if (ObjectEventIsHeldMovementActive(objectEvent) && !ObjectEventClearHeldMovementIfFinished(objectEvent)) return;
+
+    // TODO get movement behavior from description
+
+    const u8 direction = DIR_SOUTH;
+    const u8 collisionInDirection = GetCollisionInDirection(objectEvent, direction);
+    if (collisionInDirection != COLLISION_NONE) return;
+
+    ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
+}
+
+static void TestRootTaskTask(u8 taskId)
+{
+    //u8* data = (void*) gTasks[taskId].data;
+
+    struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+    struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
+    struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
+    struct CaveData* caveData = &currentTownData->caveData;
+    struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
+
+    const u8 objectIdByInstanceIndexLength = sizeof(temporaryCaveState->objectIdByInstanceIndex) / sizeof(temporaryCaveState->objectIdByInstanceIndex[0]);
+    for (u8 objectInstanceIndex = 0; objectInstanceIndex < objectIdByInstanceIndexLength; objectInstanceIndex++)
+    {
+        const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectInstanceIndex];
+
+        const u8 staticIndex = objectIdentifier->staticIndex;
+        switch (objectIdentifier->type)
+        {
+        case OBJ_ID_DEFAULT:
+        case OBJ_ID_NOTHING:
+        case OBJ_ID_PICKUP:
+            break;
+        case OBJ_ID_MONSTER:;
+            struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
+            TickCaveMonster(gameData, temporaryCaveState, cellOverworldMonsterConfig, objectInstanceIndex);
+            break;
+        case OBJECT_IDENTIFIER_TYPE_COUNT:
+            fatalf();
+        }
+    }
 }
 
 // ReSharper disable once CppUseInternalLinkage
@@ -161,8 +180,12 @@ void OnDungeonCellLoaded()
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
-    struct CaveData* caveData = &currentTownData->caveData; // todo why not pass this as arg too?
+    struct CaveData* caveData = &currentTownData->caveData;
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
+
+    fatal_assertf(!RootTaskIsRunning(gameData));
+    const u8 rootTaskId = SetRootTask(gameData, TestRootTaskTask);
+    u8* rootTaskDataArr = (void*) gTasks[rootTaskId].data;
 
     gameData->context = CONTEXT_CAVE;
     ClearTemporaryCaveState(temporaryCaveState);

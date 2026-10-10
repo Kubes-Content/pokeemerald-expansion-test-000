@@ -6,6 +6,7 @@
 struct CellOverworldMonsterConfig CellOverworldMonsterConfig_Create(const u8 homeX, const u8 homeY, const u8 sharedDescriptionIndex)
 {
     return (struct CellOverworldMonsterConfig) {
+        .isDead = FALSE,
         .sharedDescriptionIndex = sharedDescriptionIndex,
         .homeX = homeX,
         .homeY = homeY,

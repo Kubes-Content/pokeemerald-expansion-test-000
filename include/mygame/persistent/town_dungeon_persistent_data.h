@@ -5,6 +5,7 @@
 #define GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H
 #include "gba/types.h"
 #include "metaprogram.h"
+#include "task.h"
 #include "mygame/town_dungeon_macros.h"
 #include "town_dungeon/cave_data.h"
 #include "town_dungeon/town_data.h"
@@ -35,6 +36,7 @@ struct TownDungeonGamePersistentData
 {
     union TemporaryStatePerContext temporaryStatePerContext;
 
+    u8 rootTaskId : BIT_SIZE(NUM_TASKS);
     u8 currentTown : BIT_SIZE(DUNGEON_TOWN_COUNT - 1);
     enum TownDungeonMapContext context : BIT_SIZE(CONTEXTS_COUNT - 1);
     struct DummyPickupDescription sharedCavePickupDescriptions[NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON];
@@ -46,5 +48,10 @@ struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData(void);
 struct TownDungeonPersistentData* GetCurrentTownDungeonData(void);
 void InitializeTownDungeonGameConfig(struct TownDungeonGamePersistentData* this);
 void ClearTemporaryStatePerContext(struct TownDungeonGamePersistentData* this);
+bool8 RootTaskIsRunning(const struct TownDungeonGamePersistentData* this);
+void KillRootTask(struct TownDungeonGamePersistentData* this);
+u8 SetRootTask(struct TownDungeonGamePersistentData* this, TaskFunc func);
+
+void PreDynamicWarp(u8 enteredWarpId);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H
