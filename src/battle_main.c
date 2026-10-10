@@ -78,6 +78,7 @@
 #include "constants/trainers.h"
 #include "constants/weather.h"
 #include "cable_club.h"
+#include "mygame/patches/battle_main_patches.h"
 
 extern const struct BgTemplate gBattleBgTemplates[];
 extern const struct WindowTemplate *const gBattleWindowTemplates[];
@@ -473,6 +474,9 @@ void CB2_InitBattle(void)
 {
     if (!gTestRunnerEnabled)
         MoveSaveBlocks_ResetHeap();
+
+    CB2_InitBattle_FnBegin();
+
     AllocateBattleResources();
     AllocateBattleSpritesData();
     AllocateMonSpritesGfx();
