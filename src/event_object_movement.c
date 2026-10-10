@@ -58,6 +58,7 @@
 #include "constants/trainer_types.h"
 #include "constants/union_room.h"
 #include "constants/weather.h"
+#include "mygame/patches/event_object_movement_patches.h"
 
 #define SPECIAL_LOCALIDS_START (min(LOCALID_CAMERA, \
                                 min(LOCALID_PLAYER, \
@@ -6545,6 +6546,9 @@ u32 GetObjectObjectCollidesWith(struct ObjectEvent *objectEvent, s16 x, s16 y, b
             {
                 if (AreElevationsCompatible(objectEvent->currentElevation, curObject->currentElevation))
                 {
+                    if (GetObjectObjectCollidesWith_OWECollisionBegin(objectEvent, x, y, addCoords, curObject))
+                        return i;
+
                     if (DespawnOWEDueToNPCCollision(curObject, objectEvent))
                         continue;
 
