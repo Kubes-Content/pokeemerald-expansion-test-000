@@ -142,9 +142,11 @@ static void TickCaveMonster(struct TownDungeonGamePersistentData* gameData,
     ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
 }
 
-static void TestRootTaskTask(u8 taskId)
+void CaveTick(u8 taskId)
 {
-    //u8* data = (void*) gTasks[taskId].data;
+    // u8* data = (void*) gTasks[taskId].data;
+
+    // if (!gPaletteFade.active) {} // TODO prevent aggro while fading; don't prevent movement
 
     struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(gameData);
@@ -182,10 +184,6 @@ void OnDungeonCellLoaded()
     struct TownDungeonPersistentData* currentTownData = GetCurrentTownDungeonData();
     struct CaveData* caveData = &currentTownData->caveData;
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
-
-    fatal_assertf(!RootTaskIsRunning(gameData));
-    const u8 rootTaskId = SetRootTask(gameData, TestRootTaskTask);
-    u8* rootTaskDataArr = (void*) gTasks[rootTaskId].data;
 
     gameData->context = CONTEXT_CAVE;
     ClearTemporaryCaveState(temporaryCaveState);

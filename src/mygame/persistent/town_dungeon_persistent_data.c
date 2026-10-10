@@ -6,6 +6,7 @@
 #include "global.h"
 
 #include "overworld.h"
+#include "palette.h"
 #include "random.h"
 #include "constants/event_objects.h"
 #include "mygame/dungeon_generation/dungeon_generation_global.h"
@@ -425,4 +426,11 @@ void PreDynamicWarp(u8 enteredWarpId)
         SetDynamicWarpFromDungeonCellWarp(enteredWarpId);
     else if (rootGameData->context == CONTEXT_DEFAULT) {}
     else fatal_assertf(FALSE);
+}
+
+void OnRunTasks_FnBegin(const u8 firstActiveTaskId)
+{
+    const struct TownDungeonGamePersistentData* gameData = GetTownDungeonGamePersistentData();
+
+    if (gameData->context == CONTEXT_CAVE) CaveTick(255);
 }

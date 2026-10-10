@@ -1,5 +1,6 @@
 #include "global.h"
 #include "task.h"
+#include "mygame/patches/task_patches.h"
 
 COMMON_DATA struct Task gTasks[NUM_TASKS] = {0};
 
@@ -110,6 +111,8 @@ void DestroyTask(u8 taskId)
 void RunTasks(void)
 {
     u8 taskId = FindFirstActiveTask();
+
+    RunTasks_FnBegin(taskId);
 
     if (taskId != NUM_TASKS)
     {

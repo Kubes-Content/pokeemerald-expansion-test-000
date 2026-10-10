@@ -100,4 +100,6 @@ struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersis
 
 bool8* PickupIsTakenPtr(struct DungeonCellData* cellData, u8 staticIndex);
 
+void CaveTick(u8 taskId);
+
 #endif // GUARD_KUBES_TOWN_DUNGEON_CELL_DATA_H

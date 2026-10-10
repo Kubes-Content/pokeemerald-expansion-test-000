@@ -53,5 +53,6 @@ void KillRootTask(struct TownDungeonGamePersistentData* this);
 u8 SetRootTask(struct TownDungeonGamePersistentData* this, TaskFunc func);
 
 void PreDynamicWarp(u8 enteredWarpId);
+void OnRunTasks_FnBegin(u8 firstActiveTaskId);
 
 #endif // GUARD_KUBES_TOWN_DUNGEON_PERSISTENT_DATA_H
