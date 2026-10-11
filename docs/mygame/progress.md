@@ -1,18 +1,24 @@
-[ ] destroy mon on win only
+[ ] Check for collision at spawn-time / runtime share logic
+    [ ] extract shared logic - none of these live in town_dungeon_persistent_data.*
+      [ ] check: is tile at coordinate passable
+      [ ] check: would object at coordinate block a warp
+        [ ] check: is warp at coordinate
+        [ ] check: would object at coordinate block northward warp
+    [ ] Check for collision at spawn-time
+      [ ] check: is object already spawned at coordinate - if need be this could also inherit runtime's object check
+    [ ] check for collision at runtime
+      [ ] check: is object at coordinate
 [ ] mon movement behavior
-  [ ] Check for collision at spawn time check for collision at run time two functions.
-    [ ] Check for collision at spawn time
-    [ ] check for collision at run time
   [ ] load monster's movement pattern from shared desc.
-    [ ] temp cache current move dir
+    [ ] temp cache current move dir ; 8-way direction until hit an edge (consider both paths for diagonals)
       counter each, reset on spawn
+[ ] save mon location before calculating next movement step
 [ ] pickups/monsters should not spawn on top of warp
   because player may spawn onto it
   [ ] or in front of a north door .. so check if north is a transition tile?
   will the tile the player walks down onto from north door be occupied while entering?
     so that monsters know to avoid it
       or do I need to prevent monsters from ever touching a tile before a north door?
-[ ] patch death pre money/text/transition
 
 ---
 
@@ -43,8 +49,3 @@
     - prefer 2 adjacent rooms to 1 adjacent room to 3 adjacent rooms to 4
       - we want to link cells together without globbing
       - prefer to connect to rooms with less than 2 pre-existing connections
-- [ ] spawn atla independently of pickups
-  - how to assign as the drop of an overworld enemy in a cell within the cave
-    - you'd have to have the overworld enemy stuff built
-- [ ] gen. 'atla' pickups that persist per room
-- [ ] test different pickups per room
