@@ -504,6 +504,5 @@ void OnCB2_InitBattle_FnBegin(void)
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(this);
     const u8 defaultWaitDuration = 128;
 
-    TryClearQueuedBattle_Cave(temporaryCaveState);
     temporaryCaveState->aiWaitDuration = defaultWaitDuration;
 }

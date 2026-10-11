@@ -8,6 +8,7 @@
 
 #include "assertf.h"
 #include "battle_setup.h"
+#include "event_data.h"
 #include "wild_encounter.h"
 #include "constants/species.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
@@ -103,6 +104,8 @@ void QueueBattle_Cave(struct TemporaryCaveState* this, const u8 monObjectInstanc
     fatal_assertf(!BattleIsQueued_Cave(this));
 
     this->battleQueued = monObjectInstanceIndex;
+
+    MgbaPrintf(MGBA_LOG_WARN, "instance index: %d  starting battle", monObjectInstanceIndex);
 }
 
 bool8 TryClearQueuedBattle_Cave(struct TemporaryCaveState* this)
@@ -110,6 +113,16 @@ bool8 TryClearQueuedBattle_Cave(struct TemporaryCaveState* this)
     if (!BattleIsQueued_Cave(this)) return FALSE;
 
     this->battleQueued = OBJECT_EVENTS_COUNT;
+    gSpecialVar_Result = 0;
+
+    return TRUE;
+}
+
+bool8 TryGetQueuedBattle_Cave(const struct TemporaryCaveState* this, u8* instanceIndexOut)
+{
+    if (!BattleIsQueued_Cave(this)) return FALSE;
+
+    *instanceIndexOut = this->battleQueued;
     return TRUE;
 }
 

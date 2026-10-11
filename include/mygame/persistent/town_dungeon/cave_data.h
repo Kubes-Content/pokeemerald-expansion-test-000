@@ -100,6 +100,7 @@ void ClearTemporaryCaveState(struct TemporaryCaveState* this);
 [[nodiscard]] bool8 BattleIsQueued_Cave(const struct TemporaryCaveState* this);
 void QueueBattle_Cave(struct TemporaryCaveState* this, u8 monObjectInstanceIndex);
 bool8 TryClearQueuedBattle_Cave(struct TemporaryCaveState* this);
+bool8 TryGetQueuedBattle_Cave(const struct TemporaryCaveState* this, u8* instanceIndexOut);
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, u8 index);
 

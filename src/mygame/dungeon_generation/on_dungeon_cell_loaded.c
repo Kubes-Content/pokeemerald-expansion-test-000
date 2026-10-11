@@ -1,12 +1,10 @@
 #include "global.h"
 
+#include "event_data.h"
 #include "event_object_movement.h"
-#include "global.fieldmap.h"
 #include "main.h"
-#include "task.h"
-#include "constants/event_objects.h"
+#include "palette.h"
 #include "constants/trainer_types.h"
-#include "mygame/persistent/town_dungeon_persistent_data.h"
 #include "mygame/util/MapHeader.h"
 
 // todo extract
@@ -106,6 +104,9 @@ static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
                              const u8 staticIndex)
 {
     struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
+
+    if (cellOverworldMonsterConfig->isDead) return OBJECT_EVENTS_COUNT;
+
     struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
     const u16 graphicsId = sharedMonsterDescription->monSpecies + OBJ_EVENT_MON; // see OBJ_EVENT_GFX_SPECIES
     const u8 instanceIndex = SpawnBaseObject(cellOverworldMonsterConfig->homeX, cellOverworldMonsterConfig->homeY, graphicsId);
@@ -161,7 +162,32 @@ void CaveTick(u8 taskId)
     struct CaveData* caveData = &currentTownData->caveData;
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
-    if (BattleIsQueued_Cave(temporaryCaveState)) return;
+    u8 queuedBattleMonsterInstanceIndex;
+    if (TryGetQueuedBattle_Cave(temporaryCaveState, &queuedBattleMonsterInstanceIndex))
+    {
+        if (gSpecialVar_Result == 0) return; // ticks until battle start
+
+        // see B_OUTCOME_WON
+        MgbaPrintf(MGBA_LOG_WARN, "instance index: %d  gSpecialVar_Result: %d", queuedBattleMonsterInstanceIndex, gSpecialVar_Result);
+
+        struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[queuedBattleMonsterInstanceIndex];
+        fatal_assertf(objectIdentifier->type == OBJ_ID_MONSTER);
+
+        const u8 staticMonsterIndex = objectIdentifier->staticIndex;
+
+        if (gSpecialVar_Result == B_OUTCOME_WON)
+        {
+            cellData->monsterConfigs[staticMonsterIndex].isDead = TRUE;
+            RemoveObjectEvent(&gObjectEvents[queuedBattleMonsterInstanceIndex]);
+        }
+        if (gSpecialVar_Result == B_OUTCOME_LOST) {}
+        if (gSpecialVar_Result == B_OUTCOME_DREW) {}
+        if (gSpecialVar_Result == B_OUTCOME_RAN)  {}
+
+        TryClearQueuedBattle_Cave(temporaryCaveState);
+
+        return;
+    }
 
     if (temporaryCaveState->aiWaitDuration > 0)
     {
