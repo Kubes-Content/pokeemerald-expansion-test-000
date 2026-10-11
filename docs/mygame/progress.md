@@ -1,11 +1,18 @@
-[ ] load monster's movement pattern
-
+[ ] destroy mon on win only
+[ ] mon movement behavior
+  [ ] Check for collision at spawn time check for collision at run time two functions.
+    [ ] Check for collision at spawn time
+    [ ] check for collision at run time
+  [ ] load monster's movement pattern from shared desc.
+    [ ] temp cache current move dir
+      counter each, reset on spawn
 [ ] pickups/monsters should not spawn on top of warp
   because player may spawn onto it
   [ ] or in front of a north door .. so check if north is a transition tile?
   will the tile the player walks down onto from north door be occupied while entering?
     so that monsters know to avoid it
       or do I need to prevent monsters from ever touching a tile before a north door?
+[ ] patch death pre money/text/transition
 
 ---
 
