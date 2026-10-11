@@ -87,9 +87,30 @@ struct ObjectIdentifier ObjectIdentifier_Create(const enum ObjectIdentifierType 
 
 void ClearTemporaryCaveState(struct TemporaryCaveState* this)
 {
-    this->battleQueued = FALSE;
+    TryClearQueuedBattle_Cave(this);
     this->aiWaitDuration = 0;
     memset(&this->objectIdByInstanceIndex, 0, sizeof(this->objectIdByInstanceIndex));
+}
+
+bool8 BattleIsQueued_Cave(const struct TemporaryCaveState* this)
+{
+    return this->battleQueued < OBJECT_EVENTS_COUNT;
+}
+
+void QueueBattle_Cave(struct TemporaryCaveState* this, const u8 monObjectInstanceIndex)
+{
+    fatal_assertf(monObjectInstanceIndex < OBJECT_EVENTS_COUNT);
+    fatal_assertf(!BattleIsQueued_Cave(this));
+
+    this->battleQueued = monObjectInstanceIndex;
+}
+
+bool8 TryClearQueuedBattle_Cave(struct TemporaryCaveState* this)
+{
+    if (!BattleIsQueued_Cave(this)) return FALSE;
+
+    this->battleQueued = OBJECT_EVENTS_COUNT;
+    return TRUE;
 }
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, const u8 index)

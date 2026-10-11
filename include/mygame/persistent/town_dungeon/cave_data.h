@@ -80,7 +80,7 @@ struct ObjectIdentifier ObjectIdentifier_Create(enum ObjectIdentifierType type, 
 struct TemporaryCaveState
 {
     u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
-    bool8 battleQueued  : 1;
+    u8 battleQueued  : BIT_SIZE(OBJECT_EVENTS_COUNT);
     u8 aiWaitDuration;
     struct ObjectIdentifier objectIdByInstanceIndex[OBJECT_EVENTS_COUNT]; // TODO init with cave state, zeroed out should be fine
     // TODO how do we differentiate pickups/NPCs/interactable when player interacts?
@@ -97,6 +97,9 @@ struct TemporaryCaveState
 struct TemporaryCaveState TemporaryCaveState_CreateEmpty();
 struct TemporaryCaveState* GetTemporaryCaveStatePtr(struct TownDungeonGamePersistentData* this);
 void ClearTemporaryCaveState(struct TemporaryCaveState* this);
+[[nodiscard]] bool8 BattleIsQueued_Cave(const struct TemporaryCaveState* this);
+void QueueBattle_Cave(struct TemporaryCaveState* this, u8 monObjectInstanceIndex);
+bool8 TryClearQueuedBattle_Cave(struct TemporaryCaveState* this);
 
 struct DummyPickupDescription* GetPickupDescription(struct TownDungeonGamePersistentData* gameData, const struct DungeonCellData* cellData, u8 index);
 

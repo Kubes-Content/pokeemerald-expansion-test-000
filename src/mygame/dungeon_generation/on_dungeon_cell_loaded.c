@@ -161,7 +161,7 @@ void CaveTick(u8 taskId)
     struct CaveData* caveData = &currentTownData->caveData;
     struct DungeonCellData* cellData = &caveData->cellsData[temporaryCaveState->currentCellIndex];
 
-    if (temporaryCaveState->battleQueued) return;
+    if (BattleIsQueued_Cave(temporaryCaveState)) return;
 
     if (temporaryCaveState->aiWaitDuration > 0)
     {

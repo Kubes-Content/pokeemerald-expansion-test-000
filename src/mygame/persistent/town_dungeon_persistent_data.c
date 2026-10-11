@@ -482,9 +482,9 @@ bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* object
         const struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[objectInstanceIndex];
         if (objectIdentifier->type == OBJ_ID_MONSTER)
         {
-            if (!temporaryCaveState->battleQueued) 
+            if (!BattleIsQueued_Cave(temporaryCaveState))
             {
-                temporaryCaveState->battleQueued = TRUE;
+                QueueBattle_Cave(temporaryCaveState, objectInstanceIndex);
 
                 // todo flag for if battle is already queued // todo reset where we resume root task from battle
                     // so that you can't call this twice
@@ -504,6 +504,6 @@ void OnCB2_InitBattle_FnBegin(void)
     struct TemporaryCaveState* temporaryCaveState = GetTemporaryCaveStatePtr(this);
     const u8 defaultWaitDuration = 128;
 
-    temporaryCaveState->battleQueued = FALSE;
+    TryClearQueuedBattle_Cave(temporaryCaveState);
     temporaryCaveState->aiWaitDuration = defaultWaitDuration;
 }
