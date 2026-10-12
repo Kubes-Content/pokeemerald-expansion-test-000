@@ -122,7 +122,7 @@ static bool8 IsTilePassableInGeneratedCave(const struct MapLayout* layout, const
     const s32 blockIndex = GetTileIndex(layout, coordinate);
 
     const bool8 containsAGeneratedCollidableObject = usedCoordinates2dArr[blockIndex];
-    const bool8 passableTile = IsTilePassable(layout, coordinate);
+    const bool8 passableTile = TileIsPassable(layout, coordinate);
 
     return !containsAGeneratedCollidableObject && passableTile;
 }

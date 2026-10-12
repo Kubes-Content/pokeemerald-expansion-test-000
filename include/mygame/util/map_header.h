@@ -5,6 +5,8 @@
 #define GUARD_KUBES_MAP_HEADER_UTILS_H
 #include "global.h"
 
-u8 GetAllWarps(enum MapEnum mapEnum, struct WarpEvent* warpsArrOut, u8 arrLength);
+u8 GetAllWarps                  (enum MapEnum mapEnum, struct WarpEvent* warpsArrOut, u8 arrLength);
+bool8 TileIsWarp                (enum MapEnum mapEnum, struct UCoords8 coordinate);
+bool8 ObjectAtTileCouldBlockWarp(enum MapEnum mapEnum, struct UCoords8 coordinate);
 
 #endif // GUARD_KUBES_MAP_HEADER_UTILS_H
