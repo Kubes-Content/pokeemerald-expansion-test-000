@@ -6,11 +6,11 @@
 #include "global.h"
 
 #include "overworld.h"
-#include "palette.h"
 #include "random.h"
 #include "constants/event_objects.h"
 #include "mygame/dungeon_generation/dungeon_generation_global.h"
 #include "mygame/patches/dynamic_warp/town_dungeon_warps.h"
+#include "mygame/util/map_header.h"
 #include "mygame/util/map_layout.h"
 #include "mygame/util/retry.h"
 
@@ -117,18 +117,19 @@ continue_connection:
 }
 
 // usedCoordinates2dArr's size is (layout->width * layout->height)
-static bool8 IsTilePassableInGeneratedCave(const struct MapLayout* layout, const struct UCoords8 coordinate, const bool8* usedCoordinates2dArr)
+static bool8 IsTilePassableInGeneratedCave(const enum MapEnum mapEnum, const struct MapLayout* layout, const struct UCoords8 coordinate, const bool8* usedCoordinates2dArr)
 {
     const s32 blockIndex = GetTileIndex(layout, coordinate);
 
     const bool8 containsAGeneratedCollidableObject = usedCoordinates2dArr[blockIndex];
     const bool8 passableTile = TileIsPassable(layout, coordinate);
+    const bool8 tileBlocksWarp = ObjectAtTileCouldBlockWarp(mapEnum, coordinate);
 
-    return !containsAGeneratedCollidableObject && passableTile;
+    return !containsAGeneratedCollidableObject && passableTile && !tileBlocksWarp;
 }
 
 // usedCoordinates2dArr's size is (layout->width * layout->height)
-static struct UCoords8 FindOpenCoordinateInGeneratingCave(const struct MapLayout* layout, const bool8* usedCoordinates2dArr)
+static struct UCoords8 FindOpenCoordinateInGeneratingCave(const enum MapEnum mapEnum, const struct MapLayout* layout, const bool8* usedCoordinates2dArr)
 {
     const u8 maxAttempts = 29;
 
@@ -139,7 +140,7 @@ static struct UCoords8 FindOpenCoordinateInGeneratingCave(const struct MapLayout
             returnValue.y = Random() % layout->height;
             const bool8 alreadyChosenLocation = usedCoordinates2dArr[returnValue.x + returnValue.y * layout->width];
         ,
-        !alreadyChosenLocation && IsTilePassableInGeneratedCave(layout, returnValue, usedCoordinates2dArr)
+        !alreadyChosenLocation && IsTilePassableInGeneratedCave(mapEnum, layout, returnValue, usedCoordinates2dArr)
     )
 
     // ReSharper disable once CppLocalVariableMightNotBeInitialized
@@ -148,14 +149,14 @@ static struct UCoords8 FindOpenCoordinateInGeneratingCave(const struct MapLayout
 
 // reduce validSharedPickupDescriptions from NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON to not pick from the full description array
     // todo a nicer way to pick a range across the descriptions array, like index 2 to index 6, or even wrapping around the array
-static void CreatePickupPermanentCellData(const struct MapLayout* layout, struct CellPickupConfig* pickupConfigsArr, const u8 pickupConfigsArrCapacity,
+static void CreatePickupPermanentCellData(const enum MapEnum mapEnum, const struct MapLayout* layout, struct CellPickupConfig* pickupConfigsArr, const u8 pickupConfigsArrCapacity,
                                             const u8 pickupConfigsArrCount, const u8 validSharedPickupDescriptions, bool8* usedCoordinates2dArr)
 {
     fatal_assertf(pickupConfigsArrCapacity >= pickupConfigsArrCount);
 
     for (u8 i = 0; i < pickupConfigsArrCount; i++)
     {
-        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(layout, usedCoordinates2dArr);
+        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(mapEnum, layout, usedCoordinates2dArr);
 
         pickupConfigsArr[i] = CellPickupConfig_Create(openCoordinate.x, openCoordinate.y, Random() % validSharedPickupDescriptions);
 
@@ -166,7 +167,7 @@ static void CreatePickupPermanentCellData(const struct MapLayout* layout, struct
 // TODO we need a temporary bool mask of the map - to determine if we have already chosen to place an object at a coordinate
     // a bool8 2D array
     // I don't think we even need to pass the size since it'll be based on the target map
-static void CreateMonsterPermanentCellData(const struct MapLayout* layout, struct CellOverworldMonsterConfig* cellMonsterConfigsArr, const u8 cellMonsterConfigsArrCapacity,
+static void CreateMonsterPermanentCellData(const enum MapEnum mapEnum, const struct MapLayout* layout, struct CellOverworldMonsterConfig* cellMonsterConfigsArr, const u8 cellMonsterConfigsArrCapacity,
                                             const u8 cellMonsterConfigsArrCount, const u8 validSharedMonsterDescriptions, bool8* usedCoordinates2dArr)
 {
     fatal_assertf(cellMonsterConfigsArrCapacity >= cellMonsterConfigsArrCount);
@@ -175,7 +176,7 @@ static void CreateMonsterPermanentCellData(const struct MapLayout* layout, struc
 
     for (u8 i = 0; i < cellMonsterConfigsArrCount; i++)
     {
-        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(layout, usedCoordinates2dArr);
+        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(mapEnum, layout, usedCoordinates2dArr);
 
         cellMonsterConfigsArr[i] = CellOverworldMonsterConfig_Create(openCoordinate.x, openCoordinate.y, Random() % validSharedMonsterDescriptions);
         usedCoordinates2dArr[openCoordinate.x + openCoordinate.y * layout->width] = TRUE;
@@ -184,7 +185,8 @@ static void CreateMonsterPermanentCellData(const struct MapLayout* layout, struc
 
 static void GenerateCellData(struct CaveData* caveData, const struct CellVariant* cellVariant, const u8 cellIndex, const s8 cellPickupDefinitionCount, const s8 cellMonsterDefinitionCount)
 {
-    const struct MapHeader* header = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(cellVariant->mapEnum), MAP_NUM(cellVariant->mapEnum));
+    const enum MapEnum mapEnum = cellVariant->mapEnum;
+    const struct MapHeader* header = Overworld_GetMapHeaderByGroupAndId(MAP_GROUP(mapEnum), MAP_NUM(mapEnum));
     const struct MapLayout* layout = GetMapLayout(header->mapLayoutId);
 
     // bool map of where we've already spawned things // todo bitmask
@@ -193,15 +195,15 @@ static void GenerateCellData(struct CaveData* caveData, const struct CellVariant
     // TODO randomize pickup locations
     const u8 pickupConfigsArrSize = MAX_PICKUPS_PER_CELL;
     struct CellPickupConfig pickupConfigsArr[pickupConfigsArrSize];
-    CreatePickupPermanentCellData(layout, pickupConfigsArr, pickupConfigsArrSize, cellPickupDefinitionCount, NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
+    CreatePickupPermanentCellData(mapEnum, layout, pickupConfigsArr, pickupConfigsArrSize, cellPickupDefinitionCount, NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
 
     const u8 xSize = MAX_OVERWORLD_MONSTERS_PER_CELL;
     struct CellOverworldMonsterConfig monsterConfigsArr[xSize];
-    CreateMonsterPermanentCellData(layout, monsterConfigsArr, xSize, cellMonsterDefinitionCount, NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
+    CreateMonsterPermanentCellData(mapEnum, layout, monsterConfigsArr, xSize, cellMonsterDefinitionCount, NUM_OVERWORLD_MONSTER_DESCRIPTIONS_PER_DUNGEON, usedCoordinates2dArr);
 
     // TODO support entering cave from any direction, NOT TIED TO CARDINAL DIRECTION, abstracted to wrap cardinal direction until we implement a better solution in its place
 
-    caveData->cellsData[cellIndex] = DungeonCellData_Create(GetCellVariantMapEnum(cellVariant), cellPickupDefinitionCount, cellMonsterDefinitionCount, pickupConfigsArr, monsterConfigsArr); // todo reimplement, generate all cells
+    caveData->cellsData[cellIndex] = DungeonCellData_Create(mapEnum, cellPickupDefinitionCount, cellMonsterDefinitionCount, pickupConfigsArr, monsterConfigsArr); // todo reimplement, generate all cells
 }
 
 // todo fix: this assumes that entryCell is a room with a single pre-established connection to another cell
@@ -466,7 +468,7 @@ void OnRunTasks_FnBegin(const u8 firstActiveTaskId)
     if (gameData->context == CONTEXT_CAVE) CaveTick(255);
 }
 
-bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* objectEvent, s16 x, s16 y, bool32 addCoords, struct ObjectEvent* otherObject)
+bool8 OnGetObjectObjectCollidesWith_OWECollisionBegin(const struct ObjectEvent* objectEvent, s16 x, s16 y, bool32 addCoords, const struct ObjectEvent* otherObject)
 {
     if (!objectEvent->isPlayer && !otherObject->isPlayer) return TRUE; // if other things collide do nothing for now, but consume the event
 
