@@ -5,7 +5,7 @@
 #include "main.h"
 #include "palette.h"
 #include "constants/trainer_types.h"
-#include "mygame/util/MapHeader.h"
+#include "mygame/util/map_header.h"
 
 // todo extract
 static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)

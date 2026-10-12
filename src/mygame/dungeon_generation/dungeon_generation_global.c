@@ -5,7 +5,7 @@
 
 #include "overworld.h"
 #include "random.h"
-#include "mygame/util/MapHeader.h"
+#include "mygame/util/map_header.h"
 
 struct CellVariant CellVariant_CreateEmpty()
 {
