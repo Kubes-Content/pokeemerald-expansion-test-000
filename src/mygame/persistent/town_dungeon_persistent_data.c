@@ -11,6 +11,8 @@
 #include "constants/event_objects.h"
 #include "mygame/dungeon_generation/dungeon_generation_global.h"
 #include "mygame/patches/dynamic_warp/town_dungeon_warps.h"
+#include "mygame/util/map_layout.h"
+#include "mygame/util/retry.h"
 
 
 struct TownDungeonGamePersistentData* GetTownDungeonGamePersistentData()
@@ -114,32 +116,34 @@ continue_connection:
     fatalf("No result found for PickAnyOtherCellMapRelativeConnection"); // TODO useful message
 }
 
-// TODO extract
 // usedCoordinates2dArr's size is (layout->width * layout->height)
-static bool8 IsTilePassable(const struct MapLayout* layout, const u8 x, const u8 y, const bool8* usedCoordinates2dArr)
+static bool8 IsTilePassableInGeneratedCave(const struct MapLayout* layout, const struct UCoords8 coordinate, const bool8* usedCoordinates2dArr)
 {
-    const bool8 containsAGeneratedCollidableObject = usedCoordinates2dArr[x + y * layout->width];
-    const bool8 passableTile = UNPACK_COLLISION(layout->map[x + y * layout->width]) == COLLISION_NONE;
+    const s32 blockIndex = GetTileIndex(layout, coordinate);
+
+    const bool8 containsAGeneratedCollidableObject = usedCoordinates2dArr[blockIndex];
+    const bool8 passableTile = IsTilePassable(layout, coordinate);
+
     return !containsAGeneratedCollidableObject && passableTile;
 }
 
-static void FindOpenCoordinate(const struct MapLayout* layout, const bool8* usedCoordinates2dArr, u8* xPtr, u8* yPtr)
+// usedCoordinates2dArr's size is (layout->width * layout->height)
+static struct UCoords8 FindOpenCoordinateInGeneratingCave(const struct MapLayout* layout, const bool8* usedCoordinates2dArr)
 {
     const u8 maxAttempts = 29;
-    for (u8 attempt = 0; attempt < maxAttempts; attempt++)
-    {
-        *xPtr = Random() % layout->width;
-        *yPtr = Random() % layout->height;
 
-        const bool8 alreadyChosenLocation = usedCoordinates2dArr[*xPtr + *yPtr * layout->width];
-        if (alreadyChosenLocation) continue;
+    struct UCoords8 returnValue;
 
-        if (!IsTilePassable(layout, *xPtr, *yPtr, usedCoordinates2dArr)) continue;
+    RETRY_CALL_FATAL(maxAttempts,
+            returnValue.x = Random() % layout->width;
+            returnValue.y = Random() % layout->height;
+            const bool8 alreadyChosenLocation = usedCoordinates2dArr[returnValue.x + returnValue.y * layout->width];
+        ,
+        !alreadyChosenLocation && IsTilePassableInGeneratedCave(layout, returnValue, usedCoordinates2dArr)
+    )
 
-        goto chosen;
-    }
-    fatalf();
-    chosen:;
+    // ReSharper disable once CppLocalVariableMightNotBeInitialized
+    return returnValue;
 }
 
 // reduce validSharedPickupDescriptions from NUM_PICKUP_DESCRIPTIONS_PER_DUNGEON to not pick from the full description array
@@ -151,12 +155,11 @@ static void CreatePickupPermanentCellData(const struct MapLayout* layout, struct
 
     for (u8 i = 0; i < pickupConfigsArrCount; i++)
     {
-        u8 x, y;
-        FindOpenCoordinate(layout, usedCoordinates2dArr, &x, &y);
+        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(layout, usedCoordinates2dArr);
 
-        pickupConfigsArr[i] = CellPickupConfig_Create(x, y, Random() % validSharedPickupDescriptions);
+        pickupConfigsArr[i] = CellPickupConfig_Create(openCoordinate.x, openCoordinate.y, Random() % validSharedPickupDescriptions);
 
-        usedCoordinates2dArr[x + y * layout->width] = TRUE;
+        usedCoordinates2dArr[openCoordinate.x + openCoordinate.y * layout->width] = TRUE;
     }
 }
 
@@ -172,11 +175,10 @@ static void CreateMonsterPermanentCellData(const struct MapLayout* layout, struc
 
     for (u8 i = 0; i < cellMonsterConfigsArrCount; i++)
     {
-        u8 x, y;
-        FindOpenCoordinate(layout, usedCoordinates2dArr, &x, &y);
+        const struct UCoords8 openCoordinate = FindOpenCoordinateInGeneratingCave(layout, usedCoordinates2dArr);
 
-        cellMonsterConfigsArr[i] = CellOverworldMonsterConfig_Create(x, y, Random() % validSharedMonsterDescriptions);
-        usedCoordinates2dArr[x + y * layout->width] = TRUE;
+        cellMonsterConfigsArr[i] = CellOverworldMonsterConfig_Create(openCoordinate.x, openCoordinate.y, Random() % validSharedMonsterDescriptions);
+        usedCoordinates2dArr[openCoordinate.x + openCoordinate.y * layout->width] = TRUE;
     }
 }
 
