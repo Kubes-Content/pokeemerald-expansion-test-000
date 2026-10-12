@@ -1,17 +1,16 @@
-[ ] Check for collision at spawn-time / runtime share logic
-    [ ] extract shared logic - none of these live in town_dungeon_persistent_data.*
-      [ ] check: is tile at coordinate passable
-      [ ] check: would object at coordinate block a warp
-        [ ] check: is warp at coordinate
-        [ ] check: would object at coordinate block northward warp
-    [ ] Check for collision at spawn-time
-      [ ] check: is object already spawned at coordinate - if need be this could also inherit runtime's object check
-    [ ] check for collision at runtime
-      [ ] check: is object at coordinate
 [ ] mon movement behavior
-  [ ] load monster's movement pattern from shared desc.
+  [ ] load monster's behavior (movement pattern) from shared desc.
     [ ] temp cache current move dir ; 8-way direction until hit an edge (consider both paths for diagonals)
       counter each, reset on spawn
+      [ ] checks both directions for diagonals
+      [ ] if all paths for chosen dir are blocked (and none are player) then reroll the direction
+        [ ] if not fully surrounded
+        [ ] reroll if blocked again, maxAttempts
+    [ ] avoids non-player objects
+    [ ] avoids blocking warps
+    [ ] will stop moving if the player is in the next target coordinate
+      [ ] put note to activate battle here
+      - check both diagonals
 [ ] save mon location before calculating next movement step
 [ ] pickups/monsters should not spawn on top of warp
   because player may spawn onto it
