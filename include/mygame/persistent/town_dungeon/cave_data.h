@@ -82,6 +82,7 @@ struct TemporaryCaveState
     u8 currentCellIndex : BIT_SIZE(MAX_DUNGEON_CELL_COUNT - 1);
     u8 battleQueued  : BIT_SIZE(OBJECT_EVENTS_COUNT);
     u8 aiWaitDuration;
+    enum Direction objectInstanceTargetDirections[OBJECT_EVENTS_COUNT];
     struct ObjectIdentifier objectIdByInstanceIndex[OBJECT_EVENTS_COUNT]; // TODO init with cave state, zeroed out should be fine
     // TODO how do we differentiate pickups/NPCs/interactable when player interacts?
         // so any object has the same runtime state

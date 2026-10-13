@@ -3,7 +3,7 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "main.h"
-#include "palette.h"
+#include "random.h"
 #include "constants/trainer_types.h"
 #include "mygame/util/map_header.h"
 
@@ -83,7 +83,7 @@ static void SpawnGarbageOverUnusedDoors(const struct DungeonCellData* cellData)
     }
 }
 
-static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const struct TownDungeonPersistentData* this, struct TemporaryCaveState* temporaryCaveState, struct DungeonCellData* cellData)
+static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const struct TownDungeonPersistentData* this, struct TemporaryCaveState* temporaryCaveState, const struct DungeonCellData* cellData)
 {
     for (u8 staticIndex = 0; staticIndex < cellData->cellPickupDefinitionCount; staticIndex++)
     {
@@ -93,7 +93,7 @@ static void SpawnPickups(struct TownDungeonGamePersistentData* gameData, const s
         }
     }
 
-    SpawnGarbageOverUnusedDoors(cellData);
+    SpawnGarbageOverUnusedDoors(cellData); // TODO move this to OnDungeonCellLoaded
 }
 
 [[nodiscard]]
@@ -103,16 +103,18 @@ static u8 SpawnMonsterObject(struct TownDungeonGamePersistentData* gameData,
                              struct DungeonCellData* cellData,
                              const u8 staticIndex)
 {
-    struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
+    const struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
 
     if (cellOverworldMonsterConfig->isDead) return OBJECT_EVENTS_COUNT;
 
-    struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
+    const struct OverworldMonsterDescription* sharedMonsterDescription = &gameData->sharedMonsterDescriptions[cellOverworldMonsterConfig->sharedDescriptionIndex];
     const u16 graphicsId = sharedMonsterDescription->monSpecies + OBJ_EVENT_MON; // see OBJ_EVENT_GFX_SPECIES
     const u8 instanceIndex = SpawnBaseObject(cellOverworldMonsterConfig->homeX, cellOverworldMonsterConfig->homeY, graphicsId);
 
     struct ObjectIdentifier* objectIdentifier = &temporaryCaveState->objectIdByInstanceIndex[instanceIndex];
     *objectIdentifier = ObjectIdentifier_Create(OBJ_ID_MONSTER, staticIndex);
+
+    temporaryCaveState->objectInstanceTargetDirections[instanceIndex] = Random() % (CARDINAL_DIRECTION_COUNT - 1) + 1;
 
     return instanceIndex;
 }
@@ -129,23 +131,215 @@ static void SpawnMonsters(struct TownDungeonGamePersistentData* gameData,
 
 }
 
-static void TickCaveMonster(struct TownDungeonGamePersistentData* gameData,
-                            struct TemporaryCaveState* temporaryCaveState, struct
-                            CellOverworldMonsterConfig* cellConfig, u8 objectInstanceIndex)
+// TODO check for blocking warps, we don't want them reloading there
+static void GetValidDestinationsInDirection(struct ObjectEvent* objectEvent, const enum Direction direction, enum Direction validDirectionsArrOut[2], u8* validDirectionsCountOut)
 {
+    s16 xOffset, yOffset;
+#define MULTIDIR1 xOffset
+#define MULTIDIR2 yOffset
+
+    switch (direction)
+    {
+    case DIR_SOUTH:
+    case DIR_NORTH:
+    case DIR_WEST:
+    case DIR_EAST:
+        xOffset = 0;
+        yOffset = 0;
+        MoveCoords(direction, &xOffset, &yOffset);
+        break;
+    case DIR_SOUTHWEST:
+        MULTIDIR1 = DIR_SOUTH;
+        MULTIDIR2 = DIR_WEST;
+        goto multidirectional;
+    case DIR_SOUTHEAST:
+        MULTIDIR1 = DIR_SOUTH;
+        MULTIDIR2 = DIR_EAST;
+        goto multidirectional;
+    case DIR_NORTHWEST:
+        MULTIDIR1 = DIR_NORTH;
+        MULTIDIR2 = DIR_WEST;
+        goto multidirectional;
+    case DIR_NORTHEAST:
+        MULTIDIR1 = DIR_NORTH;
+        MULTIDIR2 = DIR_EAST;
+        goto multidirectional;
+    default:
+        fatalf("invalid direction");
+    }
+
+    const enum Collision collisionAtDestination = GetCollisionInDirection(objectEvent, direction);
+    const bool8 destinationWillNotCauseCollision = collisionAtDestination == COLLISION_NONE;
+
+    // TODO ObjectAtTileCouldBlockWarp
+
+    if (destinationWillNotCauseCollision)
+    {
+        validDirectionsArrOut[0] = direction;
+        *validDirectionsCountOut = 1;
+    }
+    else
+    {
+        *validDirectionsCountOut = 0;
+    }
+
+    return;
+
+multidirectional:;
+
+    *validDirectionsCountOut = 0;
+    u8 validDirectionsCountTemp = 0;
+
+    GetValidDestinationsInDirection(objectEvent, MULTIDIR1, validDirectionsArrOut, validDirectionsCountOut);
+    validDirectionsCountTemp += *validDirectionsCountOut;
+    GetValidDestinationsInDirection(objectEvent, MULTIDIR2, *validDirectionsCountOut ? &validDirectionsArrOut[1] : validDirectionsArrOut, validDirectionsCountOut);
+    validDirectionsCountTemp += *validDirectionsCountOut;
+
+    *validDirectionsCountOut = validDirectionsCountTemp;
+
+#undef MULTIDIR1
+#undef MULTIDIR2
+}
+
+static void ForceMoveMonsterInCurrentDir(struct ObjectEvent* objectEvent, const struct TemporaryCaveState* temporaryCaveState)
+{
+    const u8 objectInstanceId = objectEvent - gObjectEvents;
+    enum Direction direction = temporaryCaveState->objectInstanceTargetDirections[objectInstanceId];
+
+    // pick from diagonal options
+    if (direction >= CARDINAL_DIRECTION_COUNT)
+    {
+        enum Direction validDirectionsArr[2];
+        u8 validDirectionsCount;
+        GetValidDestinationsInDirection(objectEvent, direction, validDirectionsArr, &validDirectionsCount);
+
+        const u8 chosenIndex = validDirectionsCount == 1 ? 0 : Random() % validDirectionsCount;
+        direction = validDirectionsArr[chosenIndex];
+    }
+
+    ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
+}
+
+static u8 DirToBitmask(const enum Direction direction)
+{
+    const u8 skipDirNoneOffset = 1;
+
+    return 1u << (direction - skipDirNoneOffset);
+}
+
+static void TryToMoveNPCInNewDir(struct ObjectEvent* objectEvent, struct TemporaryCaveState* temporaryCaveState, const struct Coords16 currentCoords, const u8 elevation)
+{
+    enum Direction tempValidDirectionsArr[2];
+    u8 tempValidDirectionsCount;
+    u8 validDirectionsBitmask = 0; // you couldn't just use a u16 to avoid needing to offset the bit index?
+
+    // check if you can move in any direction
+
+    const u8 skipDirNoneOffset = 1;
+    for (u8 dirIndex = skipDirNoneOffset; dirIndex < (u8) CARDINAL_DIRECTION_COUNT; dirIndex++)
+    {
+        const enum Direction direction = dirIndex;
+
+        GetValidDestinationsInDirection(objectEvent, direction, tempValidDirectionsArr, &tempValidDirectionsCount);
+
+        if (tempValidDirectionsCount) validDirectionsBitmask |= DirToBitmask(tempValidDirectionsArr[0]);
+    }
+
+    if (__builtin_popcount(validDirectionsBitmask) == 0) return; // can't move, don't try
+
+    const u8 objectInstanceId = objectEvent - gObjectEvents;
+    enum Direction* objectDirectionInCaveDataPtr = &temporaryCaveState->objectInstanceTargetDirections[objectInstanceId];
+    const enum Direction initialDirection = *objectDirectionInCaveDataPtr;
+    const u8 initialDirectionBitmask = DirToBitmask(initialDirection); // todo get from temp cave data
+
+    if (validDirectionsBitmask == initialDirectionBitmask) return; // don't move in the same direction twice, don't try
+
+    // pick a new direction
+
+        // accumulate relevant directions
+
+    if (validDirectionsBitmask & DirToBitmask(DIR_SOUTH))
+    {
+        if (validDirectionsBitmask & DirToBitmask(DIR_WEST)) validDirectionsBitmask |= DirToBitmask(DIR_SOUTHWEST);
+        if (validDirectionsBitmask & DirToBitmask(DIR_EAST)) validDirectionsBitmask |= DirToBitmask(DIR_SOUTHEAST);
+    }
+    if (validDirectionsBitmask & DirToBitmask(DIR_NORTH))
+    {
+        if (validDirectionsBitmask & DirToBitmask(DIR_WEST)) validDirectionsBitmask |= DirToBitmask(DIR_NORTHWEST);
+        if (validDirectionsBitmask & DirToBitmask(DIR_EAST)) validDirectionsBitmask |= DirToBitmask(DIR_NORTHEAST);
+    }
+
+        // remove previous direction from options
+
+    if (validDirectionsBitmask & initialDirectionBitmask) validDirectionsBitmask &= ~initialDirectionBitmask;
+
+    // select direction
+
+    const u8 validCount = __builtin_popcount(validDirectionsBitmask);
+    const u8 chosenBitIndex = Random() % validCount;
+    u8 validBitPassed = 0;
+    enum Direction chosenDirection = DIR_NONE;
+
+    const u8 bitmaskLength = 8;
+    for (u8 i = 0; i < bitmaskLength; i++)
+    {
+        if (validDirectionsBitmask & DirToBitmask(i + skipDirNoneOffset)) validBitPassed++;
+
+        if (validBitPassed - 1 == chosenBitIndex)
+        {
+            chosenDirection = i + skipDirNoneOffset;
+            break;
+        }
+    }
+
+    fatal_assertf(chosenDirection != DIR_NONE);
+
+    // set direction in temp data before returning
+    *objectDirectionInCaveDataPtr = chosenDirection;
+
+    // move
+
+    ForceMoveMonsterInCurrentDir(objectEvent, temporaryCaveState);
+}
+
+// TODO call movement behavior through description
+// TODO move relative to a home coordinate with a max distance retrieved via getter
+static void TickCaveMonster(struct TemporaryCaveState* temporaryCaveState,
+                            const struct CellOverworldMonsterConfig* cellConfig, const u8 objectInstanceIndex)
+{
+    fatal_assertf(objectInstanceIndex < OBJECT_EVENTS_COUNT);
+
     if (cellConfig->isDead) return;
 
     struct ObjectEvent* objectEvent = &gObjectEvents[objectInstanceIndex];
 
-    if (ObjectEventIsHeldMovementActive(objectEvent) && !ObjectEventClearHeldMovementIfFinished(objectEvent)) return;
+    if (ObjectEventIsHeldMovementActive(objectEvent)
+        && !ObjectEventClearHeldMovementIfFinished(objectEvent))
+    {
+        return;
+    }
 
-    // TODO get movement behavior from description
+    // TODO extract below
 
-    const enum Direction direction = DIR_SOUTH;
-    const enum Collision collisionInDirection = GetCollisionInDirection(objectEvent, direction);
-    if (collisionInDirection != COLLISION_NONE) return;
+    // begin calculating next move
 
-    ObjectEventSetHeldMovement(objectEvent, GetWalkNormalMovementAction(direction));
+    const enum Direction initialTargetDirection = temporaryCaveState->objectInstanceTargetDirections[objectInstanceIndex];
+    const struct Coords16 currentCoords = objectEvent->currentCoords;
+    const u8 elevation = objectEvent->currentElevation;
+
+    enum Direction validDirectionsArr[2];
+    u8 validDirectionsCount;
+    GetValidDestinationsInDirection(objectEvent, initialTargetDirection, validDirectionsArr, &validDirectionsCount);
+
+    const u8 cannotMoveInTheCurrentDirection = validDirectionsCount == 0;
+    if (cannotMoveInTheCurrentDirection)
+    {
+        return TryToMoveNPCInNewDir(objectEvent, temporaryCaveState, currentCoords, elevation);
+    }
+    else
+    {
+        return ForceMoveMonsterInCurrentDir(objectEvent, temporaryCaveState);
+    }
 }
 
 void CaveTick(u8 taskId)
@@ -180,6 +374,7 @@ void CaveTick(u8 taskId)
             cellData->monsterConfigs[staticMonsterIndex].isDead = TRUE;
             RemoveObjectEvent(&gObjectEvents[queuedBattleMonsterInstanceIndex]);
         }
+        // TODO
         if (gSpecialVar_Result == B_OUTCOME_LOST) {}
         if (gSpecialVar_Result == B_OUTCOME_DREW) {}
         if (gSpecialVar_Result == B_OUTCOME_RAN)  {}
@@ -209,9 +404,9 @@ void CaveTick(u8 taskId)
             break;
         case OBJ_ID_MONSTER:;
             struct CellOverworldMonsterConfig* cellOverworldMonsterConfig = &cellData->monsterConfigs[staticIndex];
-            TickCaveMonster(gameData, temporaryCaveState, cellOverworldMonsterConfig, objectInstanceIndex);
+            TickCaveMonster(temporaryCaveState, cellOverworldMonsterConfig, objectInstanceIndex);
             break;
-        case OBJECT_IDENTIFIER_TYPE_COUNT:
+        default:
             fatalf();
         }
     }

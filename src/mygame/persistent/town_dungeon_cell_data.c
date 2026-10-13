@@ -91,6 +91,7 @@ void ClearTemporaryCaveState(struct TemporaryCaveState* this)
     TryClearQueuedBattle_Cave(this);
     this->aiWaitDuration = 0;
     memset(&this->objectIdByInstanceIndex, 0, sizeof(this->objectIdByInstanceIndex));
+    memset(&this->objectInstanceTargetDirections, 0, sizeof(this->objectInstanceTargetDirections));
 }
 
 bool8 BattleIsQueued_Cave(const struct TemporaryCaveState* this)
