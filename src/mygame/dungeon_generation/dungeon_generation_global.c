@@ -89,6 +89,9 @@ static bool8 CellsCanConnect(const struct CellVariant* A, const struct RelativeC
     case CONNECTION_EMERGE:
     default:
         fatal_assertf(FALSE && "invalid connection enum value.");
+#ifdef TESTING
+        return FALSE;
+#endif // TESTING
     }
 }
 

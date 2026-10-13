@@ -1,6 +1,7 @@
 //
 // Created by kubes on 9/26/26.
 //
+#include "gba/types.h"
 #include "assertf.h"
 #include "mygame/persistent/town_dungeon_persistent_data.h"
 

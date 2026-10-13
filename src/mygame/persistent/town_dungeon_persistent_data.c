@@ -50,6 +50,9 @@ static enum Connection Reverse(const enum Connection direction)
         return CONNECTION_WEST;
     default:
         fatalf("invalid connection enum value");
+#ifdef TESTING
+        return 0;
+#endif // TESTING
     }
 }
 
@@ -68,6 +71,9 @@ static u8 GetPlaceholderCellWarpIdForDirection(const enum Connection direction)
         return 3;
     default:
         fatalf("bad connection enum");
+#ifdef TESTING
+        return 0;
+#endif // TESTING
     }
 }
 
@@ -114,6 +120,9 @@ continue_connection:
         continue;
     }
     fatalf("No result found for PickAnyOtherCellMapRelativeConnection"); // TODO useful message
+#ifdef TESTING
+    return (struct RelativeCellConnection) {};
+#endif // TESTING
 }
 
 // usedCoordinates2dArr's size is (layout->width * layout->height)

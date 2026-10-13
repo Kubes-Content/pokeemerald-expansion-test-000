@@ -165,5 +165,8 @@ bool8 TryStartInteractionScript_FnBegin_Cave(const u8 objectEventId)
         return TRUE;
     default:
         fatalf();
+#ifdef TESTING
+        return TRUE;
+#endif // TESTING
     }
 }
