@@ -7225,3 +7225,22 @@ const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_SSAnne = {
 };
 
 #endif // IS_FRLG
+
+const struct ObjectEventGraphicsInfo gObjectEventGraphicsInfo_Example = {
+    .tileTag = TAG_NONE,
+    .paletteTag = OBJ_EVENT_PAL_EXAMPLE,
+    .reflectionPaletteTag = OBJ_EVENT_PAL_TAG_NONE,
+    .size = 128,
+    .width = 16,
+    .height = 16,
+    .paletteSlot = 0,
+    .shadowSize = SHADOW_SIZE_S,
+    .inanimate = TRUE,
+    .compressed = FALSE,
+    .tracks = TRACKS_NONE,
+    .oam = &gObjectEventBaseOam_16x16,
+    .subspriteTables = sOamTables_16x16,
+    .anims = sAnimTable_Inanimate,
+    .images = gObjectEventPicTable_Example,
+    //.affineAnims = gDummySpriteAffineAnimTable,
+};

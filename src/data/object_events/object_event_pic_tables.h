@@ -2494,3 +2494,7 @@ static const struct SpriteFrameImage sPicTable_MomFrlg[] = {
 };
 
 #endif // IS_FRLG
+
+const struct SpriteFrameImage gObjectEventPicTable_Example[] = {
+    overworld_frame(gObjectEventPic_Example, 2, 2, 0),
+};
