@@ -1,0 +1,6 @@
+- Run 1 - initial run
+  - Tests KNOWN_FAILING:   18
+  - Tests TO_DO:           421
+  - Tests EXPECT_FAILING:  9
+  - Tests PASSED:          5413
+  - Tests TOTAL:           5861
