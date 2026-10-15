@@ -20,6 +20,8 @@
 #include "constants/metatile_behaviors_frlg.h"
 #include "wild_encounter.h"
 
+#include "mygame/patches/fieldmap_patches.h"
+
 struct ConnectionFlags
 {
     u8 south:1;
@@ -139,6 +141,8 @@ void InitMap(void)
     SetOccupiedSecretBaseEntranceMetatiles(gMapHeader.events);
 #endif
     RunOnLoadMapScript();
+
+    InitMapPatch_FnEnd();
 }
 
 void InitMapFromSavedGame(void)
