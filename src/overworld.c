@@ -86,6 +86,7 @@
 #include "constants/weather.h"
 #include "mygame/patches/dynamic_warp_patches.h"
 #include "mygame/patches/new_game/new_game_custom_warp.h"
+#include "mygame/patches/overworld_patches.h"
 
 STATIC_ASSERT((B_FLAG_FOLLOWERS_DISABLED == 0 || OW_FOLLOWERS_ENABLED), FollowersFlagAssignedWithoutEnablingThem);
 
@@ -2398,6 +2399,8 @@ static bool32 ReturnToFieldLocal(u8 *state)
     switch (*state)
     {
     case 0:
+        OnReturnToFieldLocalPatch_PreResumeMap();
+
         ResetMirageTowerAndSaveBlockPtrs();
         ResetScreenForMapLoad();
         ResumeMap(FALSE);
@@ -2432,6 +2435,8 @@ static bool32 ReturnToFieldLink(u8 *state)
     switch (*state)
     {
     case 0:
+        OnReturnToFieldLinkPatch_PreResumeMap();
+
         FieldClearVBlankHBlankCallbacks();
         ResetMirageTowerAndSaveBlockPtrs();
         ResetScreenForMapLoad();
@@ -2506,6 +2511,8 @@ static bool32 ReturnToFieldLink(u8 *state)
 
 static void DoMapLoadLoop(u8 *state)
 {
+    OnDoMapLoadLoopPatch_PreResumeMap();
+
     while (!LoadMapInStepsLocal(state, FALSE));
 }
 
@@ -2619,6 +2626,8 @@ static void ResumeMap(bool32 a1)
         SetUpFieldTasks();
     RunOnResumeMapScript();
     TryStartMirageTowerPulseBlendEffect();
+
+    OnResumeMapPatch_FnEnd();
 }
 
 static void InitObjectEventsLink(void)
