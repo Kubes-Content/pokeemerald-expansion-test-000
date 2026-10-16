@@ -3,33 +3,9 @@
 //
 #ifndef GUARD_KUBES_MAP_TRANSITION_PATCHES_H
 #define GUARD_KUBES_MAP_TRANSITION_PATCHES_H
+#include "gba/defines.h"
 
-// todo how do i patch this ....
-    // a
-        // PreMapLoadPatch
-        // +
-        // PreReturnToFieldPatch
-        // +
-        // ResumeMapPatch
-            // switch on context in impl.
-    // b
-        // OnMapLoadPatch
-        // +
-        // OnReturnToFieldPatch
-        //
-        // PreX/ResumeMapPatch are handled for you
-        // global context variable
-    // c
-        // ResumeMap(context)
-        //
-        // PreX/ResumeMapPatch are handled for you
-            // TODO patch
-                // [ ] ReturnToFieldLocal
-                // [ ] DoMapLoadLoop
-        // global context variable
-            // in SaveBlock3 and cleared on NewGameInitData
-
-enum __attribute__ ((packed)) OverworldResumeMapContext
+enum PACKED OverworldResumeMapContext
 {
     RESUME_MAP_CONTEXT_UNINITIALIZED,
     RESUME_MAP_CONTEXT_RETURN_TO_FIELD,

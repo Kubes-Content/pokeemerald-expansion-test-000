@@ -19,6 +19,7 @@
 #include "constants/metatile_behaviors.h"
 #include "constants/metatile_behaviors_frlg.h"
 #include "wild_encounter.h"
+#include "mygame/patches/event_object_movement_patches.h"
 
 #include "mygame/patches/fieldmap_patches.h"
 
@@ -750,6 +751,8 @@ static void SetPositionFromConnection(const struct MapConnection *connection, en
         errorf("invalid direction: %d", direction);
         break;
     }
+
+    OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
 }
 
 bool8 CameraMove(s32 x, s32 y)
@@ -761,8 +764,12 @@ bool8 CameraMove(s32 x, s32 y)
     direction = GetPostCameraMoveMapBorderId(x, y);
     if (direction == CONNECTION_NONE || direction == CONNECTION_INVALID)
     {
+        const struct Coords16 initialPosition = gSaveBlock1Ptr->pos;
+
         gSaveBlock1Ptr->pos.x += x;
         gSaveBlock1Ptr->pos.y += y;
+
+        OnOverworldViewPositionMoved(initialPosition, gSaveBlock1Ptr->pos);
     }
     else
     {
@@ -908,6 +915,8 @@ void SetCameraFocusCoords(u16 x, u16 y)
 {
     gSaveBlock1Ptr->pos.x = x - MAP_OFFSET;
     gSaveBlock1Ptr->pos.y = y - MAP_OFFSET;
+
+    OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
 }
 
 void GetCameraFocusCoords(u16 *x, u16 *y)
@@ -920,6 +929,8 @@ static void UNUSED SetCameraCoords(u16 x, u16 y)
 {
     gSaveBlock1Ptr->pos.x = x;
     gSaveBlock1Ptr->pos.y = y;
+
+    OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
 }
 
 void GetCameraCoords(u16 *x, u16 *y)
