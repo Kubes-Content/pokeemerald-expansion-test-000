@@ -9323,6 +9323,16 @@
       "border_height": 2,
       "border_width": 2,
       "layout_version": "frlg"
+    },
+    {
+      "id": "LAYOUT_MON_FOREST_TOWN_BASE_000",
+      "name": "MonForestTownBase_000_Layout",
+      "width": 123,
+      "height": 60,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/MonForestTownBase_000/border.bin",
+      "blockdata_filepath": "data/layouts/MonForestTownBase_000/map.bin"
     }
   ]
 }
