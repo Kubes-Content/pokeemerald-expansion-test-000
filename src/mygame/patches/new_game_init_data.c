@@ -1,18 +1,20 @@
-#include "../../../include/mygame/patches/new_game/new_game_init_data.h"
-#include "../../../include/global.h"
-#include "../../../include/event_data.h"
-#include "../../../include/random.h"
-#include "../../../include/constants/flags.h"
-#include "../../../include/constants/opponents.h"
+#include "mygame/patches/new_game/new_game_init_data.h"
 
-static int GetRandomSpecies()
+#include "global.h"
+
+#include "event_data.h"
+#include "random.h"
+#include "constants/flags.h"
+
+static enum Species GetRandomSpecies()
 {
-    return Random() % (NUM_SPECIES - 1);
+    return RandomUniform(RNG_NONE, 0, NUM_SPECIES - 1);
 }
 
 static void GivePlayerRandomMon() {
     struct Pokemon mon;
-        CreateRandomMon(&mon, GetRandomSpecies(), 5);
+    CreateRandomMon(&mon, GetRandomSpecies(), 5);
+
     GiveScriptedMonToPlayer(&mon, PARTY_SIZE);
     FlagSet(FLAG_SYS_POKEMON_GET);
 }
