@@ -8,6 +8,5 @@
 
 void OnNewGameInitDataPatch_FnEnd()
 {
-    struct SaveBlock1State* myGameSaveBlock1State = &gSaveBlock1Ptr->myGameSaveBlock1State; // todo extract to function
-    SaveBlock1State_Clear(myGameSaveBlock1State);
+    SaveBlock1State_Create(&gSaveBlock1Ptr->myGameSaveBlock1State);
 }
