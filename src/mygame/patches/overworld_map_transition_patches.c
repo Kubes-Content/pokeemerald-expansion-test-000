@@ -5,9 +5,9 @@
 
 #include "global.h"
 
+#ifdef OVERWORLD_RESUME_MAP_CONTEXT
 #include "assertf.h"
 
-#ifdef OVERWORLD_RESUME_MAP_CONTEXT
 static enum OverworldResumeMapContext* GetResumeMapContext()
 {
     return OVERWORLD_RESUME_MAP_CONTEXT;
@@ -45,10 +45,12 @@ void OnDoMapLoadLoopPatch_PreResumeMap()
     SetContext(RESUME_MAP_CONTEXT_MAP_LOADED);
 }
 
+#ifdef OVERWORLD_RESUME_MAP_CONTEXT
 static void OnResumeMapPatch(const enum OverworldResumeMapContext context)
 {
 
 }
+#endif
 
 void OnResumeMapPatch_FnEnd()
 {
