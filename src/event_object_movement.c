@@ -58,6 +58,7 @@
 #include "constants/trainer_types.h"
 #include "constants/union_room.h"
 #include "constants/weather.h"
+
 #include "mygame/patches/event_object_movement_patches.h"
 
 #define SPECIAL_LOCALIDS_START (min(LOCALID_CAMERA, \
@@ -2939,6 +2940,9 @@ void RemoveObjectEventsOutsideView(void)
             if (IsOWEDespawnExempt(objectEvent))
                 continue;
 
+            if (!ObjectDespawnsOutsideViewPatch(objectEvent))
+                continue;
+
             RemoveObjectEventIfOutsideView(objectEvent);
         }
     }
@@ -2962,6 +2966,8 @@ static void RemoveObjectEventIfOutsideView(struct ObjectEvent *objectEvent)
     // their despawn animation should play.
     objectEvent->offScreen = TRUE;
     RemoveObjectEvent(objectEvent);
+
+    OnObjectRemovedOutsideView(objectEvent);
 }
 
 void SpawnObjectEventsOnReturnToField(s16 x, s16 y)

@@ -7,3 +7,23 @@ bool8 GetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* objectEv
 {
     return FALSE;
 }
+
+bool8 ObjectDespawnsOutsideViewPatch(const struct ObjectEvent* objectEvent)
+{
+    return TRUE;
+}
+
+void OnObjectRemovedOutsideView(struct ObjectEvent* objectEvent)
+{
+
+}
+
+void OnOverworldViewPositionForced(struct Coords16 position)
+{
+
+}
+
+void OnOverworldViewPositionMoved(struct Coords16 from, struct Coords16 to)
+{
+
+}

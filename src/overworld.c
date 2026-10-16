@@ -84,7 +84,9 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+
 #include "mygame/patches/dynamic_warp_patches.h"
+#include "mygame/patches/event_object_movement_patches.h"
 #include "mygame/patches/new_game/new_game_custom_warp.h"
 #include "mygame/patches/overworld_patches.h"
 
@@ -703,6 +705,8 @@ static void SetPlayerCoordsFromWarp(void)
         gSaveBlock1Ptr->pos.x = gMapHeader.mapLayout->width / 2;
         gSaveBlock1Ptr->pos.y = gMapHeader.mapLayout->height / 2;
     }
+
+    OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
 }
 
 void WarpIntoMap(void)
