@@ -1,9 +1,11 @@
-#include "../../../include/mygame/patches/new_game/new_game_init_data.h"
-#include "../../../include/global.h"
-#include "../../../include/event_data.h"
-#include "../../../include/random.h"
-#include "../../../include/constants/flags.h"
-#include "../../../include/constants/opponents.h"
+#include "mygame/patches/new_game/new_game_init_data.h"
+#include "global.h"
+#include "event_data.h"
+#include "random.h"
+#include "constants/flags.h"
+#include "constants/opponents.h"
+
+#include "mygame/patches/new_game/new_game_init_data_impl.h"
 
 static int GetRandomSpecies()
 {
@@ -19,5 +21,7 @@ static void GivePlayerRandomMon() {
 
 void NewGameInitDataPatch_FnEnd()
 {
+    OnNewGameInitDataPatch_FnEnd();
+
     GivePlayerRandomMon(); // give the player a pokemon upon starting a new game
 }

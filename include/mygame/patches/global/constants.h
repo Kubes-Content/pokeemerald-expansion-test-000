@@ -8,4 +8,6 @@
 #define MAP_COUNT (MAP_SEVEN_ISLAND_SEVAULT_CANYON_HOUSE + 1)
 #define MAX_COORDINATE (256 - 1)
 
+#define OVERWORLD_RESUME_MAP_CONTEXT &gSaveBlock1Ptr->myGameSaveBlock1State.overworldResumeMapContext
+
 #endif // GUARD_KUBES_GLOBAL_CONSTANTS_H
