@@ -475,6 +475,7 @@ struct BattleDomeTrainer
 #define DOME_TOURNAMENT_TRAINERS_COUNT 16
 #define BATTLE_TOWER_RECORD_COUNT 5
 
+#if FREE_BATTLE_FRONTIER == FALSE
 struct BattleFrontier
 {
     /*0x64C*/ struct EmeraldBattleTowerRecord towerPlayer;
@@ -577,6 +578,7 @@ struct BattleFrontier
 #endif
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
 };
+#endif
 
 struct ApprenticeQuestion
 {
