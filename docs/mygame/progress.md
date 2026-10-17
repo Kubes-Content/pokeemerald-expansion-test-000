@@ -1,3 +1,4 @@
+[x] spawn over 16 objects
 [ ] temp array of instance object states (default value is 'inactive')
 	- OutdoorGroundObjectByInstanceIndex
 	- needs to be set to 'inactive' when despawned

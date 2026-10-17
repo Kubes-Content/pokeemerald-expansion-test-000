@@ -796,6 +796,7 @@ static void Mailbox_DoMailRead(u8 taskId)
     gTasks[taskId].func = Mailbox_FadeAndReadMail;
 }
 
+// TODO could I use this?
 static void Mailbox_FadeAndReadMail(u8 taskId)
 {
     if (!gPaletteFade.active)

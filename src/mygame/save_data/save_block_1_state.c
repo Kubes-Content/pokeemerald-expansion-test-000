@@ -8,10 +8,11 @@
 
 static void GenerateSomeFruitOnTheGround(struct SaveBlock1State* saveBlock1State)
 {
-    const u8 count = 5;
+    const u8 count = 64;
+    const u8 rows = 5;
     for (u8 i = 0; i < count; i++)
     {
-        struct OutdoorGroundObjectSlot* outdoorGroundObject = GetOutdoorGroundObject(saveBlock1State, 3 + i, 4);
+        struct OutdoorGroundObjectSlot* outdoorGroundObject = GetOutdoorGroundObject(saveBlock1State, 1 + i / rows, 4 + i % rows);
         outdoorGroundObject->objectState.x = GROUND_OBJECT_TYPE_FRUIT;
     }
 }
