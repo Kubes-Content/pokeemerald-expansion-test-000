@@ -1293,7 +1293,9 @@ struct SaveBlock1
     /*0x2BBC*/ u16 easyChatBattleStart[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x2BC8*/ u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x2BD4*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
+#if FREE_MAIL == FALSE
     /*0x2BE0*/ struct Mail mail[MAIL_COUNT];
+#endif //FREE_MAIL == FALSE
     /*0x2E20*/ u8 unlockedTrendySayings[NUM_TRENDY_SAYING_BYTES]; // Bitfield for unlockable Easy Chat words in EC_GROUP_TRENDY_SAYING
 #if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x2E25*/ u8 padding5[3];

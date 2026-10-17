@@ -182,7 +182,9 @@ void NewGameInitData(void)
     ClearFrontierRecord();
     ClearSav1();
     ClearSav3();
+#if FREE_MAIL == FALSE
     ClearAllMail();
+#endif //FREE_MAIL == FALSE
     gSaveBlock2Ptr->specialSaveWarpFlags = 0;
     gSaveBlock2Ptr->gcnLinkFlags = 0;
     InitPlayerTrainerId();

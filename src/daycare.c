@@ -219,6 +219,7 @@ static void TransferEggMoves(struct DayCare *daycare)
 
 void StorePokemonInDaycare(struct Pokemon *mon, struct DaycareMon *daycareMon)
 {
+#if FREE_MAIL == FALSE
     if (MonHasMail(mon))
     {
         u8 mailId;
@@ -232,6 +233,7 @@ void StorePokemonInDaycare(struct Pokemon *mon, struct DaycareMon *daycareMon)
         daycareMon->mail.message = gSaveBlock1Ptr->mail[mailId];
         TakeMailFromMon(mon);
     }
+#endif //FREE_MAIL == FALSE
 
     TryFormChange(mon, FORM_CHANGE_DEPOSIT, B_TRAINER_PLAYER);
 
