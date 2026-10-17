@@ -1121,9 +1121,13 @@ static bool8 BufferTradeParties(void)
         }
         break;
     case 13:
+#if FREE_MAIL == FALSE
         Trade_Memcpy(gBlockSendBuffer, gSaveBlock1Ptr->mail, PARTY_SIZE * sizeof(struct Mail) + 4);
         sTradeMenu->bufferPartyState++;
         break;
+#else
+        return FALSE;
+#endif //FREE_MAIL == FALSE
     case 15:
         if (id == 0)
             RequestLinkData(BLOCK_REQ_SIZE_220);
@@ -3093,9 +3097,11 @@ static void TradeMons(u8 playerPartyIdx, u8 partnerPartyIdx)
     partnerMon = &gParties[B_TRAINER_OPPONENT_A][partnerPartyIdx];
     u16 partnerMail = GetMonData(partnerMon, MON_DATA_MAIL);
 
+#if FREE_MAIL == FALSE
     // The mail attached to the sent Pokémon no longer exists in your file.
     if (playerMail != MAIL_NONE)
         ClearMail(&gSaveBlock1Ptr->mail[playerMail]);
+#endif //FREE_MAIL == FALSE
 
     SWAP(*playerMon, *partnerMon, sTradeAnim->tempMon);
 
