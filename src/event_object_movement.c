@@ -11382,6 +11382,7 @@ void GetDaycareGraphics(struct ScriptContext *ctx)
     Script_RequestWriteVar(varForm[0]);
     Script_RequestWriteVar(varForm[1]);
 
+#if FREE_DAYCARE == FALSE
     for (i = 0; i < 2; i++)
     {
         GetMonInfo((struct Pokemon *) &gSaveBlock1Ptr->daycare.mons[i].mon, &specGfx, &shiny, &female);
@@ -11393,6 +11394,9 @@ void GetDaycareGraphics(struct ScriptContext *ctx)
         VarSet(varForm[i], 0);  //  This shouldn't be needed anymore, track down
     }
     gSpecialVar_Result = i;
+#else //FREE_DAYCARE == FALSE
+    gSpecialVar_Result = 0;
+#endif //FREE_DAYCARE == FALSE
 }
 
 // running slow
