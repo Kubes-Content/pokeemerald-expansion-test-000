@@ -225,12 +225,14 @@ struct Time
     /*0x04*/ s8 seconds;
 };
 
+#if FREE_SAVE_BLOCK_PADDING == FALSE
 struct NPCFollowerPadding
 {
     u8 padding1;
     u8 padding2;
     u8 padding3;
 };
+#endif
 
 struct NPCFollower
 {
@@ -242,7 +244,9 @@ struct NPCFollower
     u8 objId;
     u8 currentSprite;
     u8 delayedState;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     struct NPCFollowerPadding padding;
+#endif
     struct Coords16 log;
     const u8 *script;
     u16 flag;
@@ -286,17 +290,23 @@ struct Pokedex
     /*0x08*/ u32 spindaPersonality; // set when you first see Spinda
     /*0x0C*/ u32 unknown3;
 #if FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK2 == FALSE
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x10*/ u8 filler[0x68]; // Previously Dex Flags, feel free to remove.
+#endif
 #endif //FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK2
 };
 
 struct PokemonJumpRecords
 {
     u16 jumpsInRow;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u16 unused1; // Set to 0, never read
+#endif
     u16 excellentsInRow;
     u16 gamesWithMaxPlayers;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u32 unused2; // Set to 0, never read
+#endif
     u32 bestJumpScore;
 };
 
@@ -345,10 +355,14 @@ struct Apprentice
 {
     u8 id:5;
     u8 lvlMode:2;
-    //u8 padding1:1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding1:1;
+#endif
     u8 numQuestions;
     u8 number;
-    //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding2;
+#endif
     struct ApprenticeMon party[MULTI_PARTY_SIZE];
     u16 speechWon[EASY_CHAT_BATTLE_WORDS_COUNT];
     u8 playerId[TRAINER_ID_LENGTH];
@@ -396,7 +410,9 @@ struct EmeraldBattleTowerRecord
     /*0x28*/ u16 speechLost[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x34*/ struct BattleTowerPokemon party[MAX_FRONTIER_PARTY_SIZE];
     /*0xE4*/ u8 language;
-    /*0xE7*/ //u8 padding[3];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xE7*/ u8 padding[3];
+#endif
     /*0xE8*/ u32 checksum;
 };
 
@@ -429,17 +445,23 @@ struct DomeMonData
     enum Move moves[MAX_MON_MOVES];
     u8 evs[NUM_STATS];
     u8 nature;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct RentalMon
 {
     u16 monId;
-    //u8 padding1[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding1[2];
+#endif
     u32 personality;
     u8 ivs;
     u8 abilityNum;
-    //u8 padding2[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding2[2];
+#endif
 };
 
 struct BattleDomeTrainer
@@ -465,7 +487,9 @@ struct BattleFrontier
     /*0xCA9*/ u8 lvlMode:2;
               u8 challengePaused:1;
               u8 disableRecordBattle:1;
-              //u8 padding1:4;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+              u8 padding1:4;
+#endif
     /*0xCAA*/ u16 selectedPartyMons[MAX_FRONTIER_PARTY_SIZE];
     /*0xCB2*/ u16 curChallengeBattleNum; // Battle number / room number (Pike) / floor number (Pyramid)
     /*0xCB4*/ u16 trainerIds[20];
@@ -485,7 +509,9 @@ struct BattleFrontier
     /*0xD08*/ u8 domeAttemptedDoublesOpen:1;
     /*0xD08*/ u8 domeHasWonDoubles50:1;
     /*0xD08*/ u8 domeHasWonDoublesOpen:1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0xD09*/ u8 domeUnused;
+#endif
     /*0xD0A*/ u8 domeLvlMode;
     /*0xD0B*/ u8 domeBattleMode;
     /*0xD0C*/ u16 domeWinStreaks[2][FRONTIER_LVL_MODE_COUNT];
@@ -493,7 +519,9 @@ struct BattleFrontier
     /*0xD1C*/ u16 domeTotalChampionships[2][FRONTIER_LVL_MODE_COUNT];
     /*0xD24*/ struct BattleDomeTrainer domeTrainers[DOME_TOURNAMENT_TRAINERS_COUNT];
     /*0xD64*/ u16 domeMonIds[DOME_TOURNAMENT_TRAINERS_COUNT][FRONTIER_PARTY_SIZE];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0xDC4*/ u16 unused_DC4;
+#endif
     /*0xDC6*/ u16 palacePrize;
     /*0xDC8*/ u16 palaceWinStreaks[2][FRONTIER_LVL_MODE_COUNT];
     /*0xDD0*/ u16 palaceRecordWinStreaks[2][FRONTIER_LVL_MODE_COUNT];
@@ -511,17 +539,23 @@ struct BattleFrontier
     /*0xE10*/ u8 pikeHintedRoomIndex:3;
               u8 pikeHintedRoomType:4;
               u8 pikeHealingRoomsDisabled:1;
-    /*0xE11*/ //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xE11*/ u8 padding2;
+#endif
     /*0xE12*/ u16 pikeHeldItemsBackup[FRONTIER_PARTY_SIZE];
     /*0xE18*/ u16 pyramidPrize;
     /*0xE1A*/ u16 pyramidWinStreaks[FRONTIER_LVL_MODE_COUNT];
     /*0xE1E*/ u16 pyramidRecordStreaks[FRONTIER_LVL_MODE_COUNT];
     /*0xE22*/ u16 pyramidRandoms[4];
     /*0xE2A*/ u8 pyramidTrainerFlags; // 1 bit for each trainer (MAX_PYRAMID_TRAINERS)
-    /*0xE2B*/ //u8 padding3;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xE2B*/ u8 padding3;
+#endif
     /*0xE2C*/ struct PyramidBag pyramidBag;
     /*0xE68*/ u8 pyramidLightRadius;
-    /*0xE69*/ //u8 padding4;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xE69*/ u8 padding4;
+#endif
     /*0xE6A*/ u16 verdanturfTentPrize;
     /*0xE6C*/ u16 fallarborTentPrize;
     /*0xE6E*/ u16 slateportTentPrize;
@@ -533,10 +567,14 @@ struct BattleFrontier
     /*0xEE0*/ u8 trainerFlags;
     /*0xEE1*/ u8 opponentNames[FRONTIER_LVL_MODE_COUNT][PLAYER_NAME_LENGTH + 1];
     /*0xEF1*/ u8 opponentTrainerIds[FRONTIER_LVL_MODE_COUNT][TRAINER_ID_LENGTH];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0xEF9*/ u8 unk_EF9:7; // Never read
+#endif
     /*0xEF9*/ u8 savedGame:1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0xEFA*/ u8 unused_EFA;
     /*0xEFB*/ u8 unused_EFB;
+#endif
     /*0xEFC*/ struct DomeMonData domePlayerPartyData[FRONTIER_PARTY_SIZE];
 };
 
@@ -546,7 +584,9 @@ struct ApprenticeQuestion
     u8 monId:2;
     u8 moveSlot:2;
     u8 suggestedChange:2; // TRUE if told to use held item or second move, FALSE if told to use no item or first move
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
     u16 data; // used both as an itemId and a move
 };
 
@@ -558,10 +598,14 @@ struct PlayersApprentice
     /*0xB1*/ u8 leadMonId:2;
     /*0xB2*/ u8 party:3;
              u8 saveId:2;
-             //u8 padding1:3;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+             u8 padding1:3;
     /*0xB3*/ u8 unused;
+#endif
     /*0xB4*/ u8 speciesIds[MULTI_PARTY_SIZE];
-    /*0xB7*/ //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xB7*/ u8 padding2;
+#endif
     /*0xB8*/ struct ApprenticeQuestion questions[APPRENTICE_MAX_QUESTIONS];
 };
 
@@ -571,7 +615,9 @@ struct RankingHall1P
     u16 winStreak;
     u8 name[PLAYER_NAME_LENGTH + 1];
     u8 language;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct RankingHall2P
@@ -582,7 +628,9 @@ struct RankingHall2P
     u8 name1[PLAYER_NAME_LENGTH + 1];
     u8 name2[PLAYER_NAME_LENGTH + 1];
     u8 language;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct SaveBlock2
@@ -602,10 +650,14 @@ struct SaveBlock2
              u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
              u16 optionsBattleSceneOff:1; // whether battle animations are disabled
              u16 regionMapZoom:1; // whether the map is zoomed in
-             //u16 padding1:4;
-             //u16 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+             u16 padding1:4;
+             u16 padding2;
+#endif
     /*0x18*/ struct Pokedex pokedex;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x90*/ u8 filler_90[0x8];
+#endif
     /*0x98*/ struct Time localTimeOffset;
     /*0xA0*/ struct Time lastBerryTreeUpdate;
     /*0xA8*/ u32 gcnLinkFlags; // Read by Pokémon Colosseum/XD
@@ -653,10 +705,14 @@ struct SecretBase
     /*0x1AA9*/ u8 language;
     /*0x1AAA*/ u16 numSecretBasesReceived;
     /*0x1AAC*/ u8 numTimesEntered;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x1AAD*/ u8 unused;
+#endif
     /*0x1AAE*/ u8 decorations[DECOR_MAX_SECRET_BASE];
     /*0x1ABE*/ u8 decorationPositions[DECOR_MAX_SECRET_BASE];
-    /*0x1ACE*/ //u8 padding[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x1ACE*/ u8 padding[2];
+#endif
     /*0x1AD0*/ struct SecretBaseParty party;
 };
 
@@ -671,7 +727,9 @@ struct WarpData
     s8 mapGroup;
     s8 mapNum;
     s8 warpId;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
     s16 x, y;
 };
 
@@ -708,7 +766,9 @@ struct Roamer
     /*0x13*/ bool8 active;
     /*0x14*/ u8 statusB; // Stores frostbite
     /*0x15*/ bool8 shiny;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x16*/ u8 filler[0x6];
+#endif
 };
 
 struct RamScriptData
@@ -718,7 +778,9 @@ struct RamScriptData
     u8 mapNum;
     u8 localId;
     u8 script[995];
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct RamScript
@@ -733,7 +795,9 @@ struct DewfordTrend
     u16 trendiness:7;
     u16 maxTrendiness:7;
     u16 gainingTrendiness:1;
-    //u16 padding:1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u16 padding:1;
+#endif
     u16 rand;
     u16 words[2];
 }; /*size = 0x8*/
@@ -746,22 +810,30 @@ struct MauvilleManCommon
 struct MauvilleManBard
 {
     /*0x00*/ u8 id;
-    /*0x01*/ //u8 padding1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x01*/ u8 padding1;
+#endif
     /*0x02*/ u16 songLyrics[NUM_BARD_SONG_WORDS];
     /*0x0E*/ u16 newSongLyrics[NUM_BARD_SONG_WORDS];
     /*0x1A*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x22*/ u8 filler_2DB6[0x3];
+#endif
     /*0x25*/ u8 playerTrainerId[TRAINER_ID_LENGTH];
     /*0x29*/ bool8 hasChangedSong;
     /*0x2A*/ u8 language;
-    /*0x2B*/ //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x2B*/ u8 padding2;
+#endif
 }; /*size = 0x2C*/
 
 struct MauvilleManStoryteller
 {
     u8 id;
     bool8 alreadyRecorded;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u8 filler2[2];
+#endif
     u8 gameStatIDs[NUM_STORYTELLER_TALES];
     u8 trainerNames[NUM_STORYTELLER_TALES][PLAYER_NAME_LENGTH];
     u8 statValues[NUM_STORYTELLER_TALES][4];
@@ -773,11 +845,15 @@ struct MauvilleManGiddy
     /*0x00*/ u8 id;
     /*0x01*/ u8 taleCounter;
     /*0x02*/ u8 questionNum;
-    /*0x03*/ //u8 padding1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x03*/ u8 padding1;
+#endif
     /*0x04*/ u16 randomWords[GIDDY_MAX_TALES];
     /*0x18*/ u8 questionList[GIDDY_MAX_QUESTIONS];
     /*0x20*/ u8 language;
-    /*0x21*/ //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x21*/ u8 padding2;
+#endif
 }; /*size = 0x2C*/
 
 struct MauvilleManHipster
@@ -804,7 +880,9 @@ typedef union OldMan
     struct MauvilleManHipster hipster;
     struct MauvilleOldManTrader trader;
     struct MauvilleManStoryteller storyteller;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u8 filler[0x40];
+#endif
 } OldMan;
 
 #define LINK_B_RECORDS_COUNT 5
@@ -822,7 +900,9 @@ struct LinkBattleRecords
 {
     struct LinkBattleRecord entries[LINK_B_RECORDS_COUNT];
     u8 languages[LINK_B_RECORDS_COUNT];
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct RecordMixingGiftData
@@ -830,7 +910,9 @@ struct RecordMixingGiftData
     u8 unk0;
     u8 quantity;
     enum Item itemId;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u8 filler4[8];
+#endif
 };
 
 struct RecordMixingGift
@@ -849,7 +931,9 @@ struct ContestWinner
     u8 trainerName[PLAYER_NAME_LENGTH + 1];
     u8 contestRank:7;
     bool8 isShiny:1;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct Mail
@@ -908,11 +992,15 @@ struct LilycoveLadyFavor
     /*0x003*/ u8 numItemsGiven;
     /*0x004*/ u8 playerName[PLAYER_NAME_LENGTH + 1];
     /*0x00C*/ u8 favorId;
-    /*0x00D*/ //u8 padding1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x00D*/ u8 padding1;
+#endif
     /*0x00E*/ enum Item itemId;
     /*0x010*/ u16 bestItem;
     /*0x012*/ u8 language;
-    /*0x013*/ //u8 padding2;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x013*/ u8 padding2;
+#endif
 };
 
 struct LilycoveLadyContest
@@ -933,7 +1021,9 @@ typedef union // 3b58
     struct LilycoveLadyFavor favor;
     struct LilycoveLadyContest contest;
     u8 id;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     u8 filler[0x40];
+#endif
 } LilycoveLady;
 
 struct WaldaPhrase
@@ -943,7 +1033,9 @@ struct WaldaPhrase
     u8 iconId;
     u8 patternId;
     bool8 patternUnlocked;
-    //u8 padding;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding;
+#endif
 };
 
 struct TrainerNameRecord
@@ -957,7 +1049,9 @@ struct TrainerHillSave
     /*0x3D64*/ u32 timer;
     /*0x3D68*/ u32 bestTime;
     /*0x3D6C*/ u8 unk_3D6C;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x3D6D*/ u8 unused;
+#endif
     /*0x3D6E*/ u16 receivedPrize:1;
                u16 checkedFinalTime:1;
                u16 spokeToOwner:1;
@@ -965,7 +1059,9 @@ struct TrainerHillSave
                u16 maybeECardScanDuringChallenge:1;
                u16 field_3D6E_0f:1;
                u16 mode:2; // HILL_MODE_*
-               //u16 padding:8;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+               u16 padding:8;
+#endif
 };
 
 struct TrainerTower
@@ -988,7 +1084,9 @@ struct WonderNewsMetadata
     u8 sentRewardCounter:3;
     u8 rewardCounter:3;
     u8 berry;
-    //u8 padding[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding[2];
+#endif
 };
 
 struct WonderNews
@@ -1014,7 +1112,9 @@ struct WonderCard
     u8 bodyText[WONDER_CARD_BODY_TEXT_LINES][WONDER_CARD_TEXT_LENGTH];
     u8 footerLine1Text[WONDER_CARD_TEXT_LENGTH];
     u8 footerLine2Text[WONDER_CARD_TEXT_LENGTH];
-    //u8 padding[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding[2];
+#endif
 };
 
 struct WonderCardMetadata
@@ -1061,7 +1161,9 @@ struct ExternalEventFlags
 {
     u8 usedBoxRS:1; // Set by Pokémon Box: Ruby & Sapphire; denotes whether this save has connected to it and triggered the free False Swipe Swablu Egg giveaway.
     u8 boxRSEggsUnlocked:2; // Set by Pokémon Box: Ruby & Sapphire; denotes the number of Eggs unlocked from deposits; 1 for ExtremeSpeed Zigzagoon (at 100 deposited), 2 for Pay Day Skitty (at 500 deposited), 3 for Surf Pichu (at 1499 deposited)
-    //u8 padding:5;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    u8 padding:5;
+#endif
     u8 unknownFlag1;
     u8 receivedGCNJirachi; // Both the US Colosseum Bonus Disc and PAL/AUS Pokémon Channel use this field. One cannot receive a WISHMKR Jirachi and CHANNEL Jirachi with the same savefile.
     u8 unknownFlag3;
@@ -1106,11 +1208,15 @@ struct SaveBlock1
     /*0x2E*/ u8 weather;
     /*0x2F*/ u8 weatherCycleStage;
     /*0x30*/ u8 flashLevel;
-    /*0x31*/ //u8 padding1;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x31*/ u8 padding1;
+#endif
     /*0x32*/ u16 mapLayoutId;
     /*0x34*/ u16 mapView[0x100];
     /*0x234*/ u8 playerPartyCount;
-    /*0x235*/ //u8 padding2[3];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x235*/ u8 padding2[3];
+#endif
     /*0x238*/ struct Pokemon playerParty[PARTY_SIZE];
     /*0x490*/ u32 money;
     /*0x494*/ u16 coins;
@@ -1122,16 +1228,22 @@ struct SaveBlock1
     /*0x848*/ struct Pokeblock pokeblocks[POKEBLOCKS_COUNT];
 #endif
 #if FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK1 == FALSE
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x988*/ u8 filler1[0x34]; // Previously Dex Flags, feel free to remove.
+#endif //FREE_SAVE_BLOCK_PADDING == FALSE
 #endif //FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK1
     /*0x9BC*/ u16 berryBlenderRecords[3];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x9C2*/ u8 unused_9C2[2];
+#endif
               u32 dailySeed;
 #if FREE_MATCH_CALL == FALSE
     /*0x9C8*/ u16 trainerRematchStepCounter;
     /*0x9CA*/ u8 trainerRematches[MAX_REMATCH_ENTRIES];
 #endif //FREE_MATCH_CALL
-    /*0xA2E*/ //u8 padding3[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0xA2E*/ u8 padding3[2];
+#endif
     /*0xA30*/ struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
     /*0xC70*/ struct ObjectEventTemplate objectEventTemplates[OBJECT_EVENT_TEMPLATES_COUNT];
     /*0x1270*/ u8 flags[NUM_FLAG_BYTES];
@@ -1156,16 +1268,22 @@ struct SaveBlock1
 #if FREE_TV_SHOWS == FALSE
     /*0x27CC*/ TVShow tvShows[TV_SHOWS_COUNT];
 #endif
-    /*0x27CA*/ //u8 padding4[2];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x27CA*/ u8 padding4[2];
+#endif
     /*0x2B50*/ PokeNews pokeNews[POKE_NEWS_COUNT];
     /*0x2B90*/ enum Species outbreakPokemonSpecies;
     /*0x2B92*/ u8 outbreakLocationMapNum;
     /*0x2B93*/ u8 outbreakLocationMapGroup;
     /*0x2B94*/ u8 outbreakPokemonLevel;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x2B95*/ u8 outbreakUnused1;
     /*0x2B96*/ u16 outbreakUnused2;
+#endif
     /*0x2B98*/ u16 outbreakPokemonMoves[MAX_MON_MOVES];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     /*0x2BA0*/ u8 outbreakUnused3;
+#endif
     /*0x2BA1*/ u8 outbreakPokemonProbability;
     /*0x2BA2*/ u16 outbreakDaysLeft;
     /*0x2BA4*/ struct GabbyAndTyData gabbyAndTyData;
@@ -1175,7 +1293,9 @@ struct SaveBlock1
     /*0x2BD4*/ u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
     /*0x2BE0*/ struct Mail mail[MAIL_COUNT];
     /*0x2E20*/ u8 unlockedTrendySayings[NUM_TRENDY_SAYING_BYTES]; // Bitfield for unlockable Easy Chat words in EC_GROUP_TRENDY_SAYING
-    /*0x2E25*/ //u8 padding5[3];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
+    /*0x2E25*/ u8 padding5[3];
+#endif
     /*0x2E28*/ OldMan oldMan;
     /*0x2e64*/ struct DewfordTrend dewfordTrends[SAVED_TRENDS_COUNT];
     /*0x2e90*/ struct ContestWinner contestWinners[NUM_CONTEST_WINNERS]; // see CONTEST_WINNER_*
@@ -1184,7 +1304,9 @@ struct SaveBlock1
     /*0x3150*/ struct LinkBattleRecords linkBattleRecords;
 #endif //FREE_LINK_BATTLE_RECORDS
     /*0x31A8*/ u8 giftRibbons[NUM_GIFT_RIBBONS];
+#if FREE_SAVE_BLOCK_PADDING == FALSE
                u8 padding[4];
+#endif
     /*0x31B3*/ struct ExternalEventData externalEventData;
     /*0x31C7*/ struct ExternalEventFlags externalEventFlags;
     /*0x31DC*/ struct Roamer roamer[ROAMER_COUNT];
