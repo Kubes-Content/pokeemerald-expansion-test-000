@@ -995,8 +995,10 @@ static void ReceiveDaycareMailData(struct RecordMixingDaycareMail *records, size
 
     // Save player's record mixed mail to the daycare (in case it has changed)
     mixMail = (void *)records + multiplayerId * recordSize;
+#if FREE_DAYCARE == FALSE
     memcpy(&gSaveBlock1Ptr->daycare.mons[0].mail, &mixMail->mail[0], sizeof(struct DaycareMail));
     memcpy(&gSaveBlock1Ptr->daycare.mons[1].mail, &mixMail->mail[1], sizeof(struct DaycareMail));
+#endif //FREE_DAYCARE == FALSE
 }
 
 
@@ -1410,10 +1412,12 @@ static void ReceiveRankingHallRecords(struct PlayerHallRecords *records, size_t 
 
 static void GetRecordMixingDaycareMail(struct RecordMixingDaycareMail *dst)
 {
+#if FREE_DAYCARE == FALSE
     sRecordMixMail.mail[0] = gSaveBlock1Ptr->daycare.mons[0].mail;
     sRecordMixMail.mail[1] = gSaveBlock1Ptr->daycare.mons[1].mail;
     InitDaycareMailRecordMixing(&gSaveBlock1Ptr->daycare, &sRecordMixMail);
     *dst = *sRecordMixMailSave;
+#endif //FREE_DAYCARE == FALSE
 }
 
 static void SanitizeDaycareMailForRuby(struct RecordMixingDaycareMail *src)

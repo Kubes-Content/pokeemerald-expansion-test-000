@@ -260,9 +260,11 @@ void LoadPlayerBag(void)
     // load player bag.
     memcpy(&gLoadedSaveData.bag, &gSaveBlock1Ptr->bag, sizeof(struct Bag));
 
+#if FREE_MAIL == FALSE
     // load mail.
     for (i = 0; i < MAIL_COUNT; i++)
         gLoadedSaveData.mail[i] = gSaveBlock1Ptr->mail[i];
+#endif //FREE_MAIL == FALSE
 
     gLastEncryptionKey = gSaveBlock2Ptr->encryptionKey;
 }
@@ -275,9 +277,11 @@ void SavePlayerBag(void)
     // save player bag.
     memcpy(&gSaveBlock1Ptr->bag, &gLoadedSaveData.bag, sizeof(struct Bag));
 
+#if FREE_MAIL == FALSE
     // save mail.
     for (i = 0; i < MAIL_COUNT; i++)
         gSaveBlock1Ptr->mail[i] = gLoadedSaveData.mail[i];
+#endif //FREE_MAIL == FALSE
 
     encryptionKeyBackup = gSaveBlock2Ptr->encryptionKey;
     gSaveBlock2Ptr->encryptionKey = gLastEncryptionKey;

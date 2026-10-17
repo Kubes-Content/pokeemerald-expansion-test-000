@@ -298,7 +298,9 @@ void ResetTrainerHillResults(void)
 
 #if FREE_BATTLE_FRONTIER == FALSE
     gSaveBlock2Ptr->frontier.savedGame = 0;
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     gSaveBlock2Ptr->frontier.unk_EF9 = 0;
+#endif //FREE_SAVE_BLOCK_PADDING == FALSE
 #endif //FREE_BATTLE_FRONTIER == FALSE
 #if FREE_TRAINER_HILL == FALSE
     gSaveBlock1Ptr->trainerHill.bestTime = 0;
@@ -461,7 +463,9 @@ static void GiveChallengePrize(void)
         CopyItemName(itemId, gStringVar2);
         gSaveBlock1Ptr->trainerHill.receivedPrize = TRUE;
 #if FREE_BATTLE_FRONTIER == FALSE
+#if FREE_SAVE_BLOCK_PADDING == FALSE
         gSaveBlock2Ptr->frontier.unk_EF9 = 0;
+#endif //FREE_SAVE_BLOCK_PADDING == FALSE
 #endif //FREE_BATTLE_FRONTIER == FALSE
         gSpecialVar_Result = 0;
     }

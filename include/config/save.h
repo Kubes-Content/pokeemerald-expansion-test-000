@@ -4,6 +4,9 @@
 // Menu configs
 #define SKIP_SAVE_CONFIRMATION              FALSE   // If TRUE, skips the "There is already a saved file" confirmation when overwriting a save.
 
+// SaveBlocks shared configs
+#define FREE_SAVE_BLOCK_PADDING             FALSE   // Free up padding (216 bytes) (1: 100 bytes; 2: 116 bytes) some overlap with other FREE_ macros
+                                            // across SaveBlocks: 216 bytes (not included in below totals besides grand total
 // SaveBlock1 configs
 #define FREE_EXTRA_SEEN_FLAGS_SAVEBLOCK1    FALSE   // Free up unused Pokédex seen flags (52 bytes).
 #define FREE_TRAINER_HILL                   FALSE   // Frees up Trainer Hill data (28 bytes).
@@ -18,7 +21,9 @@
 #define FREE_BERRY_TREES                    FALSE   // Frees up berry tree data (1536 bytes).
 #define FREE_SECRET_BASES                   FALSE   // Frees up secret base data (3200 bytes).
 #define FREE_TV_SHOWS                       FALSE   // Frees up tv show data (900 bytes).
-                                            // SaveBlock1 total: 8432 bytes
+#define FREE_DAYCARE                        FALSE   // Frees up DayCare data (320 bytes)
+#define FREE_MAIL                           FALSE   // Frees up mail data (544 bytes)
+                                            // SaveBlock1 total: 9296 bytes
 // SaveBlock2 configs
 #define FREE_BATTLE_TOWER_E_READER          FALSE   // Frees up Battle Tower E-Reader data (188 bytes).
 #define FREE_POKEMON_JUMP                   FALSE   // Frees up Pokémon Jump data (16 bytes).
@@ -27,6 +32,6 @@
 #define FREE_BATTLE_FRONTIER                FALSE   // Free up unused Battle Frontier data (2240 bytes).
                                             // SaveBlock2 total: 3584 bytes
 
-                                            // Grand Total: 12016
+                                            // Grand Total: between 12880 and 13096
 
 #endif // GUARD_CONFIG_SAVE_H
