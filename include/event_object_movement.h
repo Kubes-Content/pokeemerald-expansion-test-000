@@ -156,7 +156,7 @@ void RemoveFollowingPokemon(void);
 struct ObjectEvent *GetFollowerObject(void);
 enum Direction GetDirectionToFace(s16, s16, s16, s16);
 void UpdateLightSprite(struct Sprite *);
-void TrySpawnObjectEvents(s16 cameraX, s16 cameraY);
+void TrySpawnObjectEvents(s16 cameraDeltaX, s16 cameraDeltaY);
 u8 CreateObjectGraphicsSpriteWithTag(u16 graphicsId, void (*callback)(struct Sprite *), s16 x, s16 y, u8 subpriority, u16 paletteTag);
 u8 CreateObjectGraphicsSprite(u16 graphicsId, void (*callback)(struct Sprite *), s16 x, s16 y, u8 subpriority);
 u8 TrySpawnObjectEvent(u8 localId, u8 mapNum, u8 mapGroup);
@@ -237,7 +237,7 @@ void OverrideTemplateCoordsForObjectEvent(const struct ObjectEvent *objectEvent)
 void ShiftStillObjectEventCoords(struct ObjectEvent *objEvent);
 void ObjectEventMoveDestCoords(struct ObjectEvent *objEvent, enum Direction direction, s16 *x, s16 *y);
 u8 AddCameraObject(u8 linkedSpriteId);
-void UpdateObjectEventsForCameraUpdate(s16 x, s16 y);
+void UpdateObjectEventsForCameraUpdate(s16 cameraDeltaX, s16 cameraDeltaY);
 u8 GetWalkSlowMovementAction(u32);
 u8 GetSpinMovementAction(u32 direction);
 u8 GetWalkSlowStairsMovementAction(u32);

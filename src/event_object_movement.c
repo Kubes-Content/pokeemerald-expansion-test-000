@@ -2877,7 +2877,7 @@ void TrySpawnLightSprites(s16 camX, s16 camY)
     }
 }
 
-void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
+void TrySpawnObjectEvents(s16 cameraDeltaX, s16 cameraDeltaY)
 {
     u8 i;
     u8 objectCount;
@@ -2905,9 +2905,9 @@ void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
             if (top <= npcY && bottom >= npcY && left <= npcX && right >= npcX && !FlagGet(template->flagId))
             {
                 if (template->graphicsId == OBJ_EVENT_GFX_LIGHT_SPRITE)
-                    SpawnLightSprite(npcX, npcY, cameraX, cameraY, template->trainerRange_berryTreeId); // light sprite instead
+                    SpawnLightSprite(npcX, npcY, cameraDeltaX, cameraDeltaY, template->trainerRange_berryTreeId); // light sprite instead
                 else
-                    TrySpawnObjectEventTemplate(template, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cameraX, cameraY);
+                    TrySpawnObjectEventTemplate(template, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cameraDeltaX, cameraDeltaY);
             }
         }
     }
@@ -3490,10 +3490,10 @@ static bool8 ObjectEventDoesElevationMatch(struct ObjectEvent *objectEvent, u8 e
     return TRUE;
 }
 
-void UpdateObjectEventsForCameraUpdate(s16 x, s16 y)
+void UpdateObjectEventsForCameraUpdate(s16 cameraDeltaX, s16 cameraDeltaY)
 {
     UpdateObjectEventCoordsForCameraUpdate();
-    TrySpawnObjectEvents(x, y);
+    TrySpawnObjectEvents(cameraDeltaX, cameraDeltaY);
     RemoveObjectEventsOutsideView();
 }
 
