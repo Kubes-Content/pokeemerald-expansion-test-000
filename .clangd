@@ -1,8 +1,6 @@
 CompileFlags:
   Add:
     - -ferror-limit=0
-    - -DTESTING=1
-    - -DFIRERED=1
 
 Diagnostics:
   Suppress:
