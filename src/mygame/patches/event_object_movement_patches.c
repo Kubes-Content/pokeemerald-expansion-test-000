@@ -27,3 +27,10 @@ void OnOverworldViewPositionMoved(struct Coords16 from, struct Coords16 to)
 {
 
 }
+
+// return TRUE to consume/skip TrySpawnObjectEvents call
+bool8 TrySpawnObjectEventsPatch_FnBegin(const s16 cameraDeltaX, const s16 cameraDeltaY) {
+
+
+    return FALSE;
+}

@@ -12,5 +12,6 @@ bool8 ObjectDespawnsOutsideViewPatch(const struct ObjectEvent* objectEvent);
 void OnObjectRemovedOutsideView(struct ObjectEvent* objectEvent);
 void OnOverworldViewPositionForced(struct Coords16 position);
 void OnOverworldViewPositionMoved(struct Coords16 from, struct Coords16 to);
+bool8 TrySpawnObjectEventsPatch_FnBegin(s16 cameraDeltaX, s16 cameraDeltaY);
 
 #endif // GUARD_KUBES_EVENT_OBJECT_MOVEMENT_PATCHES_H
