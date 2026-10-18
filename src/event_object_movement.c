@@ -2879,6 +2879,8 @@ void TrySpawnLightSprites(s16 camX, s16 camY)
 
 void TrySpawnObjectEvents(s16 cameraDeltaX, s16 cameraDeltaY)
 {
+    if (TrySpawnObjectEventsPatch_FnBegin(cameraDeltaX, cameraDeltaY)) return;
+
     u8 i;
     u8 objectCount;
 
