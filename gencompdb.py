@@ -15,13 +15,14 @@ C_FLAGS = [
     "-Wno-pointer-to-int-cast",
     "-std=gnu23",
     "-Wall",
-    "-W-enum-conversion",
-    "-W-strict-aliasing",
+    "-Wenum-conversion",
+    "-Wstrict-aliasing",
     "-Wno-attribute-alias",
     "-Wno-trigraphs",
     "-Woverride-init",
     "-Wno-gnu",
-    "-include global.h",
+    "-include",
+    "global.h",
     "-D__INTELLISENSE__",
     "-DTESTING",
     "-DMODERN=1",
@@ -29,10 +30,12 @@ C_FLAGS = [
 
 PER_FILE_FLAGS = {
     "src/field_mugshot.c": [
-        "-include constants/field_mugshots.h",
+        "-include",
+        "constants/field_mugshots.h",
     ],
     "src/move.c": [
-        "-include move.h",
+        "-include",
+        "move.h",
     ],
     "src/battle_message.c": [
         "-Wno-unknown-escape-sequence"
@@ -47,7 +50,8 @@ PER_FILE_FLAGS = {
         "-Wno-shorten-64-to-32"
     ],
     "src/pokemon.c": [
-        "-include data.h",
+        "-include",
+        "data.h",
         "-Isrc/data/graphics"
     ]
 }
