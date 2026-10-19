@@ -1,12 +1,4 @@
-[ ] temp array of instance object states (default value is 'inactive')
-	- OutdoorGroundObjectByInstanceIndex
-	- needs to be set to 'inactive' when despawned
-	- will save us if anything else is spawning objects
-	- will allow us to query what's loaded
-[ ] get objects to respawn from camera move
-	[ ] 1
-	[ ] 4
-[ ] intercept pickup's interact script via instance id
+- [ ] intercept pickup's interact script via instance id
 	[ ] patch interact to pickup fruit
 		[ ] add item to inventory
 		[ ] add new item to inventory (create a new item definition)
@@ -20,6 +12,9 @@
 	[ ] pickup fruit
 		[ ]	remove object
 		[ ] add item through fruit type
+
+[ ] shells randomly spawn in a rectangular spawn zone
+[ ] beach at bottom
 
 [ ] NPCs should navigate independent of an object event to tick+move/collide while unloaded
 	unloaded NPCs are included in collision and operate as loaded ones do
