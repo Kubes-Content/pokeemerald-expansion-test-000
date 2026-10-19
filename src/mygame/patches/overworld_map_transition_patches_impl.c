@@ -22,7 +22,7 @@ static void SpawnSomeFruitTask(const u8 taskId)
     {
         const struct OutdoorGroundObjectSlot* outdoorGroundObject = GetOutdoorGroundObject(saveBlock1State, x, y);
 
-        if (outdoorGroundObject->objectState.x == GROUND_OBJECT_TYPE_FRUIT)
+        if (outdoorGroundObject->objectState.groundObjectType == GROUND_OBJECT_TYPE_FRUIT)
             SpawnDummyObject(x, y, OBJ_EVENT_GFX_EXAMPLE);
     }
 

@@ -3,6 +3,8 @@
 //
 #include "mygame/patches/event_object_movement_patches.h"
 
+#include "mygame/patches/event_object_movement/event_object_movement_impl.h"
+
 bool8 GetObjectObjectCollidesWith_OWECollisionBegin(struct ObjectEvent* objectEvent, s16 x, s16 y, bool32 addCoords, struct ObjectEvent* otherObject)
 {
     return FALSE;
@@ -30,7 +32,8 @@ void OnOverworldViewPositionMoved(struct Coords16 from, struct Coords16 to)
 
 // return TRUE to consume/skip TrySpawnObjectEvents call
 bool8 TrySpawnObjectEventsPatch_FnBegin(const s16 cameraDeltaX, const s16 cameraDeltaY) {
+    OnTrySpawnObjectEventsPatch_FnBegin(cameraDeltaX, cameraDeltaY);
 
-
+    return TRUE;
     return FALSE;
 }

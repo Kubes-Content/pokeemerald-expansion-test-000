@@ -17,6 +17,7 @@ struct PACKED SaveBlock1State
 };
 void SaveBlock1State_Create(struct SaveBlock1State* saveBlock1State);
 void SaveBlock1State_Clear(struct SaveBlock1State* saveBlock1State);
+struct SaveBlock1State* GetSaveBlock1State();
 struct OutdoorGroundObjectSlot* GetOutdoorGroundObject(struct SaveBlock1State* saveBlock1State, u8 x, u8 y);
 
 #endif // GUARD_KUBES_SAVEBLOCK1STATE_H
