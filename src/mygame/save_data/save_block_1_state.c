@@ -25,7 +25,7 @@ void SaveBlock1State_Create(struct SaveBlock1State* saveBlock1State)
 {
     SaveBlock1State_Clear(saveBlock1State);
 
-    //GenerateSomeFruitOnTheGround(saveBlock1State);
+    GenerateSomeFruitOnTheGround(saveBlock1State);
 }
 
 void SaveBlock1State_Clear(struct SaveBlock1State* saveBlock1State)

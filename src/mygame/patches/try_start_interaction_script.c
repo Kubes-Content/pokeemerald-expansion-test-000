@@ -12,6 +12,8 @@
 #include "overworld.h"
 #include "constants/event_objects.h"
 
+#include "mygame/patches/field_control_avatar/try_start_interaction_script_impl.h"
+
 // stolen from field_control_avatar.c:GetInteractedObjectEventScript
 u8 GetInteractedObjectEventId(const struct MapPosition* position, const u8 metatileBehavior, const enum Direction direction)
 {
@@ -73,6 +75,8 @@ u8 TryStartInteractionScript_FnBegin(const u8 objectEventId)
 {
     if (objectEventId == OBJECT_EVENTS_COUNT)
         return FALSE;
+
+    if (OnTryStartInteractionScript_FnBegin(objectEventId)) return TRUE;
 
     return FALSE;
 }
