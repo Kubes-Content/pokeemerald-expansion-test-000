@@ -39,7 +39,7 @@ static struct ObjectEvent* SpawnThing(s16 x, s16 y)
 
     //MgbaPrintf(MGBA_LOG_WARN, "object %d, %d (- 1 = %d)", debugInitialX, debugInitialY, debugInitialY-yOffset);
     
-    return SpawnDummyObject(x, y, OBJ_EVENT_GFX_POKE_BALL);
+    return SpawnDummyObject(x, y, OBJ_EVENT_GFX_EXAMPLE);
     
     /*CreateVirtualObject(OBJ_EVENT_GFX_POKE_BALL, OBJECT_EVENTS_COUNT + 1, x, y, ELEVATION_DEFAULT, DIR_SOUTH); // didn't noticeably help performance in debug build
     return 0;*/

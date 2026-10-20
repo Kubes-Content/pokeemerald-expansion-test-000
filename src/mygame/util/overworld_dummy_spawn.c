@@ -32,7 +32,7 @@ struct ObjectEvent* SpawnDummyObject(const s16 x, const s16 y, const u16 graphic
     fatal_assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
 
     struct ObjectEvent* objectEvent = &gObjectEvents[objectEventIndex];
-    objectEvent->localId = OBJECT_EVENTS_COUNT + 1; // is this needed?
+    objectEvent->localId = objectEventIndex; // need unique local ID for shadows to not target one object // which shows that they're too heavy for this project as is :P
 
     return objectEvent;
 }
