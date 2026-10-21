@@ -84,8 +84,11 @@
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
 #include "constants/weather.h"
+
 #include "mygame/patches/dynamic_warp_patches.h"
+#include "mygame/patches/event_object_movement_patches.h"
 #include "mygame/patches/new_game/new_game_custom_warp.h"
+#include "mygame/patches/overworld_patches.h"
 
 STATIC_ASSERT((B_FLAG_FOLLOWERS_DISABLED == 0 || OW_FOLLOWERS_ENABLED), FollowersFlagAssignedWithoutEnablingThem);
 
@@ -702,6 +705,8 @@ static void SetPlayerCoordsFromWarp(void)
         gSaveBlock1Ptr->pos.x = gMapHeader.mapLayout->width / 2;
         gSaveBlock1Ptr->pos.y = gMapHeader.mapLayout->height / 2;
     }
+
+    OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
 }
 
 void WarpIntoMap(void)
@@ -2398,6 +2403,8 @@ static bool32 ReturnToFieldLocal(u8 *state)
     switch (*state)
     {
     case 0:
+        OnReturnToFieldLocalPatch_PreResumeMap();
+
         ResetMirageTowerAndSaveBlockPtrs();
         ResetScreenForMapLoad();
         ResumeMap(FALSE);
@@ -2432,6 +2439,8 @@ static bool32 ReturnToFieldLink(u8 *state)
     switch (*state)
     {
     case 0:
+        OnReturnToFieldLinkPatch_PreResumeMap();
+
         FieldClearVBlankHBlankCallbacks();
         ResetMirageTowerAndSaveBlockPtrs();
         ResetScreenForMapLoad();
@@ -2506,6 +2515,8 @@ static bool32 ReturnToFieldLink(u8 *state)
 
 static void DoMapLoadLoop(u8 *state)
 {
+    OnDoMapLoadLoopPatch_PreResumeMap();
+
     while (!LoadMapInStepsLocal(state, FALSE));
 }
 
@@ -2619,6 +2630,8 @@ static void ResumeMap(bool32 a1)
         SetUpFieldTasks();
     RunOnResumeMapScript();
     TryStartMirageTowerPulseBlendEffect();
+
+    OnResumeMapPatch_FnEnd();
 }
 
 static void InitObjectEventsLink(void)

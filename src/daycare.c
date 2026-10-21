@@ -219,6 +219,7 @@ static void TransferEggMoves(struct DayCare *daycare)
 
 void StorePokemonInDaycare(struct Pokemon *mon, struct DaycareMon *daycareMon)
 {
+#if FREE_MAIL == FALSE
     if (MonHasMail(mon))
     {
         u8 mailId;
@@ -232,6 +233,7 @@ void StorePokemonInDaycare(struct Pokemon *mon, struct DaycareMon *daycareMon)
         daycareMon->mail.message = gSaveBlock1Ptr->mail[mailId];
         TakeMailFromMon(mon);
     }
+#endif //FREE_MAIL == FALSE
 
     TryFormChange(mon, FORM_CHANGE_DEPOSIT, B_TRAINER_PLAYER);
 
@@ -257,6 +259,7 @@ static void StorePokemonInEmptyDaycareSlot(struct Pokemon *mon, struct DayCare *
 
 void StoreSelectedPokemonInDaycare(void)
 {
+#if FREE_DAYCARE == FALSE
     struct Pokemon *mon;
     if (gSpecialVar_0x8004 == PC_MON_CHOSEN)
     {
@@ -270,6 +273,7 @@ void StoreSelectedPokemonInDaycare(void)
     StorePokemonInEmptyDaycareSlot(mon, &gSaveBlock1Ptr->daycare);
     if (gSpecialVar_0x8004 == PC_MON_CHOSEN)
         Free(mon);
+#endif //FREE_DAYCARE == FALSE
 }
 
 // Shifts the second daycare Pokémon slot into the first slot.
@@ -367,7 +371,11 @@ static u16 TakeSelectedPokemonMonFromDaycareShiftSlots(struct DayCare *daycare, 
 
 u16 TakePokemonFromDaycare(void)
 {
+#if FREE_DAYCARE == FALSE
     return TakeSelectedPokemonMonFromDaycareShiftSlots(&gSaveBlock1Ptr->daycare, gSpecialVar_0x8004);
+#else
+    return 0;
+#endif //FREE_DAYCARE == FALSE
 }
 
 static u8 GetLevelAfterDaycareSteps(struct BoxPokemon *mon, u32 steps)
@@ -417,19 +425,27 @@ static u16 PrepareDaycareCostStringForMon(struct DayCare *daycare, u8 slotId)
 
 void GetDaycareCostAndPrepareString(void)
 {
+#if FREE_DAYCARE == FALSE
     gSpecialVar_0x8005 = PrepareDaycareCostStringForMon(&gSaveBlock1Ptr->daycare, gSpecialVar_0x8004);
+#else
+    gSpecialVar_0x8005 = 0;
+#endif //FREE_DAYCARE == FALSE
 }
 
 static void UNUSED Debug_AddDaycareSteps(u16 numSteps)
 {
+#if FREE_DAYCARE == FALSE
     gSaveBlock1Ptr->daycare.mons[0].steps += numSteps;
     gSaveBlock1Ptr->daycare.mons[1].steps += numSteps;
+#endif //FREE_DAYCARE == FALSE
 }
 
 u8 GetNumLevelsGainedFromDaycare(void)
 {
+#if FREE_DAYCARE == FALSE
     if (GetBoxMonData(&gSaveBlock1Ptr->daycare.mons[gSpecialVar_0x8004].mon, MON_DATA_SPECIES) != 0)
         return GetNumLevelsGainedForDaycareMon(&gSaveBlock1Ptr->daycare.mons[gSpecialVar_0x8004]);
+#endif //FREE_DAYCARE == FALSE
 
     return 0;
 }
@@ -454,7 +470,11 @@ static bool32 _CheckDaycareMonReceivedMail(struct DayCare *daycare, u32 slot)
 
 bool32 CheckDaycareMonReceivedMail(void)
 {
+#if FREE_DAYCARE == FALSE
     return _CheckDaycareMonReceivedMail(&gSaveBlock1Ptr->daycare, gSpecialVar_0x8004);
+#else
+    return FALSE;
+#endif //FREE_DAYCARE == FALSE
 }
 
 static void ClearDaycareMonMail(struct DaycareMail *mail)
@@ -609,7 +629,9 @@ static void _TriggerPendingDaycareEgg(struct DayCare *daycare)
 
 void TriggerPendingDaycareEgg(void)
 {
+#if FREE_DAYCARE == FALSE
     _TriggerPendingDaycareEgg(&gSaveBlock1Ptr->daycare);
+#endif //FREE_DAYCARE == FALSE
 }
 
 void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
@@ -892,7 +914,9 @@ static void RemoveEggFromDayCare(struct DayCare *daycare)
 
 void RejectEggFromDayCare(void)
 {
+#if FREE_DAYCARE == FALSE
     RemoveEggFromDayCare(&gSaveBlock1Ptr->daycare);
+#endif //FREE_DAYCARE == FALSE
 }
 
 static void AlterEggSpeciesWithIncenseItem(enum Species *species, struct DayCare *daycare)
@@ -1063,7 +1087,9 @@ static void SetInitialEggData(struct Pokemon *mon, enum Species species, struct 
 
 void GiveEggFromDaycare(void)
 {
+#if FREE_DAYCARE == FALSE
     _GiveEggFromDaycare(&gSaveBlock1Ptr->daycare);
+#endif //FREE_DAYCARE == FALSE
 }
 
 static void _IncrementDaycareSteps(struct DayCare *daycare)
@@ -1096,7 +1122,9 @@ void IncrementDaycareSteps(void)
         gSaveBlock1Ptr->route5DayCareMon.steps++;
 #endif
 
+#if FREE_DAYCARE == FALSE
     _IncrementDaycareSteps(&gSaveBlock1Ptr->daycare);
+#endif //FREE_DAYCARE == FALSE
 }
 
 static inline u32 GetEggCycleLength(void)
@@ -1165,7 +1193,11 @@ static bool32 TryToHatchEgg(struct DayCare *daycare)
 
 bool8 ShouldEggHatch(void)
 {
+#if FREE_DAYCARE == FALSE
     return TryToHatchEgg(&gSaveBlock1Ptr->daycare);
+#else
+    return FALSE;
+#endif //FREE_DAYCARE == FALSE
 }
 
 static bool32 IsEggPending(struct DayCare *daycare)
@@ -1201,11 +1233,14 @@ enum Species GetSelectedMonNicknameAndSpecies(void)
 
 void GetDaycareMonNicknames(void)
 {
+#if FREE_DAYCARE == FALSE
     _GetDaycareMonNicknames(&gSaveBlock1Ptr->daycare);
+#endif //FREE_DAYCARE == FALSE
 }
 
 u8 GetDaycareState(void)
 {
+#if FREE_DAYCARE == FALSE
     u8 numMons;
     if (IsEggPending(&gSaveBlock1Ptr->daycare))
     {
@@ -1217,6 +1252,7 @@ u8 GetDaycareState(void)
     {
         return numMons + 1; // DAYCARE_ONE_MON or DAYCARE_TWO_MONS
     }
+#endif //FREE_DAYCARE == FALSE
 
     return DAYCARE_NO_MONS;
 }
@@ -1304,7 +1340,11 @@ u8 GetDaycareCompatibilityScore(struct DayCare *daycare)
 static u8 GetDaycareCompatibilityScoreFromSave(void)
 {
     // Changed to also store result for scripts
+#if FREE_DAYCARE == FALSE
     gSpecialVar_Result = GetDaycareCompatibilityScore(&gSaveBlock1Ptr->daycare);
+#else
+    gSpecialVar_Result = 0;
+#endif //FREE_DAYCARE == FALSE
     return gSpecialVar_Result;
 }
 
@@ -1418,11 +1458,13 @@ static void DaycarePrintMonLvl(struct DayCare *daycare, u8 windowId, u32 daycare
 
 static void DaycarePrintMonInfo(u8 windowId, u32 daycareSlotId, u8 y)
 {
+#if FREE_DAYCARE == FALSE
     if (daycareSlotId < (unsigned) DAYCARE_MON_COUNT)
     {
         DaycarePrintMonNickname(&gSaveBlock1Ptr->daycare, windowId, daycareSlotId, y);
         DaycarePrintMonLvl(&gSaveBlock1Ptr->daycare, windowId, daycareSlotId, y);
     }
+#endif //FREE_DAYCARE == FALSE
 }
 
 #define tMenuListTaskId     data[0]

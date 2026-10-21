@@ -7,32 +7,12 @@
 #include "random.h"
 #include "constants/trainer_types.h"
 #include "mygame/util/map_header.h"
+#include "mygame/util/overworld_dummy_spawn.h"
 
 // todo extract
 static u8 SpawnBaseObject(s16 x, s16 y, u16 graphicsId)
 {
-    struct ObjectEventTemplate template = {
-        .x = x,
-        .y = y,
-        .graphicsId = graphicsId,
-        .localId = OBJECT_EVENTS_COUNT,
-        .kind = OBJ_KIND_NORMAL,
-        .elevation = ELEVATION_DEFAULT,
-        .movementType = MOVEMENT_TYPE_NONE,
-        .trainerType = TRAINER_TYPE_NONE,
-    };
-
-    const u8 objectEventIndex = SpawnSpecialObjectEvent(&template);
-
-    fatal_assertf(objectEventIndex < OBJECT_EVENTS_COUNT, "\n object index of %d exceeds max of %d.", objectEventIndex, OBJECT_EVENTS_COUNT - 1);
-    struct ObjectEvent* gObjectEvent = &gObjectEvents[objectEventIndex];
-    gObjectEvent->localId = OBJECT_EVENTS_COUNT + 1;
-    gObjectEvent->trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER; // prevent despawning when offscreen
-#define sOverworldEncounterLevel    trainerRange_berryTreeId // from wild_encounter_ow.c
-    gObjectEvent->sOverworldEncounterLevel = 128; // prevent despawning when offscreen // from wild_encounter_ow.c:OWE_NO_DESPAWN_FLAG
-#undef sOverworldEncounterLevel
-
-    return objectEventIndex;
+    return SpawnDummyObject(x, y, graphicsId) - gObjectEvents; // TODO offscreen despawning? we could just disable it for cave context, right? I think we added a hook... just where was that...
 }
 
 // todo refactor

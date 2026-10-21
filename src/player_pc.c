@@ -667,6 +667,7 @@ static void ItemStorage_EraseMainMenu(u8 taskId)
 
 static u8 GetMailboxMailCount(void)
 {
+#if FREE_MAIL == FALSE
     u8 mailInPC, i;
 
     // Count mail in PC (by first skipping over mail in party)
@@ -675,10 +676,14 @@ static u8 GetMailboxMailCount(void)
             mailInPC++;
 
     return mailInPC;
+#else
+    return 0;
+#endif //FREE_MAIL == FALSE
 }
 
 static void Mailbox_CompactMailList(void)
 {
+#if FREE_MAIL == FALSE
     struct Mail temp;
     u8 i, j;
 
@@ -690,6 +695,7 @@ static void Mailbox_CompactMailList(void)
                 SWAP(gSaveBlock1Ptr->mail[i], gSaveBlock1Ptr->mail[j], temp);
         }
     }
+#endif //FREE_MAIL == FALSE
 }
 
 static void Mailbox_DrawMailboxMenu(u8 taskId)
@@ -736,10 +742,12 @@ static void Mailbox_ProcessInput(u8 taskId)
 
 static void Mailbox_PrintWhatToDoWithPlayerMailText(u8 taskId)
 {
+#if FREE_MAIL == FALSE
     StringCopy(gStringVar1, gSaveBlock1Ptr->mail[gPlayerPCItemPageInfo.itemsAbove + PARTY_SIZE + gPlayerPCItemPageInfo.cursorPos].playerName);
     ConvertInternationalPlayerNameStripChar(gStringVar1, CHAR_SPACE);
     StringExpandPlaceholders(gStringVar4, gText_WhatToDoWithVar1sMail);
     DisplayItemMessageOnField(taskId, gStringVar4, Mailbox_PrintMailOptions);
+#endif //FREE_MAIL == FALSE
 }
 
 static void Mailbox_ReturnToPlayerPC(u8 taskId)
@@ -792,9 +800,13 @@ static void Mailbox_FadeAndReadMail(u8 taskId)
 {
     if (!gPaletteFade.active)
     {
+#if FREE_MAIL == FALSE
         MailboxMenu_Free();
+#endif //FREE_MAIL == FALSE
         CleanupOverworldWindowsAndTilemaps();
+#if FREE_MAIL == FALSE
         ReadMail(&gSaveBlock1Ptr->mail[gPlayerPCItemPageInfo.itemsAbove + PARTY_SIZE + gPlayerPCItemPageInfo.cursorPos], Mailbox_ReturnToFieldFromReadMail, TRUE);
+#endif //FREE_MAIL == FALSE
         DestroyTask(taskId);
     }
 }
@@ -855,6 +867,7 @@ static void Mailbox_HandleConfirmMoveToBag(u8 taskId)
 
 static void Mailbox_DoMailMoveToBag(u8 taskId)
 {
+#if FREE_MAIL == FALSE
     struct Mail *mail = &gSaveBlock1Ptr->mail[gPlayerPCItemPageInfo.itemsAbove + PARTY_SIZE + gPlayerPCItemPageInfo.cursorPos];
     if (!AddBagItem(mail->itemId, 1))
     {
@@ -870,6 +883,9 @@ static void Mailbox_DoMailMoveToBag(u8 taskId)
             gPlayerPCItemPageInfo.itemsAbove--;
         SetPlayerPCListCount(taskId);
     }
+#else
+    DestroyTask(taskId);
+#endif //FREE_MAIL == FALSE
 }
 
 static void Mailbox_CancelMoveToBag(u8 taskId)

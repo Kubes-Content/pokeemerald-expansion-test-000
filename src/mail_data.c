@@ -10,10 +10,12 @@
 
 void ClearAllMail(void)
 {
+#if FREE_MAIL == FALSE
     u8 i;
 
     for (i = 0; i < MAIL_COUNT; i++)
         ClearMail(&gSaveBlock1Ptr->mail[i]);
+#endif //FREE_MAIL == FALSE
 }
 
 void ClearMail(struct Mail *mail)
@@ -44,6 +46,7 @@ bool8 MonHasMail(struct Pokemon *mon)
 
 u8 GiveMailToMonByItemId(struct Pokemon *mon, enum Item itemId)
 {
+#if FREE_MAIL == FALSE
     u8 heldItem[2];
     u8 id, i;
     enum Species species;
@@ -76,6 +79,7 @@ u8 GiveMailToMonByItemId(struct Pokemon *mon, enum Item itemId)
             return id;
         }
     }
+#endif //FREE_MAIL == FALSE
 
     return MAIL_NONE;
 }
@@ -110,6 +114,7 @@ enum Species MailSpeciesToSpecies(u16 mailSpecies, u16 *buffer)
 
 u8 GiveMailToMon(struct Pokemon *mon, struct Mail *mail)
 {
+#if FREE_MAIL == FALSE
     enum Item itemId = mail->itemId;
     u8 mailId = GiveMailToMonByItemId(mon, itemId);
 
@@ -118,10 +123,14 @@ u8 GiveMailToMon(struct Pokemon *mon, struct Mail *mail)
 
     gSaveBlock1Ptr->mail[mailId] = *mail;
     return mailId;
+#else
+    return 0;
+#endif //FREE_MAIL == FALSE
 }
 
 void TakeMailFromMon(struct Pokemon *mon)
 {
+#if FREE_MAIL == FALSE
     u8 heldItem[2];
     u8 mailId;
 
@@ -135,10 +144,12 @@ void TakeMailFromMon(struct Pokemon *mon)
         SetMonData(mon, MON_DATA_MAIL, &mailId);
         SetMonData(mon, MON_DATA_HELD_ITEM, heldItem);
     }
+#endif //FREE_MAIL == FALSE
 }
 
 u8 SaveMailToPC(struct Mail *mail)
 {
+#if FREE_MAIL == FALSE
     for (u32 i = PARTY_SIZE; i < MAIL_COUNT; i++)
     {
         if (gSaveBlock1Ptr->mail[i].itemId == ITEM_NONE)
@@ -148,11 +159,13 @@ u8 SaveMailToPC(struct Mail *mail)
         }
     }
     // No space to save mail
+#endif //FREE_MAIL == FALSE
     return MAIL_NONE;
 }
 
 u8 TakeMailFromMonAndSave(struct Pokemon *mon)
 {
+#if FREE_MAIL == FALSE
     enum Item heldItem;
     u32 mailId, newMailId;
 
@@ -167,6 +180,9 @@ u8 TakeMailFromMonAndSave(struct Pokemon *mon)
         SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
     }
     return newMailId;
+#else
+    return 0;
+#endif //FREE_MAIL == FALSE
 }
 
 bool8 ItemIsMail(enum Item itemId)

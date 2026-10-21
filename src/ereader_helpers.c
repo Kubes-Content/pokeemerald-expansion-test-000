@@ -372,7 +372,11 @@ static const struct TrainerHillTrainer sTrainerHillTrainerTemplates_JP[] = {
 static u8 GetTrainerHillUnkVal(void)
 {
 #if FREE_TRAINER_HILL == FALSE
+#if FREE_SAVE_BLOCK_PADDING == FALSE
     return (gSaveBlock1Ptr->trainerHill.unused + 1) % 256;
+#else
+    return 0;
+#endif
 #else
     return 0;
 #endif //FREE_TRAINER_HILL

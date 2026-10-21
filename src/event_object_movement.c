@@ -58,6 +58,7 @@
 #include "constants/trainer_types.h"
 #include "constants/union_room.h"
 #include "constants/weather.h"
+
 #include "mygame/patches/event_object_movement_patches.h"
 
 #define SPECIAL_LOCALIDS_START (min(LOCALID_CAMERA, \
@@ -2876,8 +2877,10 @@ void TrySpawnLightSprites(s16 camX, s16 camY)
     }
 }
 
-void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
+void TrySpawnObjectEvents(s16 cameraDeltaX, s16 cameraDeltaY)
 {
+    if (TrySpawnObjectEventsPatch_FnBegin(cameraDeltaX, cameraDeltaY)) return;
+
     u8 i;
     u8 objectCount;
 
@@ -2904,9 +2907,9 @@ void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
             if (top <= npcY && bottom >= npcY && left <= npcX && right >= npcX && !FlagGet(template->flagId))
             {
                 if (template->graphicsId == OBJ_EVENT_GFX_LIGHT_SPRITE)
-                    SpawnLightSprite(npcX, npcY, cameraX, cameraY, template->trainerRange_berryTreeId); // light sprite instead
+                    SpawnLightSprite(npcX, npcY, cameraDeltaX, cameraDeltaY, template->trainerRange_berryTreeId); // light sprite instead
                 else
-                    TrySpawnObjectEventTemplate(template, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cameraX, cameraY);
+                    TrySpawnObjectEventTemplate(template, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup, cameraDeltaX, cameraDeltaY);
             }
         }
     }
@@ -2939,6 +2942,9 @@ void RemoveObjectEventsOutsideView(void)
             if (IsOWEDespawnExempt(objectEvent))
                 continue;
 
+            if (!ObjectDespawnsOutsideViewPatch(objectEvent))
+                continue;
+
             RemoveObjectEventIfOutsideView(objectEvent);
         }
     }
@@ -2962,6 +2968,8 @@ static void RemoveObjectEventIfOutsideView(struct ObjectEvent *objectEvent)
     // their despawn animation should play.
     objectEvent->offScreen = TRUE;
     RemoveObjectEvent(objectEvent);
+
+    OnObjectRemovedOutsideView(objectEvent);
 }
 
 void SpawnObjectEventsOnReturnToField(s16 x, s16 y)
@@ -3484,10 +3492,10 @@ static bool8 ObjectEventDoesElevationMatch(struct ObjectEvent *objectEvent, u8 e
     return TRUE;
 }
 
-void UpdateObjectEventsForCameraUpdate(s16 x, s16 y)
+void UpdateObjectEventsForCameraUpdate(s16 cameraDeltaX, s16 cameraDeltaY)
 {
     UpdateObjectEventCoordsForCameraUpdate();
-    TrySpawnObjectEvents(x, y);
+    TrySpawnObjectEvents(cameraDeltaX, cameraDeltaY);
     RemoveObjectEventsOutsideView();
 }
 
@@ -11386,6 +11394,7 @@ void GetDaycareGraphics(struct ScriptContext *ctx)
     Script_RequestWriteVar(varForm[0]);
     Script_RequestWriteVar(varForm[1]);
 
+#if FREE_DAYCARE == FALSE
     for (i = 0; i < 2; i++)
     {
         GetMonInfo((struct Pokemon *) &gSaveBlock1Ptr->daycare.mons[i].mon, &specGfx, &shiny, &female);
@@ -11397,6 +11406,9 @@ void GetDaycareGraphics(struct ScriptContext *ctx)
         VarSet(varForm[i], 0);  //  This shouldn't be needed anymore, track down
     }
     gSpecialVar_Result = i;
+#else //FREE_DAYCARE == FALSE
+    gSpecialVar_Result = 0;
+#endif //FREE_DAYCARE == FALSE
 }
 
 // running slow

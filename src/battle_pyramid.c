@@ -41,6 +41,8 @@
 #include "constants/species.h"
 #include "constants/trainers.h"
 
+#include "mygame/patches/event_object_movement_patches.h"
+
 #define NUM_LAYOUT_OFFSETS 8
 
 extern const struct MapLayout *const gMapLayouts[];
@@ -1858,6 +1860,8 @@ void GenerateBattlePyramidFloorLayout(u16 *backupMapData, bool8 setPlayerPositio
                     {
                         gSaveBlock1Ptr->pos.x = (mapLayout->width * (i % PYRAMID_FLOOR_SQUARES_WIDE)) + x;
                         gSaveBlock1Ptr->pos.y = (mapLayout->height * (i / PYRAMID_FLOOR_SQUARES_WIDE)) + y;
+
+                        OnOverworldViewPositionForced(gSaveBlock1Ptr->pos);
                     }
                     // Copy the elevation and collision, but overwrite the metatile ID
                     map[x] = (layoutMap[x] & (MAPGRID_ELEVATION_MASK | MAPGRID_COLLISION_MASK)) | METATILE_BattlePyramid_Floor;
