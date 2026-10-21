@@ -1,0 +1,9 @@
+CompileFlags:
+  Add:
+    - -ferror-limit=0
+
+Diagnostics:
+  Suppress:
+    - unknown-attributes
+    - unused-includes
+    - unknown-escape-sequence

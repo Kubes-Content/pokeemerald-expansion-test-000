@@ -71,3 +71,5 @@ __pycache__
 .idea/*
 !.idea/c_cpp_properties.json
 docs/mygame/aside
+
+compile_commands.json
